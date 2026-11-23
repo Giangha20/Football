@@ -2390,6 +2390,9 @@
       predAway: 1,
       predOutcome: 'home', // 'home' (Chủ thắng) | 'draw' (Hòa) | 'away' (Khách thắng)
       activeGroupFilter: 'ALL',
+      focusedTeamId: null,
+      focusedGroup: 'A',
+      groupFixturesByTourney: {},
       fifaFilter: 'nations',
       fifaPointsMap: {},
       fifaLastDeltaMap: {},
@@ -2670,16 +2673,79 @@
               selectTournament('world_cup');
             }
           }
-          const activeTeams = getTeamsInActiveTournament();
-          const poolOthers = activeTeams.filter(t => t.id !== chosen.id);
-          if (poolOthers.length > 0) {
-            const opp = poolOthers[Math.floor(Math.random() * poolOthers.length)];
-            state.roundNumber++;
-            setupMatch(chosen, opp);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+          const tourney = getActiveTournament();
+          ensureTeamInMainGroup4(tourney.id, chosen);
+          const tableObj = state.standingsByTourney[tourney.id];
+          state.focusedTeamId = chosen.id;
+          if (tableObj[chosen.id] && tableObj[chosen.id].group !== 'BXH') {
+            state.focusedGroup = tableObj[chosen.id].group;
+            state.activeGroupFilter = tableObj[chosen.id].group;
           }
+          state.roundNumber++;
+          pickRandomMatchInActiveTournament(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
+    }
+
+    function buildGroupFixturesForGroup(tourneyId, grpLetter) {
+      const tableObj = state.standingsByTourney[tourneyId];
+      if (!tableObj) return [];
+      const members = Object.values(tableObj)
+        .filter(r => r.group === grpLetter && r.inMainGroup)
+        .sort((a, b) => a.seedOrder - b.seedOrder);
+
+      if (members.length < 4) {
+        // Fallback round-robin for 2 or 3 teams
+        const list = [];
+        for (let i = 0; i < members.length; i++) {
+          for (let j = i + 1; j < members.length; j++) {
+            list.push({ matchday: list.length + 1, home: members[i].team, away: members[j].team, played: false, score: null });
+          }
+        }
+        return list;
+      }
+
+      const [t1, t2, t3, t4] = members.map(m => m.team);
+      // Official 4-Team Group Stage 3-Matchday Schedule (6 matches total, every team plays the other 3 teams in the group!)
+      return [
+        { matchday: 1, home: t1, away: t2, played: false, score: null },
+        { matchday: 1, home: t3, away: t4, played: false, score: null },
+        { matchday: 2, home: t1, away: t3, played: false, score: null },
+        { matchday: 2, home: t2, away: t4, played: false, score: null },
+        { matchday: 3, home: t4, away: t1, played: false, score: null },
+        { matchday: 3, home: t2, away: t3, played: false, score: null }
+      ];
+    }
+
+    function ensureTeamInMainGroup4(tourneyId, team) {
+      initStandingsForTournament(tourneyId);
+      const tourney = TOURNAMENTS.find(t => t.id === tourneyId) || TOURNAMENTS[0];
+      if (!tourney.groupCount || tourney.groupCount <= 0) return;
+
+      const tableObj = state.standingsByTourney[tourneyId];
+      const entry = tableObj[team.id];
+      if (!entry) return;
+      if (entry.inMainGroup) return;
+
+      // Swap this team into its group's 4th slot so the user can play a full 4-team group stage with this team!
+      const grp = entry.group || 'A';
+      const currentMain = Object.values(tableObj)
+        .filter(r => r.group === grp && r.inMainGroup)
+        .sort((a, b) => a.seedOrder - b.seedOrder);
+
+      if (currentMain.length >= 4) {
+        const replaced = currentMain[currentMain.length - 1];
+        replaced.inMainGroup = false;
+        entry.inMainGroup = true;
+        entry.seedOrder = replaced.seedOrder;
+      } else {
+        entry.inMainGroup = true;
+        entry.seedOrder = currentMain.length;
+      }
+      // Rebuild fixtures for this group
+      if (!state.groupFixturesByTourney[tourneyId]) state.groupFixturesByTourney[tourneyId] = {};
+      state.groupFixturesByTourney[tourneyId][grp] = buildGroupFixturesForGroup(tourneyId, grp);
     }
 
     function initStandingsForTournament(tourneyId) {
@@ -2689,19 +2755,52 @@
       const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
       const numGroups = tourney.groupCount || 0;
 
-      // Sort by OVR rating descending so Pot 1, Pot 2, Pot 3, Pot 4 seeds are distributed evenly across Groups A, B, C, D, E, F...
-      const sortedTeams = [...teams].sort((a, b) => b.rating - a.rating);
+      // Sort by OVR rating descending so Pot 1, Pot 2, Pot 3, Pot 4 seeds are distributed evenly across Groups A, B, C, D...
+      // Special priority: ensure ĐT Việt Nam ('vie') or Thép Xanh Nam Định ('nmd') is always seeded in the main 4-team Group stage of their tournaments!
+      const sortedTeams = [...teams].sort((a, b) => {
+        if (a.id === 'vie' && tourneyId === 'world_cup') return -1;
+        if (b.id === 'vie' && tourneyId === 'world_cup') return 1;
+        return b.rating - a.rating;
+      });
+
       const table = {};
+      const groupCounts = {};
       sortedTeams.forEach((t, idx) => {
         let grp = 'BXH';
+        let inMainGroup = true;
+        let seedOrder = idx;
         if (numGroups > 0) {
-          // Serpentine / Pot seeding across groups (e.g. Group A, B, C, D, E, F each gets 1 team from Pot 1, Pot 2, Pot 3, Pot 4)
           const groupIdx = idx % numGroups;
           grp = groupLetters[groupIdx] || 'A';
+          groupCounts[grp] = (groupCounts[grp] || 0) + 1;
+          seedOrder = groupCounts[grp] - 1;
+          // Each Group A, B, C, D... has 4 official teams in the group table
+          inMainGroup = groupCounts[grp] <= 4;
         }
-        table[t.id] = { team: t, group: grp, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, pts: 0 };
+        table[t.id] = {
+          team: t,
+          group: grp,
+          inMainGroup,
+          seedOrder,
+          played: 0,
+          won: 0,
+          drawn: 0,
+          lost: 0,
+          gf: 0,
+          ga: 0,
+          pts: 0
+        };
       });
       state.standingsByTourney[tourneyId] = table;
+
+      // Build official 3-Matchday round-robin fixtures for each group A, B, C, D...
+      if (numGroups > 0) {
+        state.groupFixturesByTourney[tourneyId] = {};
+        for (let g = 0; g < numGroups; g++) {
+          const gLetter = groupLetters[g];
+          state.groupFixturesByTourney[tourneyId][gLetter] = buildGroupFixturesForGroup(tourneyId, gLetter);
+        }
+      }
     }
 
     function renderLeagueStandings() {
@@ -2723,7 +2822,49 @@
       const filterBar = document.getElementById('groupLetterFilterBar');
       const container = document.getElementById('tournamentGroupsContainer');
 
+      const schedBanner = document.getElementById('groupScheduleBanner');
       if (numGroups > 0) {
+        // Determine current active group & focused team
+        const homeEntry = tableObj[state.homeTeam.id];
+        const currentGrp = (homeEntry && homeEntry.group !== 'BXH') ? homeEntry.group : (groupLetters[0] || 'A');
+        state.focusedGroup = currentGrp;
+        if (!state.focusedTeamId || !tableObj[state.focusedTeamId] || tableObj[state.focusedTeamId].group !== currentGrp) {
+          state.focusedTeamId = state.homeTeam.id;
+        }
+        const focusTeam = tableObj[state.focusedTeamId]?.team || state.homeTeam;
+        const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][currentGrp]) || [];
+
+        if (schedBanner) {
+          schedBanner.classList.remove('hidden');
+          const focusMatches = grpFixtures.filter(f => f.home.id === focusTeam.id || f.away.id === focusTeam.id);
+          schedBanner.innerHTML = `
+            <div class="flex items-center justify-between gap-1 pb-1 border-b border-white/10">
+              <span class="font-extrabold text-emerald-300 flex items-center gap-1">
+                📅 Lịch đấu Bảng ${currentGrp} của <strong class="text-white">${focusTeam.name}</strong>
+              </span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">Đấu lần lượt 3 đội cùng bảng</span>
+            </div>
+            <div class="grid grid-cols-1 gap-1 pt-0.5">
+              ${focusMatches.map((m, idx) => {
+                const isCurrentMatch = (!m.played && ((m.home.id === state.homeTeam.id && m.away.id === state.awayTeam.id) || (m.home.id === state.awayTeam.id && m.away.id === state.homeTeam.id)));
+                const opp = m.home.id === focusTeam.id ? m.away : m.home;
+                const statusBadge = m.played
+                  ? `<span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">Đã đá: ${m.score}</span>`
+                  : (isCurrentMatch
+                    ? `<span class="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 font-extrabold">⚡ Đang đá</span>`
+                    : `<span class="px-1.5 py-0.2 rounded bg-slate-800 text-sky-300 font-semibold">Trận tiếp theo</span>`);
+                return `
+                  <div class="flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${isCurrentMatch ? 'bg-emerald-500/20 border border-emerald-400/40' : 'bg-slate-900/80'}">
+                    <span class="font-mono text-[10px] text-slate-400">Lượt ${m.matchday}/3:</span>
+                    <span class="font-bold text-white truncate flex-1">vs ${opp.name} (${opp.code})</span>
+                    ${statusBadge}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+
         // Render group filter pills: Tất cả | A | B | C | D ...
         const pills = ['ALL', ...groupLetters];
         filterBar.innerHTML = pills.map(g => {
@@ -2743,8 +2884,7 @@
         container.innerHTML = groupsToShow.map(gLetter => {
           // Ensure current match teams appear if they belong to this group, limit each group table to 4 teams (or 6 if small)
           const grpRows = allRows
-            .filter(r => r.group === gLetter)
-            .slice(0, 4)
+            .filter(r => r.group === gLetter && r.inMainGroup)
             .sort((a, b) => {
               if (b.pts !== a.pts) return b.pts - a.pts;
               const gdB = b.gf - b.ga;
@@ -2796,7 +2936,21 @@
           `;
         }).join('');
       } else {
-        // Domestic League Single Table (V.League 1, EPL, La Liga, Serie A, Bundesliga, Ligue 1, Saudi Pro League)
+        // Domestic League Single Table — show next sequential round opponent in schedule banner
+        if (schedBanner) {
+          if (!state.focusedTeamId || !tableObj[state.focusedTeamId]) {
+            state.focusedTeamId = state.homeTeam.id;
+          }
+          const focusTeam = tableObj[state.focusedTeamId]?.team || state.homeTeam;
+          const oppTeam = state.homeTeam.id === focusTeam.id ? state.awayTeam : state.homeTeam;
+          schedBanner.classList.remove('hidden');
+          schedBanner.innerHTML = `
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-bold text-emerald-300">📅 Hành trình CLB: <strong class="text-white">${focusTeam.name}</strong></span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold">Vòng ${state.roundNumber}/${tourney.totalRounds}: vs ${oppTeam.code}</span>
+            </div>
+          `;
+        }
         filterBar.innerHTML = '';
         const rows = allRows.sort((a, b) => {
           if (b.pts !== a.pts) return b.pts - a.pts;
@@ -2886,6 +3040,7 @@
       // Default Cup tournaments with Knockout to a thrilling stage or Stage 0, users can switch any stage
       state.stageIndex = 0;
       state.activeGroupFilter = 'ALL';
+      state.focusedTeamId = null;
       document.getElementById('activeTournamentHeaderBadge').textContent = `${tourney.icon} ${tourney.name}`;
       document.getElementById('currentLeagueDesc').textContent = tourney.desc;
       initStandingsForTournament(tournamentId);
@@ -2896,15 +3051,105 @@
       pickRandomMatchInActiveTournament();
     }
 
-    function pickRandomMatchInActiveTournament() {
+    // Pick the NEXT scheduled match inside the active group (so the user plays all 3 opponents in their group sequentially!)
+    function pickRandomMatchInActiveTournament(forceNewGroup = false) {
+      const tourney = getActiveTournament();
+      initStandingsForTournament(tourney.id);
+      const tableObj = state.standingsByTourney[tourney.id];
       const pool = getTeamsInActiveTournament();
       if (pool.length < 2) return;
-      const idx1 = Math.floor(Math.random() * pool.length);
-      let idx2 = Math.floor(Math.random() * pool.length);
-      while (idx2 === idx1) {
-        idx2 = Math.floor(Math.random() * pool.length);
+
+      const numGroups = tourney.groupCount || 0;
+      const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].slice(0, numGroups);
+
+      // 1. If tournament has Group Stage (Bảng A, B, C, D...) and we are not in a Knockout round
+      if (numGroups > 0 && !state.isKnockoutMatch) {
+        // Determine which group and which team we are following
+        let currentGrp = state.focusedGroup || 'A';
+        if (!groupLetters.includes(currentGrp)) currentGrp = groupLetters[0] || 'A';
+
+        if (forceNewGroup) {
+          // If user clicked "Cặp đấu khác cùng giải", cycle to next match or another group
+          const curIdx = groupLetters.indexOf(currentGrp);
+          currentGrp = groupLetters[(curIdx + 1) % groupLetters.length];
+          state.focusedGroup = currentGrp;
+          const grpMembers = Object.values(tableObj).filter(r => r.group === currentGrp && r.inMainGroup);
+          if (grpMembers.length > 0) state.focusedTeamId = grpMembers[0].team.id;
+        }
+
+        if (!state.focusedTeamId || !tableObj[state.focusedTeamId] || tableObj[state.focusedTeamId].group !== currentGrp) {
+          // Pick a default focal team in this group (prioritize ĐT Việt Nam or Thép Xanh Nam Định if present in tournament)
+          const vnTeam = Object.values(tableObj).find(r => r.inMainGroup && (r.team.id === 'vie' || r.team.id === 'nmd'));
+          if (vnTeam && !forceNewGroup) {
+            currentGrp = vnTeam.group;
+            state.focusedGroup = currentGrp;
+            state.focusedTeamId = vnTeam.team.id;
+          } else {
+            const grpMembers = Object.values(tableObj).filter(r => r.group === currentGrp && r.inMainGroup);
+            if (grpMembers.length > 0) state.focusedTeamId = grpMembers[0].team.id;
+          }
+        }
+
+        const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][currentGrp]) || [];
+        // First look for the next unplayed fixture of our focusedTeamId in this group!
+        let nextFix = grpFixtures.find(f => !f.played && (f.home.id === state.focusedTeamId || f.away.id === state.focusedTeamId));
+
+        if (!nextFix) {
+          // All 3 group matches for focusedTeamId in this group are complete!
+          // Check if any other fixture in this group is unplayed, or advance to the Round of 16 / Quarter-final Knockout stage!
+          const anyUnplayed = grpFixtures.find(f => !f.played);
+          if (anyUnplayed) {
+            nextFix = anyUnplayed;
+          } else {
+            // Group Stage finished! Advance to the first Knock-out stage of this tournament if available
+            const stages = tourney.stages || [];
+            const koIdx = stages.findIndex(s =>
+              s.toLowerCase().includes('1/16') ||
+              s.toLowerCase().includes('1/8') ||
+              s.toLowerCase().includes('tứ kết') ||
+              s.toLowerCase().includes('bán kết')
+            );
+            if (koIdx !== -1) {
+              state.stageIndex = koIdx;
+              updateStageFormatUI();
+              showPhaseNotice(`🏆 ĐÃ HOÀN THÀNH VÒNG BẢNG! TIẾN VÀO ${stages[koIdx].toUpperCase()}!`);
+            } else {
+              // Reset group fixtures for a new group campaign
+              state.groupFixturesByTourney[tourney.id][currentGrp] = buildGroupFixturesForGroup(tourney.id, currentGrp);
+              nextFix = state.groupFixturesByTourney[tourney.id][currentGrp][0];
+            }
+          }
+        }
+
+        if (nextFix && !state.isKnockoutMatch) {
+          // Auto-align stage selector label with current Matchday (Lượt 1, Lượt 2, Lượt 3)
+          const stages = tourney.stages || [];
+          const mdStageIdx = stages.findIndex(s => s.includes(`Lượt ${nextFix.matchday}`));
+          if (mdStageIdx !== -1 && state.stageIndex !== mdStageIdx) {
+            state.stageIndex = mdStageIdx;
+          }
+          state.activeGroupFilter = currentGrp;
+          setupMatch(nextFix.home, nextFix.away);
+          return;
+        }
       }
-      setupMatch(pool[idx1], pool[idx2]);
+
+      // 2. For Domestic Leagues (V.League 1, EPL, La Liga, etc.) or Knock-out Rounds:
+      // Keep the user's focusedTeamId and pair them against the next opponent they haven't faced yet!
+      const focusId = state.focusedTeamId && tableObj[state.focusedTeamId] ? state.focusedTeamId : pool[0].id;
+      state.focusedTeamId = focusId;
+      const focusTeam = tableObj[focusId].team;
+      const recentOppIds = state.history.slice(0, 6).map(h => h.home.id === focusId ? h.away.id : (h.away.id === focusId ? h.home.id : null)).filter(Boolean);
+      let candidates = pool.filter(t => t.id !== focusId && !recentOppIds.includes(t.id));
+      if (candidates.length === 0) candidates = pool.filter(t => t.id !== focusId);
+      const opp = candidates[Math.floor(Math.random() * candidates.length)];
+
+      // Alternate Home / Away each round
+      if (state.roundNumber % 2 === 1) {
+        setupMatch(focusTeam, opp);
+      } else {
+        setupMatch(opp, focusTeam);
+      }
     }
 
     function computeWinProbabilities(home, away) {
@@ -3346,18 +3591,53 @@
       const tourney = getActiveTournament();
       initStandingsForTournament(tourney.id);
       const stTable = state.standingsByTourney[tourney.id];
-      const hRow = stTable[state.homeTeam.id];
-      const aRow = stTable[state.awayTeam.id];
-      if (hRow && aRow) {
-        hRow.played++; aRow.played++;
-        hRow.gf += actualH; hRow.ga += actualA;
-        aRow.gf += actualA; aRow.ga += actualH;
-        if (actualH > actualA) {
-          hRow.won++; hRow.pts += 3; aRow.lost++;
-        } else if (actualH < actualA) {
-          aRow.won++; aRow.pts += 3; hRow.lost++;
+
+      function recordScoreToStandings(teamH, teamA, gH, gA) {
+        const rH = stTable[teamH.id];
+        const rA = stTable[teamA.id];
+        if (!rH || !rA) return;
+        rH.played++; rA.played++;
+        rH.gf += gH; rH.ga += gA;
+        rA.gf += gA; rA.ga += gH;
+        if (gH > gA) {
+          rH.won++; rH.pts += 3; rA.lost++;
+        } else if (gH < gA) {
+          rA.won++; rA.pts += 3; rH.lost++;
         } else {
-          hRow.drawn++; aRow.drawn++; hRow.pts += 1; aRow.pts += 1;
+          rH.drawn++; rA.drawn++; rH.pts += 1; rA.pts += 1;
+        }
+      }
+
+      recordScoreToStandings(state.homeTeam, state.awayTeam, actualH, actualA);
+
+      // If this match is part of a Group Stage (Bảng A, B, C, D...), mark fixture as played AND auto-simulate the companion fixture of the same Matchday in this group!
+      if ((tourney.groupCount || 0) > 0 && !state.isKnockoutMatch) {
+        const grp = stTable[state.homeTeam.id]?.group || state.focusedGroup;
+        const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][grp]) || [];
+        const thisFix = grpFixtures.find(f =>
+          !f.played &&
+          ((f.home.id === state.homeTeam.id && f.away.id === state.awayTeam.id) ||
+           (f.home.id === state.awayTeam.id && f.away.id === state.homeTeam.id))
+        );
+        if (thisFix) {
+          thisFix.played = true;
+          thisFix.score = thisFix.home.id === state.homeTeam.id ? `${actualH}-${actualA}` : `${actualA}-${actualH}`;
+
+          // Simulate the other 2 teams in the same group on the same Matchday so the 4-team group table stays synchronized!
+          const companionFix = grpFixtures.find(f => !f.played && f.matchday === thisFix.matchday);
+          if (companionFix) {
+            const compSim = generateMatchScore(companionFix.home, companionFix.away, 1.0);
+            companionFix.played = true;
+            companionFix.score = `${compSim.homeGoals}-${compSim.awayGoals}`;
+            recordScoreToStandings(companionFix.home, companionFix.away, compSim.homeGoals, compSim.awayGoals);
+            updateFifaWorldPointsAfterMatch(companionFix.home, companionFix.away, compSim.homeGoals, compSim.awayGoals, null);
+
+            const feed = document.getElementById('matchEventsFeed');
+            const compItem = document.createElement('div');
+            compItem.className = 'text-sky-300 text-[11px] bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20';
+            compItem.innerHTML = `📊 <strong>Kết quả trận cùng Bảng ${grp} (Lượt ${companionFix.matchday}):</strong> ${companionFix.home.name} <strong>${compSim.homeGoals} - ${compSim.awayGoals}</strong> ${companionFix.away.name}`;
+            feed.prepend(compItem);
+          }
         }
       }
       renderLeagueStandings();
@@ -4134,14 +4414,21 @@
       container.querySelectorAll('.team-dir-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           SoundFX.click();
+          const tourney = getActiveTournament();
           const activeTeams = getTeamsInActiveTournament();
           const chosen = activeTeams.find(t => t.id === btn.dataset.teamId);
           if (!chosen) return;
-          const othersInSameTournament = activeTeams.filter(t => t.id !== chosen.id);
-          if (othersInSameTournament.length === 0) return;
-          const opponent = othersInSameTournament[Math.floor(Math.random() * othersInSameTournament.length)];
+
+          ensureTeamInMainGroup4(tourney.id, chosen);
+          const tableObj = state.standingsByTourney[tourney.id];
+          const entry = tableObj[chosen.id];
+          state.focusedTeamId = chosen.id;
+          if (entry && entry.group !== 'BXH') {
+            state.focusedGroup = entry.group;
+            state.activeGroupFilter = entry.group;
+          }
           state.roundNumber++;
-          setupMatch(chosen, opponent);
+          pickRandomMatchInActiveTournament(false);
         });
       });
     }
@@ -4291,7 +4578,7 @@
       document.getElementById('btnSkipMatch').addEventListener('click', () => {
         SoundFX.click();
         state.roundNumber++;
-        pickRandomMatchInActiveTournament();
+        pickRandomMatchInActiveTournament(true);
       });
 
       // Group Filter Tabs
