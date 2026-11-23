@@ -113,11 +113,12 @@
         desc: 'Giải VĐQG Thái Lan (Thai League 1) — Các CLB hàng đầu xứ Chùa Vàng đối đầu vòng tròn 2 lượt.'
       },
       {
-        id: 'msl_idn', name: 'Malaysia Super League & Liga 1 Indonesia', shortName: 'VĐQG Malaysia & Indo', icon: '🇲🇾', group: 'vleague',
-        formatType: 'league', totalRounds: 28, knockoutPossible: false, groupCount: 0, fifaI: 15,
-        formatBadge: 'Giải VĐQG Đông Nam Á (Malaysia & Indonesia - 28 Vòng) • Thắng 3đ, Hòa 1đ',
-        stages: ['Vòng 1/28 (Khai màn)', 'Vòng 9/28 (Lượt đi)', 'Vòng 14/28 (Derby Nusantara)', 'Vòng 22/28 (Lượt về)', 'Vòng 28/28 (Chung kết mùa giải)'],
-        desc: 'Giải VĐQG Malaysia & Liga 1 Indonesia — Các CLB mạnh nhất Malaysia và Indonesia tranh tài.'
+        id: 'msl', name: 'Malaysia Super League', shortName: 'Malaysia Super League', icon: '🇲🇾', group: 'vleague',
+        formatType: 'league', knockoutPossible: false, groupCount: 0, fifaI: 15, stages: []
+      },
+      {
+        id: 'liga1_idn', name: 'Liga 1 Indonesia', shortName: 'Liga 1 Indonesia', icon: '🇮🇩', group: 'vleague',
+        formatType: 'league', knockoutPossible: false, groupCount: 0, fifaI: 15, stages: []
       },
       {
         id: 'jleague', name: 'Meiji Yasuda J1 League (Nhật Bản)', shortName: 'J1 League (Nhật)', icon: '🇯🇵', group: 'vleague',
@@ -212,11 +213,27 @@
         desc: 'Giải Vô Địch ĐTQG Châu Âu (53 ĐTQG) — Vòng loại, Vòng bảng (Bảng A->F) và loại trực tiếp Vòng 1/16, 1/8, Tứ kết, Bán kết, Chung kết.'
       },
       {
-        id: 'world_cup', name: 'FIFA World Cup (Đủ 186 ĐTQG)', shortName: 'FIFA World Cup (186 ĐT)', icon: '🌍', group: 'nations',
-        formatType: 'cup', totalRounds: 12, knockoutPossible: true, groupCount: 12, fifaI: 50,
-        formatBadge: 'Vòng loại 186 ĐTQG + Vòng bảng (Bảng A, B, C, D... L) + Vòng 1/16, 1/8, Tứ kết, Bán kết & Chung kết',
-        stages: ['Vòng loại World Cup - Lượt 1 (186 Quốc gia)', 'Vòng loại World Cup - Play-off Liên lục địa', 'Vòng bảng World Cup (Bảng A, B, C, D... L) • Lượt 1', 'Vòng bảng World Cup (Bảng A, B, C, D... L) • Lượt 2', 'Vòng bảng World Cup (Bảng A, B, C, D... L) • Lượt 3', 'Vòng 1/16 FIFA World Cup (Knock-out)', 'Vòng 1/8 FIFA World Cup (Knock-out)', 'Tứ kết FIFA World Cup (Knock-out)', 'Bán kết FIFA World Cup (Knock-out)', 'Tranh Hạng 3 FIFA World Cup (Knock-out)', 'CHUNG KẾT FIFA WORLD CUP'],
-        desc: 'Giải Vô Địch Bóng Đá Thế Giới (186 Quốc gia) — Đầy đủ Vòng loại, Vòng bảng (Bảng A, B, C, D... L) và Vòng 1/16, 1/8, Tứ kết, Bán kết, Chung kết!'
+        id: 'world_cup', name: 'FIFA World Cup (Mùa giải 2026/2027)', shortName: 'FIFA World Cup', icon: '🌍', group: 'nations',
+        formatType: 'cup', totalRounds: 14, knockoutPossible: true, groupCount: 12, fifaI: 50,
+        formatBadge: 'Vòng loại 6 Khu vực (Châu Á, Châu Âu, Nam Mỹ, Châu Phi, Bắc Trung Mỹ, Châu Đại Dương) + VCK 48 Đội (Bảng A -> L) + Vòng 1/16, 1/8, Tứ kết, Bán kết & Chung kết',
+        stages: [
+          'Vòng loại World Cup — Khu vực Châu Á (AFC Qualifiers)',
+          'Vòng loại World Cup — Khu vực Châu Âu (UEFA Qualifiers)',
+          'Vòng loại World Cup — Khu vực Nam Mỹ (CONMEBOL Qualifiers)',
+          'Vòng loại World Cup — Khu vực Châu Phi (CAF Qualifiers)',
+          'Vòng loại World Cup — Khu vực Bắc Trung Mỹ (CONCACAF Qualifiers)',
+          'Vòng loại World Cup — Châu Đại Dương & Play-off (OFC)',
+          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội) • Lượt 1',
+          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội) • Lượt 2',
+          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội) • Lượt 3 (Quyết định)',
+          'Vòng 1/16 VCK FIFA World Cup (32 Đội - Knock-out)',
+          'Vòng 1/8 VCK FIFA World Cup (16 Đội - Knock-out)',
+          'Tứ kết FIFA World Cup (8 Đội - Knock-out)',
+          'Bán kết FIFA World Cup (4 Đội - Knock-out)',
+          'Tranh Hạng 3 FIFA World Cup (Knock-out)',
+          'CHUNG KẾT VÔ ĐỊCH THẾ GIỚI — FIFA WORLD CUP'
+        ],
+        desc: 'Đấu trường Vô Địch Bóng Đá Thế Giới: Tranh tài qua Vòng loại các khu vực (Châu Á, Châu Âu, Nam Mỹ, Châu Phi, Bắc Trung Mỹ, Châu Đại Dương). Các đội vượt qua vòng loại tiến vào Vòng bảng VCK 48 Đội (Bảng A đến L) và các vòng Knock-out tranh Cúp Vàng!'
       }
     ];
 
@@ -353,12 +370,12 @@
       },
       {
         id: 'jdt', name: 'Johor Darul Ta\'zim', code: 'JDT', type: 'vleague', league: 'Malaysia Super League / AFC',
-        tournaments: ['msl_idn', 'afc_cl', 'asean_club'], rating: 80, icon: '🐯', colors: ['#1e3a8a', '#dc2626'], form: 'W-W-W',
+        tournaments: ['msl', 'afc_cl', 'asean_club'], rating: 80, icon: '🐯', colors: ['#1e3a8a', '#dc2626'], form: 'W-W-W',
         stars: ['Arif Aiman Hanapi', 'Bérgson da Silva', 'Heberty Fernandes', 'Juan Muñiz', 'Jordi Amat', 'Matthew Davies', 'La\'Vere Corbin-Ong', 'Hong Wan', 'Natxo Insa', 'Feroz Baharudin', 'Syihan Hazmi']
       },
       {
         id: 'psm', name: 'PSM Makassar', code: 'PSM', type: 'vleague', league: 'Liga 1 Indonesia / ASEAN',
-        tournaments: ['msl_idn', 'asean_club'], rating: 76, icon: '⛵', colors: ['#991b1b', '#dc2626'], form: 'D-W-D',
+        tournaments: ['liga1_idn', 'asean_club'], rating: 76, icon: '⛵', colors: ['#991b1b', '#dc2626'], form: 'D-W-D',
         stars: ['Nermin Haljeta', 'Tito Okello', 'Yuran Fernandes', 'Akbar Tanjung', 'Ananda Raehan', 'Victor Luiz', 'Aloisio Neto', 'Dzaky Asraf', 'Ricky Pratama', 'Latyr Fall', 'Reza Arya Pratama']
       },
 
@@ -1017,6 +1034,52 @@
       // =======================================================================
       // ADDITIONAL UEFA CHAMPIONS LEAGUE ELITE CLUBS
       // =======================================================================
+
+      {
+        id: 'shak', name: 'FC Shakhtar Donetsk', code: 'SHAK', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 80, icon: '⚒️', colors: ['#ea580c', '#18181b'], form: 'W-D-W',
+        stars: ['Georgiy Sudakov', 'Danylo Sikan', 'Kevin', 'Lassina Traoré', 'Artem Bondarenko', 'Taras Stepanenko', 'Mykola Matviyenko', 'Valeriy Bondar', 'Pedro Henrique', 'Yukhym Konoplya', 'Dmytro Riznyk']
+      },
+      {
+        id: 'czv', name: 'FK Crvena zvezda (Red Star)', code: 'CZV', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 78, icon: '⭐', colors: ['#dc2626', '#991b1b'], form: 'W-W-L',
+        stars: ['Cherif Ndiaye', 'Bruno Duarte', 'Silas Katompa Mvumpa', 'Mirko Ivanić', 'Rade Krunić', 'Timi Max Elšnik', 'Peter Olayinka', 'Nasser Djiga', 'Uroš Spajić', 'Young-woo Seol', 'Omri Glazer']
+      },
+      {
+        id: 'dinz', name: 'GNK Dinamo Zagreb', code: 'DZG', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 79, icon: '🔵', colors: ['#1d4ed8', '#1e3a8a'], form: 'W-W-D',
+        stars: ['Bruno Petković', 'Sandro Kulenović', 'Martin Baturina', 'Marko Pjaca', 'Arijan Ademi', 'Josip Mišić', 'Petar Sučić', 'Kévin Théophile-Catherine', 'Stefan Ristovski', 'Ronaël Pierre-Gabriel', 'Ivan Nevistić']
+      },
+      {
+        id: 'spar', name: 'AC Sparta Prague', code: 'SPA', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 79, icon: '🔴', colors: ['#991b1b', '#18181b'], form: 'W-D-L',
+        stars: ['Victor Olatunji', 'Jan Kuchta', 'Veljko Birmančević', 'Lukáš Haraslín', 'Qazim Laçi', 'Kaan Kairinen', 'Angelo Preciado', 'Martin Vitík', 'Asger Sørensen', 'Jaroslav Zelený', 'Peter Vindahl Jensen']
+      },
+      {
+        id: 'brug', name: 'Club Brugge KV', code: 'CLU', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 81, icon: '🔵', colors: ['#1d4ed8', '#18181b'], form: 'W-W-D',
+        stars: ['Gustaf Nilsson', 'Ferran Jutglà', 'Andreas Skov Olsen', 'Christos Tzolis', 'Hans Vanaken', 'Raphael Onyedika', 'Ardon Jashari', 'Brandon Mechele', 'Joel Ordóñez', 'Maxim De Cuyper', 'Simon Mignolet']
+      },
+      {
+        id: 'sturm', name: 'SK Sturm Graz', code: 'STU', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 78, icon: '⚪', colors: ['#18181b', '#475569'], form: 'W-L-D',
+        stars: ['Mika Biereth', 'William Bøving', 'Tomi Horvat', 'Otar Kiteishvili', 'Jon Gorenc Stanković', 'Malick Yalcouyé', 'Tochi Chukwuani', 'Jusuf Gazibegović', 'Gregory Wüthrich', 'Emanuel Aiwu', 'Kjell Scherpen']
+      },
+      {
+        id: 'slov', name: 'ŠK Slovan Bratislava', code: 'SLO', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 77, icon: '👑', colors: ['#0284c7', '#1e3a8a'], form: 'W-D-L',
+        stars: ['David Strelec', 'Tigran Barseghyan', 'Marko Tolić', 'Vladimír Weiss', 'Juraj Kucka', 'Danylo Ignatenko', 'Kyriakos Savvidis', 'Guram Kashia', 'Kenan Bajrić', 'César Blackman', 'Dominik Takáč']
+      },
+      {
+        id: 'salz', name: 'FC Red Bull Salzburg', code: 'SAL', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 80, icon: '🐂', colors: ['#dc2626', '#991b1b'], form: 'W-D-W',
+        stars: ['Karim Konaté', 'Petar Ratkov', 'Oscar Gloukh', 'Moussa Yeo', 'Lucas Gourna-Douath', 'Mads Bidstrup', 'Maurits Kjærgaard', 'Samson Baidoo', 'Kamil Piątkowski', 'Amar Dedić', 'Janis Blaswich']
+      },
+      {
+        id: 'yb', name: 'BSC Young Boys', code: 'YBO', type: 'clubs', league: 'UEFA Champions League',
+        tournaments: ['ucl'], rating: 78, icon: '🟡', colors: ['#eab308', '#18181b'], form: 'D-W-L',
+        stars: ['Silvère Ganvoula', 'Cedric Itten', 'Joël Monteiro', 'Ebrima Colley', 'Filip Ugrinic', 'Sandro Lauper', 'Cheikh Niasse', 'Loris Benito', 'Tanguy Zoukrou', 'Jaouen Hadjam', 'David von Ballmoos']
+      },
       {
         id: 'ben', name: 'SL Benfica', code: 'BEN', type: 'clubs', league: 'UEFA Champions League',
         tournaments: ['ucl'], rating: 84, icon: '🦅', colors: ['#dc2626', '#991b1b'], form: 'W-W-W',
@@ -1107,7 +1170,7 @@
       },
       {
         id: 'sela', name: 'Selangor FC (Malaysia)', code: 'SEL', type: 'vleague', league: 'Malaysia Super League / ASEAN',
-        tournaments: ['msl_idn', 'asean_club'], rating: 76, icon: '🟡', colors: ['#dc2626', '#eab308'], form: 'W-D-W',
+        tournaments: ['msl', 'asean_club'], rating: 76, icon: '🟡', colors: ['#dc2626', '#eab308'], form: 'W-D-W',
         stars: ['Ronnie Fernández', 'Alvin Fortes', 'Ali Olwan', 'Yohandry Orozco', 'Nooa Laine', 'Noor Al-Rawabdeh', 'Safuwan Baharudin', 'Harith Haiqal', 'Quentin Cheng', 'Fazly Mazlan', 'Azim Al-Amin']
       },
       {
@@ -1117,7 +1180,7 @@
       },
       {
         id: 'bFC', name: 'Borneo FC Samarinda', code: 'BOR', type: 'vleague', league: 'Liga 1 Indonesia / ASEAN',
-        tournaments: ['msl_idn', 'asean_club'], rating: 76, icon: '🐬', colors: ['#ea580c', '#991b1b'], form: 'W-D-W',
+        tournaments: ['liga1_idn', 'asean_club'], rating: 76, icon: '🐬', colors: ['#ea580c', '#991b1b'], form: 'W-D-W',
         stars: ['Léo Gaúcho', 'Stefano Lilipaly', 'Berguinho', 'Mariano Peralta', 'Kei Hirose', 'Christophe Nduwarugira', 'Rivaldo Pakpahan', 'Ronaldo Rodrigues', 'Gabriel Furtado', 'Fajar Fathur Rahman', 'Nadeo Argawinata']
       },
       {
@@ -1132,6 +1195,124 @@
       },
 
       // =======================================================================
+      
+      // Additional Thai League Clubs
+      {
+        id: 'korat', name: 'Nakhon Ratchasima Mazda FC', code: 'NRM', type: 'vleague', league: 'Thai League 1 (Thái Lan)',
+        tournaments: ['thaileague'], rating: 74, icon: '🐈', colors: ['#ea580c', '#18181b'], form: 'D-W-L',
+        stars: ['Deyvison Fernandes', 'Dennis Murillo', 'Somkaet Kunmee', 'Greg Houla', 'Nick Taylor', 'Nattawut Jaroenboot', 'Weerawat Jiraphaksiri', 'Thanison Paibulkijcharoen', 'Lee Jong-cheon', 'Anusak Jaiphet', 'Tanachai Noorach']
+      },
+      {
+        id: 'sukho', name: 'Sukhothai FC', code: 'SKT', type: 'vleague', league: 'Thai League 1 (Thái Lan)',
+        tournaments: ['thaileague'], rating: 74, icon: '🦇', colors: ['#dc2626', '#eab308'], form: 'W-L-D',
+        stars: ['John Baggio', 'Matheus Fornazari', 'Siroch Chatthong', 'Ekkasit Chaobut', 'Lidor Cohen', 'Tatchathepp Krudmuntre', 'Adisak Seebunmee', 'Hikaru Matsui', 'Cláudio', 'Sarawut Kanlayanabandit', 'Kittipun Saensuk']
+      },
+      {
+        id: 'khon', name: 'Khon Kaen United', code: 'KKU', type: 'vleague', league: 'Thai League 1 (Thái Lan)',
+        tournaments: ['thaileague'], rating: 73, icon: '👑', colors: ['#dc2626', '#18181b'], form: 'L-D-D',
+        stars: ['Brenner Alves', 'Chitsanuphong Choti', 'Lossémy Karaboué', 'Tinnakorn Asurin', 'Parndecha Ngernprasert', 'Steve Ambri', 'Diego Landis', 'Kittichai Yaidee', 'Wasan Homsan', 'Phanuphong Phonsa', 'Chirawat Wangthaphan']
+      },
+      {
+        id: 'lamp', name: 'Lamphun Warriors', code: 'LPW', type: 'vleague', league: 'Thai League 1 (Thái Lan)',
+        tournaments: ['thaileague'], rating: 74, icon: '🐂', colors: ['#991b1b', '#f8fafc'], form: 'W-D-W',
+        stars: ['Junior Batista', 'Negueba', 'Maung Maung Lwin', 'Mohammed Osman', 'Baworn Tapla', 'Akarapong Pumwisat', 'Kike Linares', 'Victor Cardozo', 'Wittaya Moonwong', 'Todsapol Lated', 'Nont Muangngam']
+      },
+
+      // Additional Saudi Pro League Clubs
+      {
+        id: 'khal', name: 'Al-Khaleej Club', code: 'KHL', type: 'vleague', league: 'Saudi Pro League',
+        tournaments: ['saudi_pro'], rating: 77, icon: '🦅', colors: ['#eab308', '#15803d'], form: 'W-W-L',
+        stars: ['Fábio Martins', 'Mohamed Sherif', 'Khaled Narey', 'Kostas Fortounis', 'Mansour Hamzi', 'Dimitrios Kourbelis', 'Pedro Rebocho', 'Lisandro López', 'Marcel Tisserand', 'Saeed Al Hamsal', 'Ibrahim Šehić']
+      },
+      {
+        id: 'wehd', name: 'Al-Wehda FC', code: 'WEH', type: 'vleague', league: 'Saudi Pro League',
+        tournaments: ['saudi_pro'], rating: 76, icon: '🔴', colors: ['#dc2626', '#991b1b'], form: 'L-D-W',
+        stars: ['Odion Ighalo', 'Craig Goodwin', 'Juninho Bacuna', 'Murad Khadhari', 'Youssef Amyn', 'Alexandru Crețu', 'Waleed Bakshween', 'Jawad El Yamiq', 'Ali Makki', 'Saeed Al-Mowalad', 'Ignacio de Arruabarrena']
+      },
+      {
+        id: 'damac', name: 'Damac FC', code: 'DAM', type: 'vleague', league: 'Saudi Pro League',
+        tournaments: ['saudi_pro'], rating: 77, icon: '⚔️', colors: ['#eab308', '#dc2626'], form: 'D-W-D',
+        stars: ['Georges-Kévin Nkoudou', 'Habib Diallo', 'François Kamano', 'Nicolae Stanciu', 'Tarek Hamed', 'Ayman Fallatah', 'Noor Al-Rashidi', 'Farouk Chafaï', 'Abdelkader Bedrane', 'Sanousi Hawsawi', 'Florin Niță']
+      },
+      {
+        id: 'raed', name: 'Al-Raed FC', code: 'RAE', type: 'vleague', league: 'Saudi Pro League',
+        tournaments: ['saudi_pro'], rating: 76, icon: '🦁', colors: ['#dc2626', '#18181b'], form: 'W-L-D',
+        stars: ['Amir Sayoud', 'Karim El Berkaoui', 'Saleh Al-Amri', 'Mathias Normann', 'Mehdi Abeid', 'Yahya Sunbul', 'Ayoub Qasmi', 'Oumar Gonzalez', 'Mubarak Al-Rajeh', 'Hamad Al-Jayzani', 'André Moreira']
+      },
+
+      // Additional K League 1 Clubs
+      {
+        id: 'inch', name: 'Incheon United', code: 'INC', type: 'vleague', league: 'K League 1 (Hàn Quốc)',
+        tournaments: ['kleague'], rating: 77, icon: '⚓', colors: ['#1d4ed8', '#18181b'], form: 'D-L-W',
+        stars: ['Stefan Mugoša', 'Gerso Fernandes', "Paul-José M'Poku", 'Kim Do-hyeok', 'Lee Myung-joo', 'Sin Jin-ho', 'Kim Bo-sub', 'Matej Jonjić', 'Kim Gun-hee', 'Kim Yeon-soo', 'Lee Bum-soo']
+      },
+      {
+        id: 'daegu', name: 'Daegu FC', code: 'DAE', type: 'vleague', league: 'K League 1 (Hàn Quốc)',
+        tournaments: ['kleague'], rating: 77, icon: '☀️', colors: ['#38bdf8', '#1e3a8a'], form: 'W-D-L',
+        stars: ['Cesinha', 'Edgar Silva', 'Italo', 'Go Jae-hyeon', 'Kyohei Yoshino', 'Park Se-jin', 'Hwang Jae-won', 'Kim Jin-hyuk', 'Park Jin-young', 'Ko Myeong-seok', 'Oh Seung-hoon']
+      },
+
+      // Additional J1 League Clubs
+      {
+        id: 'nagoya', name: 'Nagoya Grampus', code: 'NAG', type: 'vleague', league: 'J1 League (Nhật Bản)',
+        tournaments: ['jleague'], rating: 80, icon: '🐬', colors: ['#dc2626', '#eab308'], form: 'W-D-W',
+        stars: ['Kasper Junker', 'Patric', 'Kensuke Nagai', 'Ryuji Izumi', 'Sho Inagaki', 'Keiya Shiihashi', 'Takuya Uchida', 'KennedyEgbus Mikuni', 'Chang-rae Ha', 'Yuki Nogami', 'Mitchell Langerak']
+      },
+      {
+        id: 'fuku', name: 'Avispa Fukuoka', code: 'AVF', type: 'vleague', league: 'J1 League (Nhật Bản)',
+        tournaments: ['jleague'], rating: 78, icon: '🐝', colors: ['#1e3a8a', '#475569'], form: 'D-W-D',
+        stars: ['Shahab Zahedi', 'Wellington', 'Takeshi Kanamori', 'Kazuya Konno', 'Hiroyuki Mae', 'Daiki Matsuoka', 'Masato Shigemi', 'Douglas Grolli', 'Tatsuki Nara', 'Masato Yuzawa', 'Masaaki Murakami']
+      },
+      {
+        id: 'kashiwa', name: 'Kashiwa Reysol', code: 'KAS', type: 'vleague', league: 'J1 League (Nhật Bản)',
+        tournaments: ['jleague'], rating: 78, icon: '☀️', colors: ['#eab308', '#18181b'], form: 'D-L-W',
+        stars: ['Mao Hosoya', 'Matheus Sávio', 'Kosuke Kinoshita', 'Tomoya Koyamatsu', 'Eiji Shirai', 'Sachiro Toshima', 'Diego', 'Taiyo Koga', 'Tomoki Inukai', 'Hiroki Sekine', 'Kenta Matsumoto']
+      },
+      {
+        id: 'niig', name: 'Albirex Niigata', code: 'ALB', type: 'vleague', league: 'J1 League (Nhật Bản)',
+        tournaments: ['jleague'], rating: 77, icon: '🦢', colors: ['#ea580c', '#1d4ed8'], form: 'W-L-D',
+        stars: ['Koji Suzuki', 'Motoki Nagakura', 'Yuji Ono', 'Shusuke Ota', 'Yuzuru Shimada', 'Hiroki Akiyama', 'Eita Hasegawa', 'Michael James Fitzgerald', 'Thomas Deng', 'Soya Fujiwara', 'Ryosuke Kojima']
+      },
+
+      // Additional Chinese Super League Clubs
+      {
+        id: 'tianjin', name: 'Tianjin Jinmen Tiger', code: 'TJT', type: 'vleague', league: 'Chinese Super League',
+        tournaments: ['csl'], rating: 76, icon: '🐯', colors: ['#1d4ed8', '#f8fafc'], form: 'W-D-L',
+        stars: ['Andrea Compagno', 'Albion Ademi', 'Xadas', 'Ba Dun', 'Wang Qiuming', 'Guo Hao', 'Ming Tian', 'Mile Škorić', 'Alex Grant', 'Su Yuanjie', 'Fang Jingqi']
+      },
+      {
+        id: 'henan', name: 'Henan FC', code: 'HNF', type: 'vleague', league: 'Chinese Super League',
+        tournaments: ['csl'], rating: 76, icon: '🔴', colors: ['#dc2626', '#15803d'], form: 'D-W-D',
+        stars: ['Nemanja Čović', 'Bruno Nazário', 'Frank Acheampong', 'Djordje Denić', 'Huang Zichang', 'Wang Shangyuan', 'Ke Zhao', 'Iago Maidana', 'Gu Cao', 'Feng Boyuan', 'Wang Guoming']
+      },
+      {
+        id: 'wuhan', name: 'Wuhan Three Towns', code: 'WHT', type: 'vleague', league: 'Chinese Super League',
+        tournaments: ['csl'], rating: 76, icon: '⚡', colors: ['#1e3a8a', '#38bdf8'], form: 'L-W-L',
+        stars: ['Pedro Henrique', 'Joca', 'Darlan Mendes', 'Romário Baldé', 'Tao Qianglong', 'He Chao', 'Zhang Xiaobin', 'Park Ji-soo', 'Ren Hang', 'Deng Hanwen', 'Liu Dianzuo']
+      },
+
+      // Additional Americas & Copa Libertadores Clubs
+      {
+        id: 'flu', name: 'Fluminense FC', code: 'FLU', type: 'clubs', league: 'Copa Libertadores',
+        tournaments: ['americas_cl'], rating: 82, icon: '🛡️', colors: ['#881337', '#15803d'], form: 'W-W-D',
+        stars: ['Germán Cano', 'Jhon Arias', 'Keno', 'Ganso', 'Martinelli', 'Facundo Bernal', 'Thiago Silva', 'Ignácio', 'Samuel Xavier', 'Diogo Barbosa', 'Fábio']
+      },
+      {
+        id: 'sao', name: 'São Paulo FC', code: 'SAO', type: 'clubs', league: 'Copa Libertadores',
+        tournaments: ['americas_cl'], rating: 82, icon: '🔴', colors: ['#dc2626', '#18181b'], form: 'W-D-W',
+        stars: ['Jonathan Calleri', 'Lucas Moura', 'Luciano', 'Ferreira', 'Damián Bobadilla', 'Luiz Gustavo', 'Robert Arboleda', 'Alan Franco', 'Igor Vinícius', 'Welington', 'Rafael']
+      },
+      {
+        id: 'min', name: 'Atlético Mineiro', code: 'CAM', type: 'clubs', league: 'Copa Libertadores',
+        tournaments: ['americas_cl'], rating: 82, icon: '🐓', colors: ['#18181b', '#f8fafc'], form: 'W-D-L',
+        stars: ['Hulk', 'Paulinho', 'Deyverson', 'Gustavo Scarpa', 'Fausto Vera', 'Otávio', 'Guilherme Arana', 'Junior Alonso', 'Rodrigo Battaglia', 'Renzo Saravia', 'Everson']
+      },
+      {
+        id: 'gre', name: 'Grêmio FBPA', code: 'GRE', type: 'clubs', league: 'Copa Libertadores',
+        tournaments: ['americas_cl'], rating: 81, icon: '🔵', colors: ['#0284c7', '#18181b'], form: 'D-W-L',
+        stars: ['Martin Braithwaite', 'Diego Costa', 'Yeferson Soteldo', 'Franco Cristaldo', 'Mathías Villasanti', 'Dodi', 'Pedro Geromel', 'Walter Kannemann', 'João Pedro', 'Reinaldo', 'Agustín Marchesín']
+      },
+
       // ADDITIONAL MLS & COPA LIBERTADORES CLUBS (12/12 CLUBS)
       // =======================================================================
       {
@@ -1389,32 +1570,32 @@
       // =======================================================================
       {
         id: 'persib', name: 'Persib Bandung (Indonesia)', code: 'PSB', type: 'vleague', league: 'Liga 1 Indonesia',
-        tournaments: ['msl_idn', 'asean_club'], rating: 77, icon: '🐯', colors: ['#1d4ed8', '#1e3a8a'], form: 'W-W-D',
+        tournaments: ['liga1_idn', 'asean_club'], rating: 77, icon: '🐯', colors: ['#1d4ed8', '#1e3a8a'], form: 'W-W-D',
         stars: ['David da Silva', 'Ciro Alves', 'Tyronne del Pino', 'Marc Klok', 'Beckham Putra', 'Dedi Kusnandar', 'Dimas Drajad', 'Nick Kuipers', 'Gustavo França', 'Edo Febriansah', 'Kevin Ray Mendoza']
       },
       {
         id: 'persija', name: 'Persija Jakarta (Indonesia)', code: 'PSJ', type: 'vleague', league: 'Liga 1 Indonesia',
-        tournaments: ['msl_idn'], rating: 76, icon: '🦅', colors: ['#dc2626', '#ea580c'], form: 'W-D-L',
+        tournaments: ['liga1_idn'], rating: 76, icon: '🦅', colors: ['#dc2626', '#ea580c'], form: 'W-D-L',
         stars: ['Gustavo Almeida', 'Marko Šimić', 'Ryo Matsumura', 'Maciej Gajos', 'Witan Sulaeman', 'Ramon Bueno', 'Hanif Sjahbandi', 'Rizky Ridho', 'Ondřej Kúdela', 'Firza Andika', 'Carlos Eduardo']
       },
       {
         id: 'perseb', name: 'Persebaya Surabaya (Indonesia)', code: 'PBY', type: 'vleague', league: 'Liga 1 Indonesia',
-        tournaments: ['msl_idn'], rating: 76, icon: '🐊', colors: ['#15803d', '#eab308'], form: 'W-W-D',
+        tournaments: ['liga1_idn'], rating: 76, icon: '🐊', colors: ['#15803d', '#eab308'], form: 'W-W-D',
         stars: ['Bruno Moreira', 'Flávio Silva', 'Francisco Rivera', 'Malik Risaldi', 'Mohammed Rashid', 'Gilson Costa', 'Kasim Botan', 'Slavko Damjanović', 'Kadek Raditya', 'Ardi Idrus', 'Ernando Ari']
       },
       {
         id: 'bali', name: 'Bali United (Indonesia)', code: 'BAL', type: 'vleague', league: 'Liga 1 Indonesia',
-        tournaments: ['msl_idn'], rating: 76, icon: '🏝️', colors: ['#dc2626', '#18181b'], form: 'W-D-W',
+        tournaments: ['liga1_idn'], rating: 76, icon: '🏝️', colors: ['#dc2626', '#18181b'], form: 'W-D-W',
         stars: ['Everton Nascimento', 'Privat Mbarga', 'Irfan Jaya', 'Mitsuru Maruoka', 'Brandon Wilson', 'Kadek Agung', 'Ricky Fajrin', 'Elias Dolah', 'Bagas Adi', 'Made Andhika', 'Adilson Maringá']
       },
       {
         id: 'tereng', name: 'Terengganu FC (Malaysia)', code: 'TFC_M', type: 'vleague', league: 'Malaysia Super League',
-        tournaments: ['msl_idn', 'asean_club'], rating: 76, icon: '🐢', colors: ['#18181b', '#f8fafc'], form: 'W-D-W',
+        tournaments: ['msl', 'asean_club'], rating: 76, icon: '🐢', colors: ['#18181b', '#f8fafc'], form: 'W-D-W',
         stars: ['Safawi Rasid', 'Akhyar Rashid', 'Ismaheel Akinade', 'Nelson Bonilla', 'Manuel Ott', 'Nurillo Tukhtasinov', 'Marin Pilj', 'Shahrul Nizam', 'Safwan Mazlan', 'Azam Azmi', 'Suhaimi Husin']
       },
       {
         id: 'sabah', name: 'Sabah FC (Malaysia)', code: 'SAB', type: 'vleague', league: 'Malaysia Super League',
-        tournaments: ['msl_idn'], rating: 75, icon: '🦏', colors: ['#dc2626', '#0284c7'], form: 'W-L-W',
+        tournaments: ['msl'], rating: 75, icon: '🦏', colors: ['#dc2626', '#0284c7'], form: 'W-L-W',
         stars: ['Darren Lok', 'Saddil Ramdani', 'João Pedro', 'Miguel Cifuentes', 'Telmo Castanheira', 'Stuart Wilkin', 'Park Tae-su', 'Gabriel Peres', 'Dominic Tan', 'Daniel Ting', 'Damien Lim']
       }      ,
       {
@@ -2233,6 +2414,245 @@
     // =========================================================================
     // 2B. 100% OFFLINE VECTOR TEAM LOGOS & NATIONAL FLAGS ENGINE (338 TEAMS)
     // =========================================================================
+    
+    // =========================================================================
+    // 2A. REAL TEAM LOGOS & NATIONAL FLAGS DIRECTORY (100% AUTHENTIC)
+    // =========================================================================
+    const NATION_ISO2_MAP = {
+      'VIE': 'vn', 'THA': 'th', 'IDN': 'id', 'JPN': 'jp', 'KOR': 'kr', 'KSA': 'sa',
+      'ARG': 'ar', 'BRA': 'br', 'COL': 'co', 'URU': 'uy', 'ESP': 'es', 'FRA': 'fr',
+      'ENG': 'gb-eng', 'GER': 'de', 'POR': 'pt', 'NED': 'nl', 'ITA': 'it', 'CRO': 'hr',
+      'MAR': 'ma', 'SEN': 'sn', 'USA': 'us', 'BEL': 'be', 'SUI': 'ch', 'DEN': 'dk',
+      'AUT': 'at', 'TUR': 'tr', 'UKR': 'ua', 'POL': 'pl', 'SRB': 'rs', 'IRN': 'ir',
+      'AUS': 'au', 'QAT': 'qa', 'UZB': 'uz', 'IRQ': 'iq', 'MAS': 'my', 'CHN': 'cn',
+      'UAE': 'ae', 'JOR': 'jo', 'OMA': 'om', 'BHR': 'bh', 'SYR': 'sy', 'PLE': 'ps',
+      'LBN': 'lb', 'KUW': 'kw', 'YEM': 'ye', 'IND': 'in', 'KGZ': 'kg', 'TJK': 'tj',
+      'TKM': 'tm', 'AFG': 'af', 'PRK': 'kp', 'HKG': 'hk', 'MNG': 'mn', 'GUM': 'gu',
+      'PHI': 'ph', 'SGP': 'sg', 'MYA': 'mm', 'CAM': 'kh', 'LAO': 'la', 'BRU': 'bn',
+      'TLS': 'tl', 'BAN': 'bd', 'MDV': 'mv', 'NEP': 'np', 'BHU': 'bt', 'SRI': 'lk',
+      'PAK': 'pk', 'ECU': 'ec', 'PAR': 'py', 'VEN': 've', 'CHI': 'cl', 'PER': 'pe',
+      'BOL': 'bo', 'MEX': 'mx', 'CAN': 'ca', 'CRC': 'cr', 'PAN': 'pa', 'JAM': 'jm',
+      'HON': 'hn', 'SLV': 'sv', 'GUA': 'gt', 'TRI': 'tt', 'HAI': 'ht', 'CUW': 'cw',
+      'SUR': 'sr', 'NCA': 'ni', 'CUB': 'cu', 'DOM': 'do', 'GUY': 'gy', 'ATG': 'ag',
+      'SKN': 'kn', 'LCA': 'lc', 'VIN': 'vc', 'GRN': 'gd', 'BRB': 'bb', 'BER': 'bm',
+      'BLZ': 'bz', 'PUR': 'pr', 'EGY': 'eg', 'NGA': 'ng', 'CIV': 'ci', 'ALG': 'dz',
+      'TUN': 'tn', 'CMR': 'cm', 'MLI': 'ml', 'GHA': 'gh', 'RSA': 'za', 'COD': 'cd',
+      'GUI': 'gn', 'ANG': 'ao', 'BFA': 'bf', 'CPV': 'cv', 'EQG': 'gq', 'GAB': 'ga',
+      'UGA': 'ug', 'BEN': 'bj', 'MOZ': 'mz', 'MAD': 'mg', 'KEN': 'ke', 'NAM': 'na',
+      'ZAM': 'zm', 'ZIM': 'zw', 'TAN': 'tz', 'GNB': 'gw', 'SLE': 'sl', 'LBR': 'lr',
+      'TOG': 'tg', 'NIG': 'ne', 'CTA': 'cf', 'CGO': 'cg', 'CHA': 'td', 'BOT': 'bw',
+      'LES': 'ls', 'SWZ': 'sz', 'COM': 'km', 'NZL': 'nz', 'FIJ': 'fj', 'TAH': 'pf',
+      'PNG': 'pg', 'SCO': 'gb-sct', 'WAL': 'gb-wls', 'IRL': 'ie', 'NIR': 'gb-nir',
+      'SWE': 'se', 'NOR': 'no', 'FIN': 'fi', 'ISL': 'is', 'CZE': 'cz', 'SVK': 'sk',
+      'HUN': 'hu', 'ROU': 'ro', 'GEO': 'ge', 'MKD': 'mk', 'BIH': 'ba', 'MNE': 'me',
+      'BUL': 'bg', 'ISR': 'il', 'KOS': 'xk', 'ARM': 'am', 'AZE': 'az', 'KAZ': 'kz',
+      'CYP': 'cy', 'EST': 'ee', 'LVA': 'lv', 'LTU': 'lt', 'LUX': 'lu', 'FRO': 'fo',
+      'MLT': 'mt', 'MDA': 'md', 'AND': 'ad', 'LIE': 'li', 'SMR': 'sm', 'GIB': 'gi',
+      'NMI': 'mp'
+    };
+
+    const REAL_CLUB_LOGOS = {
+      // Vietnam V.League 1
+      'nmd': 'https://upload.wikimedia.org/wikipedia/vi/thumb/9/92/Logo_CLB_Th%C3%A9p_Xanh_Nam_%C4%90%E1%BB%8Bnh.png/180px-Logo_CLB_Th%C3%A9p_Xanh_Nam_%C4%90%E1%BB%8Bnh.png',
+      'cahn': 'https://upload.wikimedia.org/wikipedia/vi/thumb/6/69/Cong_an_Ha_Noi_FC_logo.svg/180px-Cong_an_Ha_Noi_FC_logo.svg.png',
+      'hnfc': 'https://upload.wikimedia.org/wikipedia/vi/thumb/e/e0/Hanoi_FC_logo.svg/180px-Hanoi_FC_logo.svg.png',
+      'vtl': 'https://upload.wikimedia.org/wikipedia/vi/thumb/3/36/The_Cong_Viettel_FC_logo.svg/180px-The_Cong_Viettel_FC_logo.svg.png',
+      'hpfc': 'https://upload.wikimedia.org/wikipedia/vi/thumb/6/6b/Logo_CLB_Hai_Phong.png/180px-Logo_CLB_Hai_Phong.png',
+      'bbd': 'https://upload.wikimedia.org/wikipedia/vi/thumb/b/b3/Becamex_Binh_Duong_FC_logo.svg/180px-Becamex_Binh_Duong_FC_logo.svg.png',
+      'bth': 'https://upload.wikimedia.org/wikipedia/vi/thumb/8/87/Dong_A_Thanh_Hoa_FC_logo.png/180px-Dong_A_Thanh_Hoa_FC_logo.png',
+      'hagl': 'https://upload.wikimedia.org/wikipedia/vi/thumb/1/10/Logo_HAGL.png/180px-Logo_HAGL.png',
+      'slna': 'https://upload.wikimedia.org/wikipedia/vi/thumb/9/94/Logo_Song_Lam_Nghe_An.png/180px-Logo_Song_Lam_Nghe_An.png',
+      'hlht': 'https://upload.wikimedia.org/wikipedia/vi/thumb/c/cf/Logo_Hong_Linh_Ha_Tinh.png/180px-Logo_Hong_Linh_Ha_Tinh.png',
+      'qnbd': 'https://upload.wikimedia.org/wikipedia/vi/thumb/2/23/Logo_Quy_Nhon_Binh_Dinh.png/180px-Logo_Quy_Nhon_Binh_Dinh.png',
+      'hcmc': 'https://upload.wikimedia.org/wikipedia/vi/thumb/6/68/Logo_TP_Ho_Chi_Minh.png/180px-Logo_TP_Ho_Chi_Minh.png',
+      'qnam': 'https://upload.wikimedia.org/wikipedia/vi/thumb/c/ca/Logo_CLB_Quang_Nam.png/180px-Logo_CLB_Quang_Nam.png',
+      'shbdn': 'https://upload.wikimedia.org/wikipedia/vi/thumb/e/eb/Logo_SHB_Da_Nang.png/180px-Logo_SHB_Da_Nang.png',
+
+      // Premier League
+      'mci': 'https://images.fotmob.com/image_resources/logo/teamlogo/8456.png',
+      'liv': 'https://images.fotmob.com/image_resources/logo/teamlogo/8650.png',
+      'ars': 'https://images.fotmob.com/image_resources/logo/teamlogo/9825.png',
+      'che': 'https://images.fotmob.com/image_resources/logo/teamlogo/8455.png',
+      'mun': 'https://images.fotmob.com/image_resources/logo/teamlogo/10260.png',
+      'tot': 'https://images.fotmob.com/image_resources/logo/teamlogo/8586.png',
+      'avl': 'https://images.fotmob.com/image_resources/logo/teamlogo/10252.png',
+      'new': 'https://images.fotmob.com/image_resources/logo/teamlogo/10261.png',
+      'bha': 'https://images.fotmob.com/image_resources/logo/teamlogo/10204.png',
+      'whu': 'https://images.fotmob.com/image_resources/logo/teamlogo/8654.png',
+      'ful': 'https://images.fotmob.com/image_resources/logo/teamlogo/9879.png',
+      'bre': 'https://images.fotmob.com/image_resources/logo/teamlogo/9937.png',
+      'cry': 'https://images.fotmob.com/image_resources/logo/teamlogo/9826.png',
+      'bou': 'https://images.fotmob.com/image_resources/logo/teamlogo/8678.png',
+      'wol': 'https://images.fotmob.com/image_resources/logo/teamlogo/8602.png',
+      'eve': 'https://images.fotmob.com/image_resources/logo/teamlogo/8668.png',
+      'nfo': 'https://images.fotmob.com/image_resources/logo/teamlogo/10203.png',
+      'lei': 'https://images.fotmob.com/image_resources/logo/teamlogo/8197.png',
+      'ips': 'https://images.fotmob.com/image_resources/logo/teamlogo/9423.png',
+      'sou': 'https://images.fotmob.com/image_resources/logo/teamlogo/8466.png',
+
+      // La Liga
+      'rma': 'https://images.fotmob.com/image_resources/logo/teamlogo/8633.png',
+      'fcb': 'https://images.fotmob.com/image_resources/logo/teamlogo/8634.png',
+      'atm': 'https://images.fotmob.com/image_resources/logo/teamlogo/9906.png',
+      'ath': 'https://images.fotmob.com/image_resources/logo/teamlogo/8315.png',
+      'vil': 'https://images.fotmob.com/image_resources/logo/teamlogo/10205.png',
+      'rso': 'https://images.fotmob.com/image_resources/logo/teamlogo/8918.png',
+      'bet': 'https://images.fotmob.com/image_resources/logo/teamlogo/8603.png',
+      'gir': 'https://images.fotmob.com/image_resources/logo/teamlogo/7732.png',
+      'sev': 'https://images.fotmob.com/image_resources/logo/teamlogo/8302.png',
+      'val': 'https://images.fotmob.com/image_resources/logo/teamlogo/10267.png',
+      'cel': 'https://images.fotmob.com/image_resources/logo/teamlogo/9910.png',
+      'osa': 'https://images.fotmob.com/image_resources/logo/teamlogo/8371.png',
+      'mal': 'https://images.fotmob.com/image_resources/logo/teamlogo/8661.png',
+      'ray': 'https://images.fotmob.com/image_resources/logo/teamlogo/10163.png',
+      'get': 'https://images.fotmob.com/image_resources/logo/teamlogo/8305.png',
+      'ala': 'https://images.fotmob.com/image_resources/logo/teamlogo/9866.png',
+      'lpa': 'https://images.fotmob.com/image_resources/logo/teamlogo/8306.png',
+      'leg': 'https://images.fotmob.com/image_resources/logo/teamlogo/7854.png',
+      'esp_cl': 'https://images.fotmob.com/image_resources/logo/teamlogo/8558.png',
+      'vld': 'https://images.fotmob.com/image_resources/logo/teamlogo/10281.png',
+
+      // Serie A
+      'int': 'https://images.fotmob.com/image_resources/logo/teamlogo/8636.png',
+      'acm': 'https://images.fotmob.com/image_resources/logo/teamlogo/8564.png',
+      'juv': 'https://images.fotmob.com/image_resources/logo/teamlogo/9885.png',
+      'nap': 'https://images.fotmob.com/image_resources/logo/teamlogo/9875.png',
+      'ata': 'https://images.fotmob.com/image_resources/logo/teamlogo/8524.png',
+      'rom': 'https://images.fotmob.com/image_resources/logo/teamlogo/8686.png',
+      'laz': 'https://images.fotmob.com/image_resources/logo/teamlogo/8543.png',
+      'fio': 'https://images.fotmob.com/image_resources/logo/teamlogo/8535.png',
+      'bol': 'https://images.fotmob.com/image_resources/logo/teamlogo/9857.png',
+      'tor': 'https://images.fotmob.com/image_resources/logo/teamlogo/9804.png',
+      'udi': 'https://images.fotmob.com/image_resources/logo/teamlogo/8600.png',
+      'gen': 'https://images.fotmob.com/image_resources/logo/teamlogo/10233.png',
+      'ver': 'https://images.fotmob.com/image_resources/logo/teamlogo/9876.png',
+      'emp': 'https://images.fotmob.com/image_resources/logo/teamlogo/8534.png',
+      'com': 'https://images.fotmob.com/image_resources/logo/teamlogo/10171.png',
+      'par': 'https://images.fotmob.com/image_resources/logo/teamlogo/10167.png',
+      'cag': 'https://images.fotmob.com/image_resources/logo/teamlogo/8529.png',
+      'monz': 'https://images.fotmob.com/image_resources/logo/teamlogo/6504.png',
+      'lec': 'https://images.fotmob.com/image_resources/logo/teamlogo/9888.png',
+      'ven': 'https://images.fotmob.com/image_resources/logo/teamlogo/7889.png',
+
+      // Bundesliga
+      'bay': 'https://images.fotmob.com/image_resources/logo/teamlogo/9823.png',
+      'lev': 'https://images.fotmob.com/image_resources/logo/teamlogo/8178.png',
+      'bvb': 'https://images.fotmob.com/image_resources/logo/teamlogo/9789.png',
+      'rbl': 'https://images.fotmob.com/image_resources/logo/teamlogo/178475.png',
+      'vfb': 'https://images.fotmob.com/image_resources/logo/teamlogo/10269.png',
+      'sge': 'https://images.fotmob.com/image_resources/logo/teamlogo/9810.png',
+      'scf': 'https://images.fotmob.com/image_resources/logo/teamlogo/8358.png',
+      'svw': 'https://images.fotmob.com/image_resources/logo/teamlogo/8697.png',
+      'tsg': 'https://images.fotmob.com/image_resources/logo/teamlogo/8226.png',
+      'fcu': 'https://images.fotmob.com/image_resources/logo/teamlogo/8244.png',
+      'bmg': 'https://images.fotmob.com/image_resources/logo/teamlogo/9788.png',
+      'wob': 'https://images.fotmob.com/image_resources/logo/teamlogo/8721.png',
+      'm05': 'https://images.fotmob.com/image_resources/logo/teamlogo/9905.png',
+      'fca': 'https://images.fotmob.com/image_resources/logo/teamlogo/8406.png',
+      'fch': 'https://images.fotmob.com/image_resources/logo/teamlogo/7882.png',
+      'stp': 'https://images.fotmob.com/image_resources/logo/teamlogo/8152.png',
+      'kiel': 'https://images.fotmob.com/image_resources/logo/teamlogo/8150.png',
+      'boc': 'https://images.fotmob.com/image_resources/logo/teamlogo/9911.png',
+
+      // Ligue 1
+      'psg': 'https://images.fotmob.com/image_resources/logo/teamlogo/9847.png',
+      'om': 'https://images.fotmob.com/image_resources/logo/teamlogo/8588.png',
+      'asm': 'https://images.fotmob.com/image_resources/logo/teamlogo/9829.png',
+      'lil': 'https://images.fotmob.com/image_resources/logo/teamlogo/8639.png',
+      'ol': 'https://images.fotmob.com/image_resources/logo/teamlogo/9748.png',
+      'nic': 'https://images.fotmob.com/image_resources/logo/teamlogo/9831.png',
+      'rcl': 'https://images.fotmob.com/image_resources/logo/teamlogo/8583.png',
+      'sdr': 'https://images.fotmob.com/image_resources/logo/teamlogo/9837.png',
+      'srfc': 'https://images.fotmob.com/image_resources/logo/teamlogo/9851.png',
+      'sb29': 'https://images.fotmob.com/image_resources/logo/teamlogo/8521.png',
+      'rcs': 'https://images.fotmob.com/image_resources/logo/teamlogo/9848.png',
+      'tfc': 'https://images.fotmob.com/image_resources/logo/teamlogo/9941.png',
+      'fcn': 'https://images.fotmob.com/image_resources/logo/teamlogo/9830.png',
+      'aja': 'https://images.fotmob.com/image_resources/logo/teamlogo/10249.png',
+      'sco': 'https://images.fotmob.com/image_resources/logo/teamlogo/8121.png',
+      'asse': 'https://images.fotmob.com/image_resources/logo/teamlogo/9853.png',
+      'hac': 'https://images.fotmob.com/image_resources/logo/teamlogo/9746.png',
+      'mhsc': 'https://images.fotmob.com/image_resources/logo/teamlogo/10202.png',
+
+      // Other Elite UEFA Clubs
+      'ben': 'https://images.fotmob.com/image_resources/logo/teamlogo/9772.png',
+      'scp': 'https://images.fotmob.com/image_resources/logo/teamlogo/9768.png',
+      'psv': 'https://images.fotmob.com/image_resources/logo/teamlogo/8640.png',
+      'fey': 'https://images.fotmob.com/image_resources/logo/teamlogo/10235.png',
+      'celt': 'https://images.fotmob.com/image_resources/logo/teamlogo/9925.png',
+      'shak': 'https://images.fotmob.com/image_resources/logo/teamlogo/8404.png',
+      'czv': 'https://images.fotmob.com/image_resources/logo/teamlogo/8421.png',
+      'dinz': 'https://images.fotmob.com/image_resources/logo/teamlogo/8418.png',
+      'spar': 'https://images.fotmob.com/image_resources/logo/teamlogo/8422.png',
+      'brug': 'https://images.fotmob.com/image_resources/logo/teamlogo/8342.png',
+      'sturm': 'https://images.fotmob.com/image_resources/logo/teamlogo/8243.png',
+      'slov': 'https://images.fotmob.com/image_resources/logo/teamlogo/8504.png',
+      'salz': 'https://images.fotmob.com/image_resources/logo/teamlogo/8410.png',
+      'yb': 'https://images.fotmob.com/image_resources/logo/teamlogo/10192.png',
+
+      // Saudi Pro League
+      'hil': 'https://images.fotmob.com/image_resources/logo/teamlogo/9812.png',
+      'nas': 'https://images.fotmob.com/image_resources/logo/teamlogo/9813.png',
+      'itt': 'https://images.fotmob.com/image_resources/logo/teamlogo/9814.png',
+      'ahl': 'https://images.fotmob.com/image_resources/logo/teamlogo/9815.png',
+      'shab': 'https://images.fotmob.com/image_resources/logo/teamlogo/10360.png',
+      'ett': 'https://images.fotmob.com/image_resources/logo/teamlogo/10361.png',
+      'taaw': 'https://images.fotmob.com/image_resources/logo/teamlogo/225339.png',
+      'qad': 'https://images.fotmob.com/image_resources/logo/teamlogo/225345.png',
+      'fateh': 'https://images.fotmob.com/image_resources/logo/teamlogo/225341.png',
+      'riy': 'https://images.fotmob.com/image_resources/logo/teamlogo/225348.png',
+
+      // Asia & Americas
+      'fmar': 'https://images.fotmob.com/image_resources/logo/teamlogo/8415.png',
+      'vissel': 'https://images.fotmob.com/image_resources/logo/teamlogo/8414.png',
+      'ulsan': 'https://images.fotmob.com/image_resources/logo/teamlogo/8451.png',
+      'alain': 'https://images.fotmob.com/image_resources/logo/teamlogo/10359.png',
+      'buri': 'https://images.fotmob.com/image_resources/logo/teamlogo/317316.png',
+      'bgpu': 'https://images.fotmob.com/image_resources/logo/teamlogo/317315.png',
+      'jdt': 'https://images.fotmob.com/image_resources/logo/teamlogo/317318.png',
+      'psm': 'https://images.fotmob.com/image_resources/logo/teamlogo/282245.png',
+      'mia': 'https://images.fotmob.com/image_resources/logo/teamlogo/1063162.png',
+      'lag': 'https://images.fotmob.com/image_resources/logo/teamlogo/9988.png',
+      'fla': 'https://images.fotmob.com/image_resources/logo/teamlogo/9770.png',
+      'riv': 'https://images.fotmob.com/image_resources/logo/teamlogo/10086.png',
+      'pal': 'https://images.fotmob.com/image_resources/logo/teamlogo/10243.png',
+      'bot': 'https://images.fotmob.com/image_resources/logo/teamlogo/8517.png',
+      'boc_j': 'https://images.fotmob.com/image_resources/logo/teamlogo/10085.png',
+      'lafc': 'https://images.fotmob.com/image_resources/logo/teamlogo/899144.png',
+      'clb': 'https://images.fotmob.com/image_resources/logo/teamlogo/9985.png',
+      'ame': 'https://images.fotmob.com/image_resources/logo/teamlogo/7968.png',
+      'shsp': 'https://images.fotmob.com/image_resources/logo/teamlogo/158659.png',
+      'shsh': 'https://images.fotmob.com/image_resources/logo/teamlogo/9759.png',
+      'sdts': 'https://images.fotmob.com/image_resources/logo/teamlogo/9758.png',
+      'bjga': 'https://images.fotmob.com/image_resources/logo/teamlogo/9757.png',
+      'kawa': 'https://images.fotmob.com/image_resources/logo/teamlogo/8412.png',
+      'sdd': 'https://images.fotmob.com/image_resources/logo/teamlogo/8408.png',
+      'pers': 'https://images.fotmob.com/image_resources/logo/teamlogo/8417.png',
+      // Added UCL & Domestic Clubs
+      'korat': 'https://images.fotmob.com/image_resources/logo/teamlogo/225325.png',
+      'sukho': 'https://images.fotmob.com/image_resources/logo/teamlogo/225330.png',
+      'khon': 'https://images.fotmob.com/image_resources/logo/teamlogo/746356.png',
+      'lamp': 'https://images.fotmob.com/image_resources/logo/teamlogo/1118160.png',
+      'khal': 'https://images.fotmob.com/image_resources/logo/teamlogo/225344.png',
+      'wehd': 'https://images.fotmob.com/image_resources/logo/teamlogo/225350.png',
+      'damac': 'https://images.fotmob.com/image_resources/logo/teamlogo/225340.png',
+      'raed': 'https://images.fotmob.com/image_resources/logo/teamlogo/225346.png',
+      'inch': 'https://images.fotmob.com/image_resources/logo/teamlogo/8447.png',
+      'daegu': 'https://images.fotmob.com/image_resources/logo/teamlogo/8444.png',
+      'nagoya': 'https://images.fotmob.com/image_resources/logo/teamlogo/8411.png',
+      'fuku': 'https://images.fotmob.com/image_resources/logo/teamlogo/8419.png',
+      'kashiwa': 'https://images.fotmob.com/image_resources/logo/teamlogo/8413.png',
+      'niig': 'https://images.fotmob.com/image_resources/logo/teamlogo/8416.png',
+      'tianjin': 'https://images.fotmob.com/image_resources/logo/teamlogo/9760.png',
+      'henan': 'https://images.fotmob.com/image_resources/logo/teamlogo/9761.png',
+      'wuhan': 'https://images.fotmob.com/image_resources/logo/teamlogo/984639.png',
+      'flu': 'https://images.fotmob.com/image_resources/logo/teamlogo/9863.png',
+      'sao': 'https://images.fotmob.com/image_resources/logo/teamlogo/10242.png',
+      'min': 'https://images.fotmob.com/image_resources/logo/teamlogo/10240.png',
+      'gre': 'https://images.fotmob.com/image_resources/logo/teamlogo/8472.png'
+
+    };
+
     const OFFLINE_LOGO_CACHE = {};
 
     // Authentic vector flag patterns for National Teams (100% offline SVG Data URI)
@@ -2359,6 +2779,22 @@
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
     }
 
+    function getTeamRealLogoUrl(team) {
+      if (!team) return '';
+      if (team.type === 'nations') {
+        const code = (team.code || '').toUpperCase();
+        const iso2 = NATION_ISO2_MAP[code];
+        if (iso2) {
+          return 'https://flagcdn.com/w160/' + iso2 + '.png';
+        }
+      } else {
+        if (REAL_CLUB_LOGOS[team.id]) {
+          return REAL_CLUB_LOGOS[team.id];
+        }
+      }
+      return '';
+    }
+
     function getTeamLogoUrl(team) {
       if (!team) return '';
       if (!OFFLINE_LOGO_CACHE[team.id]) {
@@ -2370,10 +2806,13 @@
     }
 
     function getTeamLogoHtml(team, sizeClass = 'w-6 h-6') {
-      const url = getTeamLogoUrl(team);
+      if (!team) return '';
+      const fallbackUrl = getTeamLogoUrl(team);
+      const realUrl = getTeamRealLogoUrl(team);
       const isFlag = team.type === 'nations';
       const fitClass = isFlag ? 'object-contain rounded-md drop-shadow' : 'object-contain drop-shadow';
-      return `<img src="${url}" alt="${team.name}" class="${sizeClass} ${fitClass} shrink-0" />`;
+      const primaryUrl = realUrl || fallbackUrl;
+      return `<img src="${primaryUrl}" alt="${team.name}" class="${sizeClass} ${fitClass} shrink-0" loading="lazy" onerror="this.onerror=null;this.src='${fallbackUrl}';" />`;
     }
 
 
@@ -2399,6 +2838,7 @@
       phase: 'predicting',       // 'predicting' | 'simulating' | 'finished'
       simInterval: null,
       goalPopupTimeout: null,
+      duration: 120,
       speedMultiplier: 1,        // 1 = Chuẩn (1p/Hiệp = 2p trận chính, 30s Hiệp phụ), 4 = 4x, 12 = 12x
 
       // Live Simulation State
@@ -2570,7 +3010,6 @@
       state.fifaLastDeltaMap[home.id] = deltaHome;
       state.fifaLastDeltaMap[away.id] = deltaAway;
 
-      renderFifaWorldRankings();
       return { deltaHome, deltaAway };
     }
 
@@ -2663,7 +3102,7 @@
         row.addEventListener('click', () => {
           SoundFX.click();
           const chosen = TEAMS_DB.find(t => t.id === row.dataset.fifaTeam);
-          if (!chosen) return;
+          if (!chosen || state.phase === 'simulating') return;
           if (chosen.type === 'nations') {
             if (state.fifaFilter === 'asean' && chosen.tournaments.includes('asean_cup')) {
               selectTournament('asean_cup');
@@ -2673,134 +3112,146 @@
               selectTournament('world_cup');
             }
           }
-          const tourney = getActiveTournament();
-          ensureTeamInMainGroup4(tourney.id, chosen);
-          const tableObj = state.standingsByTourney[tourney.id];
-          state.focusedTeamId = chosen.id;
-          if (tableObj[chosen.id] && tableObj[chosen.id].group !== 'BXH') {
-            state.focusedGroup = tableObj[chosen.id].group;
-            state.activeGroupFilter = tableObj[chosen.id].group;
-          }
-          state.roundNumber++;
-          pickRandomMatchInActiveTournament(false);
+          if (!chosen.tournaments.includes(state.activeTournamentId)) selectTournament(chosen.tournaments[0]);
+          chooseTeam(chosen.id);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
     }
 
-    function buildGroupFixturesForGroup(tourneyId, grpLetter) {
-      const tableObj = state.standingsByTourney[tourneyId];
-      if (!tableObj) return [];
-      const members = Object.values(tableObj)
-        .filter(r => r.group === grpLetter && r.inMainGroup)
-        .sort((a, b) => a.seedOrder - b.seedOrder);
-
-      if (members.length < 4) {
-        // Fallback round-robin for 2 or 3 teams
-        const list = [];
-        for (let i = 0; i < members.length; i++) {
-          for (let j = i + 1; j < members.length; j++) {
-            list.push({ matchday: list.length + 1, home: members[i].team, away: members[j].team, played: false, score: null });
-          }
+    function buildFixtures(teams, twoLegs) {
+      const rotation = [...teams];
+      if (rotation.length % 2) rotation.push(null);
+      const rounds = rotation.length - 1;
+      const fixtures = [];
+      for (let day = 1; day <= rounds; day++) {
+        for (let i = 0; i < rotation.length / 2; i++) {
+          const first = rotation[i], second = rotation[rounds - i];
+          if (!first || !second) continue;
+          const [home, away] = day % 2 ? [first, second] : [second, first];
+          fixtures.push({ matchday: day, home, away, played: false });
         }
-        return list;
+        rotation.splice(1, 0, rotation.pop());
       }
-
-      const [t1, t2, t3, t4] = members.map(m => m.team);
-      // Official 4-Team Group Stage 3-Matchday Schedule (6 matches total, every team plays the other 3 teams in the group!)
-      return [
-        { matchday: 1, home: t1, away: t2, played: false, score: null },
-        { matchday: 1, home: t3, away: t4, played: false, score: null },
-        { matchday: 2, home: t1, away: t3, played: false, score: null },
-        { matchday: 2, home: t2, away: t4, played: false, score: null },
-        { matchday: 3, home: t4, away: t1, played: false, score: null },
-        { matchday: 3, home: t2, away: t3, played: false, score: null }
-      ];
+      if (!twoLegs) return fixtures;
+      return fixtures.concat(fixtures.map(f => ({
+        ...f, matchday: f.matchday + rounds, home: f.away, away: f.home
+      })));
     }
 
-    function ensureTeamInMainGroup4(tourneyId, team) {
-      initStandingsForTournament(tourneyId);
-      const tourney = TOURNAMENTS.find(t => t.id === tourneyId) || TOURNAMENTS[0];
-      if (!tourney.groupCount || tourney.groupCount <= 0) return;
-
-      const tableObj = state.standingsByTourney[tourneyId];
-      const entry = tableObj[team.id];
-      if (!entry) return;
-      if (entry.inMainGroup) return;
-
-      // Swap this team into its group's 4th slot so the user can play a full 4-team group stage with this team!
-      const grp = entry.group || 'A';
-      const currentMain = Object.values(tableObj)
-        .filter(r => r.group === grp && r.inMainGroup)
-        .sort((a, b) => a.seedOrder - b.seedOrder);
-
-      if (currentMain.length >= 4) {
-        const replaced = currentMain[currentMain.length - 1];
-        replaced.inMainGroup = false;
-        entry.inMainGroup = true;
-        entry.seedOrder = replaced.seedOrder;
-      } else {
-        entry.inMainGroup = true;
-        entry.seedOrder = currentMain.length;
-      }
-      // Rebuild fixtures for this group
-      if (!state.groupFixturesByTourney[tourneyId]) state.groupFixturesByTourney[tourneyId] = {};
-      state.groupFixturesByTourney[tourneyId][grp] = buildGroupFixturesForGroup(tourneyId, grp);
+    function getTeamConfederation(team) {
+      if (!team || team.type !== 'nations') return 'club';
+      if (team.tournaments.includes('asian_cup') || team.tournaments.includes('asean_cup')) return 'afc';
+      if (team.tournaments.includes('euro')) return 'uefa';
+      const conmebol = new Set(['ARG', 'BRA', 'COL', 'URU', 'ECU', 'PAR', 'VEN', 'CHI', 'PER', 'BOL']);
+      const concacaf = new Set(['USA', 'MEX', 'CAN', 'CRC', 'PAN', 'JAM', 'HON', 'SLV', 'GUA', 'TRI', 'HAI', 'CUW', 'SUR', 'NCA', 'CUB', 'DOM', 'GUY', 'ATG', 'SKN', 'LCA', 'VIN', 'GRN', 'BRB', 'BER', 'BLZ', 'PUR']);
+      const ofc = new Set(['NZL', 'FIJ', 'TAH', 'PNG']);
+      if (conmebol.has(team.code)) return 'conmebol';
+      if (concacaf.has(team.code)) return 'concacaf';
+      if (ofc.has(team.code)) return 'ofc';
+      return 'caf';
     }
 
-    function initStandingsForTournament(tourneyId) {
-      if (state.standingsByTourney[tourneyId]) return;
+    function initStandingsForTournament(tourneyId, forceReinit = false) {
+      if (state.standingsByTourney[tourneyId] && !forceReinit) return;
       const tourney = TOURNAMENTS.find(t => t.id === tourneyId) || TOURNAMENTS[0];
-      const teams = TEAMS_DB.filter(t => t.tournaments.includes(tourneyId));
+      let teams = TEAMS_DB.filter(t => t.tournaments.includes(tourneyId));
       const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-      const numGroups = tourney.groupCount || 0;
 
-      // Sort by OVR rating descending so Pot 1, Pot 2, Pot 3, Pot 4 seeds are distributed evenly across Groups A, B, C, D...
-      // Special priority: ensure ĐT Việt Nam ('vie') or Thép Xanh Nam Định ('nmd') is always seeded in the main 4-team Group stage of their tournaments!
-      const sortedTeams = [...teams].sort((a, b) => {
-        if (a.id === 'vie' && tourneyId === 'world_cup') return -1;
-        if (b.id === 'vie' && tourneyId === 'world_cup') return 1;
-        return b.rating - a.rating;
-      });
+      // SPECIAL SYSTEM FOR FIFA WORLD CUP:
+      // StageIndex < 6: Regional Qualifiers (AFC, UEFA, CONMEBOL, CAF, CONCACAF, OFC)
+      // StageIndex >= 6: World Cup Finals Group Stage (Groups A..L) or Knockouts
+      if (tourneyId === 'world_cup') {
+        const isQualifiers = state.stageIndex < 6;
+        const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || teams[0];
+        const focusConf = getTeamConfederation(focusTeam);
+
+        if (isQualifiers) {
+          // Filter nations belonging to the SAME confederation as the focused team!
+          // (e.g., Vietnam plays AFC Asian qualifiers; England plays UEFA European qualifiers)
+          const regionalTeams = teams.filter(t => getTeamConfederation(t) === focusConf);
+          if (regionalTeams.length >= 4) {
+            teams = regionalTeams;
+          }
+          // Divide regional teams into groups of 4-6 teams
+          const numRegionalGroups = Math.max(1, Math.min(8, Math.floor(teams.length / 4)));
+          const sortedTeams = [...teams].sort((a, b) => {
+            if (a.id === focusTeam.id) return -1;
+            if (b.id === focusTeam.id) return 1;
+            return b.rating - a.rating;
+          });
+
+          const table = {};
+          sortedTeams.forEach((t, idx) => {
+            table[t.id] = {
+              team: t,
+              group: `Vòng loại ${groupLetters[idx % numRegionalGroups]}`,
+              played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, pts: 0
+            };
+          });
+          state.standingsByTourney[tourneyId] = table;
+          const schedules = {};
+          for (const grp of new Set(Object.values(table).map(row => row.group))) {
+            const members = Object.values(table).filter(row => row.group === grp);
+            schedules[grp] = buildFixtures(members.map(row => row.team), true); // 2 legs home & away
+          }
+          state.groupFixturesByTourney[tourneyId] = schedules;
+          return;
+        } else {
+          // World Cup Finals: Select the top 48 teams globally across all continents (ensuring focused team is included)
+          const sortedGlobal = [...teams].sort((a, b) => {
+            if (a.id === focusTeam.id) return -1;
+            if (b.id === focusTeam.id) return 1;
+            return b.rating - a.rating;
+          });
+          // Pick 48 best teams
+          teams = sortedGlobal.slice(0, 48);
+          const numFinalsGroups = 12; // Groups A to L
+          const table = {};
+          teams.forEach((t, idx) => {
+            table[t.id] = {
+              team: t,
+              group: groupLetters[idx % numFinalsGroups],
+              played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, pts: 0
+            };
+          });
+          state.standingsByTourney[tourneyId] = table;
+          const schedules = {};
+          for (const grp of new Set(Object.values(table).map(row => row.group))) {
+            const members = Object.values(table).filter(row => row.group === grp);
+            schedules[grp] = buildFixtures(members.map(row => row.team), false); // 1 leg round robin in group stage
+          }
+          state.groupFixturesByTourney[tourneyId] = schedules;
+          return;
+        }
+      }
+
+      // Default logic for other tournaments (V.League, Champions League, etc.)
+      const numGroups = Math.min(tourney.groupCount, Math.floor(teams.length / 2));
+      const sortedTeams = [...teams].sort((a, b) => b.rating - a.rating);
 
       const table = {};
-      const groupCounts = {};
       sortedTeams.forEach((t, idx) => {
-        let grp = 'BXH';
-        let inMainGroup = true;
-        let seedOrder = idx;
-        if (numGroups > 0) {
-          const groupIdx = idx % numGroups;
-          grp = groupLetters[groupIdx] || 'A';
-          groupCounts[grp] = (groupCounts[grp] || 0) + 1;
-          seedOrder = groupCounts[grp] - 1;
-          // Each Group A, B, C, D... has 4 official teams in the group table
-          inMainGroup = groupCounts[grp] <= 4;
-        }
         table[t.id] = {
           team: t,
-          group: grp,
-          inMainGroup,
-          seedOrder,
-          played: 0,
-          won: 0,
-          drawn: 0,
-          lost: 0,
-          gf: 0,
-          ga: 0,
-          pts: 0
+          group: numGroups ? groupLetters[idx % numGroups] : 'BXH',
+          played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, pts: 0
         };
       });
       state.standingsByTourney[tourneyId] = table;
 
-      // Build official 3-Matchday round-robin fixtures for each group A, B, C, D...
-      if (numGroups > 0) {
-        state.groupFixturesByTourney[tourneyId] = {};
-        for (let g = 0; g < numGroups; g++) {
-          const gLetter = groupLetters[g];
-          state.groupFixturesByTourney[tourneyId][gLetter] = buildGroupFixturesForGroup(tourneyId, gLetter);
-        }
+      const schedules = {};
+      for (const group of new Set(Object.values(table).map(row => row.group))) {
+        const members = Object.values(table).filter(row => row.group === group);
+        schedules[group] = buildFixtures(members.map(row => row.team), !numGroups);
       }
+      state.groupFixturesByTourney[tourneyId] = schedules;
+      if (!numGroups) tourney.totalRounds = schedules.BXH.at(-1).matchday;
+    }
+
+    function rankStandingRows(a, b) {
+      return b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga)
+        || b.gf - a.gf || b.team.rating - a.team.rating;
     }
 
     function renderLeagueStandings() {
@@ -2808,7 +3259,7 @@
       initStandingsForTournament(tourney.id);
       const tableObj = state.standingsByTourney[tourney.id];
       const allRows = Object.values(tableObj);
-      const numGroups = tourney.groupCount || 0;
+      const numGroups = tourney.groupCount ? Object.keys(state.groupFixturesByTourney[tourney.id]).length : 0;
       const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].slice(0, numGroups);
 
       document.getElementById('standingsCardTitle').textContent = numGroups > 0
@@ -2825,12 +3276,8 @@
       const schedBanner = document.getElementById('groupScheduleBanner');
       if (numGroups > 0) {
         // Determine current active group & focused team
-        const homeEntry = tableObj[state.homeTeam.id];
-        const currentGrp = (homeEntry && homeEntry.group !== 'BXH') ? homeEntry.group : (groupLetters[0] || 'A');
+        const currentGrp = tableObj[state.focusedTeamId].group;
         state.focusedGroup = currentGrp;
-        if (!state.focusedTeamId || !tableObj[state.focusedTeamId] || tableObj[state.focusedTeamId].group !== currentGrp) {
-          state.focusedTeamId = state.homeTeam.id;
-        }
         const focusTeam = tableObj[state.focusedTeamId]?.team || state.homeTeam;
         const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][currentGrp]) || [];
 
@@ -2842,7 +3289,7 @@
               <span class="font-extrabold text-emerald-300 flex items-center gap-1">
                 📅 Lịch đấu Bảng ${currentGrp} của <strong class="text-white">${focusTeam.name}</strong>
               </span>
-              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">Đấu lần lượt 3 đội cùng bảng</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">${focusMatches.length} trận vòng bảng</span>
             </div>
             <div class="grid grid-cols-1 gap-1 pt-0.5">
               ${focusMatches.map((m, idx) => {
@@ -2851,11 +3298,11 @@
                 const statusBadge = m.played
                   ? `<span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">Đã đá: ${m.score}</span>`
                   : (isCurrentMatch
-                    ? `<span class="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 font-extrabold">⚡ Đang đá</span>`
+                    ? `<span class="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 font-extrabold">Trận đã chọn</span>`
                     : `<span class="px-1.5 py-0.2 rounded bg-slate-800 text-sky-300 font-semibold">Trận tiếp theo</span>`);
                 return `
                   <div class="flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${isCurrentMatch ? 'bg-emerald-500/20 border border-emerald-400/40' : 'bg-slate-900/80'}">
-                    <span class="font-mono text-[10px] text-slate-400">Lượt ${m.matchday}/3:</span>
+                    <span class="font-mono text-[10px] text-slate-400">Lượt ${m.matchday}</span>
                     <span class="font-bold text-white truncate flex-1">vs ${opp.name} (${opp.code})</span>
                     ${statusBadge}
                   </div>
@@ -2882,16 +3329,9 @@
 
         const groupsToShow = state.activeGroupFilter === 'ALL' ? groupLetters : [state.activeGroupFilter];
         container.innerHTML = groupsToShow.map(gLetter => {
-          // Ensure current match teams appear if they belong to this group, limit each group table to 4 teams (or 6 if small)
           const grpRows = allRows
-            .filter(r => r.group === gLetter && r.inMainGroup)
-            .sort((a, b) => {
-              if (b.pts !== a.pts) return b.pts - a.pts;
-              const gdB = b.gf - b.ga;
-              const gdA = a.gf - a.ga;
-              if (gdB !== gdA) return gdB - gdA;
-              return b.team.rating - a.team.rating;
-            });
+            .filter(r => r.group === gLetter)
+            .sort(rankStandingRows);
 
           return `
             <div class="bg-slate-950/85 rounded-xl p-2.5 border border-white/10">
@@ -2952,13 +3392,7 @@
           `;
         }
         filterBar.innerHTML = '';
-        const rows = allRows.sort((a, b) => {
-          if (b.pts !== a.pts) return b.pts - a.pts;
-          const gdB = b.gf - b.ga;
-          const gdA = a.gf - a.ga;
-          if (gdB !== gdA) return gdB - gdA;
-          return b.team.rating - a.team.rating;
-        });
+        const rows = allRows.sort(rankStandingRows);
 
         container.innerHTML = `
           <table class="w-full text-left text-[11px]">
@@ -2995,160 +3429,163 @@
 
     function updateStageFormatUI() {
       const tourney = getActiveTournament();
-      const stages = tourney.stages || ['Vòng 1'];
       const stageSelect = document.getElementById('selectCompetitionStage');
-      stageSelect.innerHTML = stages.map((st, idx) => `<option value="${idx}" ${idx === state.stageIndex ? 'selected' : ''}>🏆 ${st}</option>`).join('');
+      const fixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][state.focusedGroup]) || [];
+      const total = fixtures.at(-1)?.matchday || 1;
 
-      const currentStageName = stages[state.stageIndex] || stages[0];
-      const isKnockout = tourney.knockoutPossible && (
-        currentStageName.toLowerCase().includes('knock-out') ||
-        currentStageName.toLowerCase().includes('1/16') ||
-        currentStageName.toLowerCase().includes('1/8') ||
-        currentStageName.toLowerCase().includes('tứ kết') ||
-        currentStageName.toLowerCase().includes('bán kết') ||
-        currentStageName.toLowerCase().includes('chung kết') ||
-        currentStageName.toLowerCase().includes('play-off')
-      );
+      let regularStage = '';
+      if (tourney.id === 'world_cup') {
+        if (state.stageIndex < 6) {
+          const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || state.homeTeam;
+          const confName = {
+            'afc': 'Châu Á (AFC)',
+            'uefa': 'Châu Âu (UEFA)',
+            'conmebol': 'Nam Mỹ (CONMEBOL)',
+            'caf': 'Châu Phi (CAF)',
+            'concacaf': 'Bắc Trung Mỹ (CONCACAF)',
+            'ofc': 'Châu Đại Dương (OFC)'
+          }[getTeamConfederation(focusTeam)] || 'Khu vực';
+          regularStage = `Vòng loại ${confName} • Lượt ${state.roundNumber}/${total}`;
+        } else if (state.stageIndex <= 8) {
+          regularStage = `VCK World Cup • Bảng ${state.focusedGroup} • Lượt ${state.roundNumber}/${total}`;
+        } else {
+          regularStage = tourney.stages[state.stageIndex] || 'Knock-out';
+        }
+      } else {
+        regularStage = tourney.groupCount
+          ? `Bảng ${state.focusedGroup} · Lượt ${state.roundNumber}/${total}`
+          : `Vòng ${state.roundNumber}/${total} · ${state.roundNumber <= total / 2 ? 'Lượt đi' : 'Lượt về'}`;
+      }
+
+      // Stages list
+      let stages = [];
+      if (tourney.id === 'world_cup') {
+        stages = tourney.stages;
+      } else {
+        stages = [regularStage, ...tourney.stages.filter(st => tourney.knockoutPossible && /knock-out|bán kết|chung kết|tứ kết/i.test(st) && !/play-off/i.test(st))];
+      }
+
+      stageSelect.innerHTML = stages.map((st, i) => `<option value="${i}">${st}</option>`).join('');
+      stageSelect.value = state.stageIndex;
+      stageSelect.hidden = stages.length <= 1;
+      const currentStageName = stages[state.stageIndex] || regularStage;
+
+      const isKnockout = tourney.id === 'world_cup' ? state.stageIndex >= 9 : state.stageIndex > 0;
       state.isKnockoutMatch = isKnockout;
 
-      document.getElementById('officialFormatText').textContent = tourney.formatBadge;
+      let formatDesc = '';
+      if (tourney.id === 'world_cup') {
+        if (state.stageIndex < 6) {
+          formatDesc = 'Vòng loại khu vực • Đá vòng tròn sân nhà & khách • Thắng 3đ, Hòa 1đ';
+        } else if (state.stageIndex <= 8) {
+          formatDesc = 'VCK FIFA World Cup (12 Bảng A->L) • Top 2 mỗi bảng + 8 đội hạng 3 tốt nhất vào Vòng 1/16';
+        } else {
+          formatDesc = 'Đấu loại trực tiếp Knock-out (Hiệp phụ 30s + Luân lưu 11m)';
+        }
+      } else {
+        formatDesc = isKnockout ? 'Đấu loại trực tiếp Knock-out' : tourney.groupCount ? 'Mỗi đội gặp các đối thủ cùng bảng một lượt.' : 'Vòng tròn hai lượt • Sân nhà và sân khách';
+      }
+      document.getElementById('officialFormatText').textContent = formatDesc;
+
       const chkET = document.getElementById('chkExtraTime');
+      chkET.parentElement.hidden = !isKnockout;
       const statusTag = document.getElementById('stageRuleStatusTag');
 
       if (tourney.formatType === 'league') {
-        // Official Domestic League format: 90 mins only, 3 pts Win, 1 pt Draw, NO Extra Time
         chkET.checked = false;
-        statusTag.textContent = 'Đấu Vòng tròn tính điểm (Thắng 3đ, Hòa 1đ • 90 Phút)';
+        statusTag.textContent = 'Thắng 3 điểm · Hòa 1 điểm · Thua 0 điểm';
         statusTag.className = 'font-bold text-sky-300';
       } else if (isKnockout) {
-        // Official Knockout Stage: Extra time 30s + Penalty Shootout if tied
         chkET.checked = true;
         statusTag.textContent = 'Loại trực tiếp Knock-out (Hiệp phụ 30s + Luân lưu 11m)';
         statusTag.className = 'font-bold text-amber-300';
       } else {
-        // Group Stage / League Phase of a Cup competition
         chkET.checked = false;
-        statusTag.textContent = 'Vòng bảng / Phân hạng Cúp (Thắng 3đ, Hòa 1đ • Chọn vòng Knock-out để đá Hiệp phụ)';
+        statusTag.textContent = 'Tính điểm BXH (Thắng 3đ, Hòa 1đ)';
         statusTag.className = 'font-bold text-emerald-300';
       }
+      document.getElementById('badgeMatchType').hidden = stages.length > 1;
       document.getElementById('badgeMatchType').textContent = currentStageName;
     }
 
     function selectTournament(tournamentId) {
       state.activeTournamentId = tournamentId;
       const tourney = getActiveTournament();
-      // Default Cup tournaments with Knockout to a thrilling stage or Stage 0, users can switch any stage
       state.stageIndex = 0;
       state.activeGroupFilter = 'ALL';
-      state.focusedTeamId = null;
+      state.focusedTeamId = getTeamsInActiveTournament()[0].id;
       document.getElementById('activeTournamentHeaderBadge').textContent = `${tourney.icon} ${tourney.name}`;
-      document.getElementById('currentLeagueDesc').textContent = tourney.desc;
+      document.getElementById('currentLeagueDesc').textContent = tourney.groupCount ? 'Chọn đội để xem lịch đấu và bảng điểm của bảng tương ứng.' : 'Mỗi đội gặp tất cả các đối thủ một trận sân nhà và một trận sân khách.';
       initStandingsForTournament(tournamentId);
       renderTournamentSelectorBar();
-      updateStageFormatUI();
       renderTeamsDirectory(document.getElementById('teamSearchInput').value);
-      state.roundNumber++;
-      pickRandomMatchInActiveTournament();
+      pickNextMatch();
     }
 
-    // Pick the NEXT scheduled match inside the active group (so the user plays all 3 opponents in their group sequentially!)
-    function pickRandomMatchInActiveTournament(forceNewGroup = false) {
-      const tourney = getActiveTournament();
-      initStandingsForTournament(tourney.id);
-      const tableObj = state.standingsByTourney[tourney.id];
+    function fixturesForTeam(teamId) {
+      const group = state.standingsByTourney[state.activeTournamentId][teamId].group;
+      return state.groupFixturesByTourney[state.activeTournamentId][group]
+        .filter(f => f.home.id === teamId || f.away.id === teamId);
+    }
+
+    function chooseTeam(id, fixture) {
+      if (state.phase === 'simulating') return;
+      state.focusedTeamId = id;
+      pickNextMatch(fixture);
+    }
+
+    function pickNextMatch(requested) {
       const pool = getTeamsInActiveTournament();
-      if (pool.length < 2) return;
-
-      const numGroups = tourney.groupCount || 0;
-      const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].slice(0, numGroups);
-
-      // 1. If tournament has Group Stage (Bảng A, B, C, D...) and we are not in a Knockout round
-      if (numGroups > 0 && !state.isKnockoutMatch) {
-        // Determine which group and which team we are following
-        let currentGrp = state.focusedGroup || 'A';
-        if (!groupLetters.includes(currentGrp)) currentGrp = groupLetters[0] || 'A';
-
-        if (forceNewGroup) {
-          // If user clicked "Cặp đấu khác cùng giải", cycle to next match or another group
-          const curIdx = groupLetters.indexOf(currentGrp);
-          currentGrp = groupLetters[(curIdx + 1) % groupLetters.length];
-          state.focusedGroup = currentGrp;
-          const grpMembers = Object.values(tableObj).filter(r => r.group === currentGrp && r.inMainGroup);
-          if (grpMembers.length > 0) state.focusedTeamId = grpMembers[0].team.id;
-        }
-
-        if (!state.focusedTeamId || !tableObj[state.focusedTeamId] || tableObj[state.focusedTeamId].group !== currentGrp) {
-          // Pick a default focal team in this group (prioritize ĐT Việt Nam or Thép Xanh Nam Định if present in tournament)
-          const vnTeam = Object.values(tableObj).find(r => r.inMainGroup && (r.team.id === 'vie' || r.team.id === 'nmd'));
-          if (vnTeam && !forceNewGroup) {
-            currentGrp = vnTeam.group;
-            state.focusedGroup = currentGrp;
-            state.focusedTeamId = vnTeam.team.id;
-          } else {
-            const grpMembers = Object.values(tableObj).filter(r => r.group === currentGrp && r.inMainGroup);
-            if (grpMembers.length > 0) state.focusedTeamId = grpMembers[0].team.id;
-          }
-        }
-
-        const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][currentGrp]) || [];
-        // First look for the next unplayed fixture of our focusedTeamId in this group!
-        let nextFix = grpFixtures.find(f => !f.played && (f.home.id === state.focusedTeamId || f.away.id === state.focusedTeamId));
-
-        if (!nextFix) {
-          // All 3 group matches for focusedTeamId in this group are complete!
-          // Check if any other fixture in this group is unplayed, or advance to the Round of 16 / Quarter-final Knockout stage!
-          const anyUnplayed = grpFixtures.find(f => !f.played);
-          if (anyUnplayed) {
-            nextFix = anyUnplayed;
-          } else {
-            // Group Stage finished! Advance to the first Knock-out stage of this tournament if available
-            const stages = tourney.stages || [];
-            const koIdx = stages.findIndex(s =>
-              s.toLowerCase().includes('1/16') ||
-              s.toLowerCase().includes('1/8') ||
-              s.toLowerCase().includes('tứ kết') ||
-              s.toLowerCase().includes('bán kết')
-            );
-            if (koIdx !== -1) {
-              state.stageIndex = koIdx;
-              updateStageFormatUI();
-              showPhaseNotice(`🏆 ĐÃ HOÀN THÀNH VÒNG BẢNG! TIẾN VÀO ${stages[koIdx].toUpperCase()}!`);
-            } else {
-              // Reset group fixtures for a new group campaign
-              state.groupFixturesByTourney[tourney.id][currentGrp] = buildGroupFixturesForGroup(tourney.id, currentGrp);
-              nextFix = state.groupFixturesByTourney[tourney.id][currentGrp][0];
-            }
-          }
-        }
-
-        if (nextFix && !state.isKnockoutMatch) {
-          // Auto-align stage selector label with current Matchday (Lượt 1, Lượt 2, Lượt 3)
-          const stages = tourney.stages || [];
-          const mdStageIdx = stages.findIndex(s => s.includes(`Lượt ${nextFix.matchday}`));
-          if (mdStageIdx !== -1 && state.stageIndex !== mdStageIdx) {
-            state.stageIndex = mdStageIdx;
-          }
-          state.activeGroupFilter = currentGrp;
-          setupMatch(nextFix.home, nextFix.away);
-          return;
-        }
+      const focus = pool.find(t => t.id === state.focusedTeamId) || pool[0];
+      state.focusedTeamId = focus.id;
+      state.focusedGroup = state.standingsByTourney[state.activeTournamentId][focus.id].group;
+      state.activeGroupFilter = state.focusedGroup;
+      const picker = document.getElementById('focusTeam');
+      picker.replaceChildren(...pool.map(t => new Option(t.name, t.id)));
+      picker.value = focus.id;
+      if (state.stageIndex > 0) {
+        const opponents = pool.filter(t => t !== focus);
+        setupMatch(focus, requested?.away || opponents[Math.floor(Math.random() * opponents.length)]);
+        return;
       }
+      const fixtures = fixturesForTeam(focus.id);
+      const next = requested || fixtures.find(f => !f.played);
+      const fixture = next || fixtures.at(-1);
+      state.roundNumber = fixture.matchday;
+      setupMatch(fixture.home, fixture.away);
+      if (!next) {
+        state.phase = 'complete';
+        setScoreControlsEnabled(false);
+        const table = state.standingsByTourney[state.activeTournamentId];
+        const summary = `${focus.name} · ${table[focus.id].played} trận · ${table[focus.id].pts} điểm`;
+        document.getElementById('simBadge').textContent = 'Đã hoàn thành lịch đấu';
+        document.getElementById('simMinute').textContent = 'Kết quả trận cuối';
+        document.getElementById('matchEventsFeed').textContent = summary;
+        document.getElementById('liveScoreBoard').textContent = fixture.score;
+        document.getElementById('liveTouchBadge').textContent = 'Hết trận';
+        document.getElementById('timerStatusText').textContent = 'Đã hoàn thành lịch đấu của ' + focus.name;
+        document.getElementById('btnLockPrediction').disabled = false;
 
-      // 2. For Domestic Leagues (V.League 1, EPL, La Liga, etc.) or Knock-out Rounds:
-      // Keep the user's focusedTeamId and pair them against the next opponent they haven't faced yet!
-      const focusId = state.focusedTeamId && tableObj[state.focusedTeamId] ? state.focusedTeamId : pool[0].id;
-      state.focusedTeamId = focusId;
-      const focusTeam = tableObj[focusId].team;
-      const recentOppIds = state.history.slice(0, 6).map(h => h.home.id === focusId ? h.away.id : (h.away.id === focusId ? h.home.id : null)).filter(Boolean);
-      let candidates = pool.filter(t => t.id !== focusId && !recentOppIds.includes(t.id));
-      if (candidates.length === 0) candidates = pool.filter(t => t.id !== focusId);
-      const opp = candidates[Math.floor(Math.random() * candidates.length)];
+        const isWorldCup = state.activeTournamentId === 'world_cup';
+        const isWorldCupQualifiers = isWorldCup && state.stageIndex < 6;
+        const isWorldCupFinalsGroup = isWorldCup && state.stageIndex >= 6 && state.stageIndex <= 8;
 
-      // Alternate Home / Away each round
-      if (state.roundNumber % 2 === 1) {
-        setupMatch(focusTeam, opp);
-      } else {
-        setupMatch(opp, focusTeam);
+        const qualified = getActiveTournament().groupCount && Object.values(table)
+          .filter(r => r.group === state.focusedGroup).sort(rankStandingRows)
+          .slice(0, 2).some(r => r.team.id === focus.id);
+
+        if (isWorldCupQualifiers) {
+          state.phase = 'wc_qualified_finals';
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG BẢNG VCK WORLD CUP 🏆</span>`;
+        } else if (isWorldCupFinalsGroup) {
+          state.phase = 'wc_qualified_knockout';
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="zap" class="w-5 h-5 text-amber-400"></i><span>VÀO VÒNG 1/16 VCK WORLD CUP (KNOCK-OUT) 🔥</span>`;
+        } else if (qualified) {
+          state.phase = 'qualified';
+          document.getElementById('btnLockPrediction').textContent = 'Vào vòng loại trực tiếp';
+        } else {
+          document.getElementById('btnLockPrediction').textContent = 'Bắt đầu mùa giải mới';
+        }
       }
     }
 
@@ -3185,6 +3622,7 @@
       state.inExtraTime = false;
       state.halfTimeAnnounced = false;
       state.shotAnim.active = false;
+      state.kickoffUntil = 0;
       state.ballTrail = [];
 
       const tourney = getActiveTournament();
@@ -3204,9 +3642,7 @@
       renderLeagueStandings();
 
       // Reset Simulation Timer bar
-      document.getElementById('timerStatusText').textContent = `GIẢI ĐẤU: ${tourney.name.toUpperCase()} • GIẢ LẬP 2 PHÚT (1P/HIỆP) + HIỆP PHỤ 30S`;
-      document.getElementById('timerStatusText').className = 'text-xs sm:text-sm font-extrabold uppercase tracking-wider text-emerald-300';
-      document.getElementById('timerDisplay').textContent = '00:00 / 02:00';
+      syncSettings();
       document.getElementById('timerBar').style.width = '0%';
 
       // Home UI with Real Team Logo
@@ -3264,6 +3700,8 @@
       `;
 
       setScoreControlsEnabled(true);
+      document.getElementById('liveTouchBadge').textContent = 'Chờ giao bóng';
+      state.pitchDirty = true;
       initPitchPlayers();
       updateScoreDisplay();
       if (window.lucide) lucide.createIcons();
@@ -3272,6 +3710,20 @@
     // =========================================================================
     // 6. TIMERS & CONTROLS MANAGEMENT
     // =========================================================================
+    function syncSettings() {
+      document.querySelector(`[name=duration][value="${state.duration}"]`).checked = true;
+      document.querySelector(`[name=speed][value="${state.speedMultiplier}"]`).checked = true;
+      document.getElementById('simSpeedText').textContent = `Tốc độ ${state.speedMultiplier}×`;
+      if (state.phase === 'predicting') {
+        document.getElementById('timerDisplay').textContent = '00:00 / ' + formatClockMMSS(state.duration);
+        document.getElementById('timerStatusText').textContent = `Thời gian thi đấu · ${state.duration / 60} phút`;
+      }
+    }
+
+    function setLiveControls(live) {
+      document.querySelectorAll('#focusTeam, #selectLeagueFilter, .mode-tab, .league-pill, #btnSkipMatch, #btnOpenCustomMatch, #selectCompetitionStage, .team-dir-btn, #durationChoices').forEach(el => el.disabled = live);
+    }
+
     function clearIntervals() {
       if (state.simInterval) {
         clearInterval(state.simInterval);
@@ -3368,6 +3820,7 @@
       const targetY = 0.42 + Math.random() * 0.16;
 
       state.shotAnim.active = true;
+      state.shotAnim.restartAt = performance.now() + 1100;
       state.shotAnim.phase = 'flying';
       state.shotAnim.side = side;
       state.shotAnim.startX = shooter.x + (side === 'home' ? 0.016 : -0.016);
@@ -3413,6 +3866,7 @@
       if (state.phase !== 'predicting') return;
       clearIntervals();
       state.phase = 'simulating';
+      setLiveControls(true);
       SoundFX.whistle();
 
       setScoreControlsEnabled(false);
@@ -3458,34 +3912,33 @@
 
       document.getElementById('simBadge').textContent = "HIỆP 1 • ĐANG ĐÁ";
       document.getElementById('simBadge').className = "px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse";
-      document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 1 (1 PHÚT)`;
+      document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 1`;
 
-      // 2 minutes regular time (60s Half 1 + 60s Half 2), 30s Extra Time
-      const tickMs = 200;
-
+      restartPlay('home');
+      const tickMs = 100;
+      const duration = state.duration;
+      let previous = performance.now();
       state.simInterval = setInterval(() => {
-        const dtRealSec = (tickMs / 1000) * state.speedMultiplier;
-        state.simElapsedSec += dtRealSec;
+        const now = performance.now();
+        const delta = Math.min((now - previous) / 1000, 1) * state.speedMultiplier;
+        previous = now;
+        if (state.shotAnim.active) {
+          if (now >= state.shotAnim.restartAt) restartPlay(state.shotAnim.side === 'home' ? 'away' : 'home');
+          return;
+        }
+        if (now < state.kickoffUntil) return;
+        const boundary = state.inExtraTime ? duration + 30 : (state.halfTimeAnnounced ? duration : duration / 2);
+        state.simElapsedSec = Math.min(boundary, state.simElapsedSec + delta);
 
         if (!state.inExtraTime) {
-          state.simMinute = Math.min(90, (state.simElapsedSec / 120) * 90);
-          const pct = Math.min(100, (state.simElapsedSec / 120) * 100);
+          state.simMinute = Math.min(90, (state.simElapsedSec / duration) * 90);
+          const pct = Math.min(100, (state.simElapsedSec / duration) * 100);
           document.getElementById('timerBar').style.width = `${pct}%`;
-          document.getElementById('timerDisplay').textContent = `${formatClockMMSS(state.simElapsedSec)} / 02:00`;
+          document.getElementById('timerDisplay').textContent = `${formatClockMMSS(state.simElapsedSec)} / ${formatClockMMSS(duration)}`;
 
-          if (state.simMinute >= 45 && !state.halfTimeAnnounced) {
-            state.halfTimeAnnounced = true;
-            SoundFX.whistle();
-            document.getElementById('simBadge').textContent = "HIỆP 2 • ĐANG ĐÁ";
-            document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 2 (1 PHÚT)`;
-            showPhaseNotice("⏱️ HIỆP 2 BẮT ĐẦU (45' - 90')");
-            const htItem = document.createElement('div');
-            htItem.className = 'text-sky-300 font-semibold';
-            htItem.textContent = `⏸️ 45' Hết Hiệp 1 (01:00). Hai đội bước vào Hiệp 2 với tỷ số ${state.liveHomeGoals} - ${state.liveAwayGoals}.`;
-            feed.prepend(htItem);
-          }
+
         } else {
-          const etElapsed = state.simElapsedSec - 120;
+          const etElapsed = state.simElapsedSec - duration;
           state.simMinute = Math.min(120, 90 + (etElapsed / 30) * 30);
           const pct = Math.min(100, (etElapsed / 30) * 100);
           document.getElementById('timerBar').style.width = `${pct}%`;
@@ -3498,8 +3951,8 @@
           : `Phút ${displayMin}'`;
 
         // Check scheduled goals
-        state.scheduledEvents.forEach(ev => {
-          if (!ev.triggered && displayMin >= ev.minute) {
+        const ev = state.scheduledEvents.find(event => !event.triggered && event.minute <= displayMin);
+        if (ev) {
             ev.triggered = true;
             if (ev.side === 'home') {
               state.liveHomeGoals++;
@@ -3519,12 +3972,25 @@
             item.className = 'text-amber-300 font-bold flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1.5 rounded-lg border border-amber-500/25';
             item.innerHTML = `<span>⚽ ${ev.minute}' <strong>Vàoooo!</strong></span> <span class="text-white">${ev.scorer}</span> <span class="text-slate-300">sút tung lưới (${teamName})</span> <span class="text-emerald-400 ml-auto">[${state.liveHomeGoals} - ${state.liveAwayGoals}]</span>`;
             feed.prepend(item);
+            return;
+        }
+          if (state.simMinute >= 45 && !state.halfTimeAnnounced) {
+            state.halfTimeAnnounced = true;
+            SoundFX.whistle();
+            document.getElementById('simBadge').textContent = "HIỆP 2 • ĐANG ĐÁ";
+            document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 2`;
+            showPhaseNotice("⏱️ HIỆP 2 BẮT ĐẦU (45' - 90')");
+            const htItem = document.createElement('div');
+            htItem.className = 'text-sky-300 font-semibold';
+            htItem.textContent = `⏸️ 45' Hết hiệp 1. Hai đội bước vào Hiệp 2 với tỷ số ${state.liveHomeGoals} - ${state.liveAwayGoals}.`;
+            feed.prepend(htItem);
+            restartPlay('away');
+            return;
           }
-        });
 
         // Check End of Regular Time (90' / 120s)
-        if (!state.inExtraTime && state.simElapsedSec >= 120) {
-          const allowET = document.getElementById('chkExtraTime').checked;
+        if (!state.inExtraTime && state.simElapsedSec >= duration) {
+          const allowET = state.isKnockoutMatch;
           if (allowET && state.liveHomeGoals === state.liveAwayGoals) {
             state.inExtraTime = true;
             SoundFX.whistle();
@@ -3551,13 +4017,13 @@
 
             const etMsg = document.createElement('div');
             etMsg.className = 'text-amber-300 font-bold';
-            etMsg.textContent = `⚡ 90' Hòa ${state.liveHomeGoals}-${state.liveAwayGoals} sau 2 phút chính thức! Hai đội đá thêm 2 Hiệp phụ (30 giây)!`;
+            etMsg.textContent = `⚡ 90' Hòa ${state.liveHomeGoals}-${state.liveAwayGoals} sau hai hiệp chính! Hai đội đá thêm 2 Hiệp phụ (30 giây)!`;
             feed.prepend(etMsg);
           } else {
             clearIntervals();
             finishMatch();
           }
-        } else if (state.inExtraTime && state.simElapsedSec >= 150) {
+        } else if (state.inExtraTime && state.simElapsedSec >= duration + 30) {
           clearIntervals();
           finishMatch();
         }
@@ -3566,6 +4032,8 @@
 
     function finishMatch() {
       state.phase = 'finished';
+      state.pitchDirty = true;
+      setLiveControls(false);
       SoundFX.whistle();
 
       const actualH = state.liveHomeGoals;
@@ -3608,39 +4076,24 @@
         }
       }
 
-      recordScoreToStandings(state.homeTeam, state.awayTeam, actualH, actualA);
 
-      // If this match is part of a Group Stage (Bảng A, B, C, D...), mark fixture as played AND auto-simulate the companion fixture of the same Matchday in this group!
-      if ((tourney.groupCount || 0) > 0 && !state.isKnockoutMatch) {
-        const grp = stTable[state.homeTeam.id]?.group || state.focusedGroup;
-        const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][grp]) || [];
-        const thisFix = grpFixtures.find(f =>
-          !f.played &&
-          ((f.home.id === state.homeTeam.id && f.away.id === state.awayTeam.id) ||
-           (f.home.id === state.awayTeam.id && f.away.id === state.homeTeam.id))
-        );
-        if (thisFix) {
-          thisFix.played = true;
-          thisFix.score = thisFix.home.id === state.homeTeam.id ? `${actualH}-${actualA}` : `${actualA}-${actualH}`;
 
-          // Simulate the other 2 teams in the same group on the same Matchday so the 4-team group table stays synchronized!
-          const companionFix = grpFixtures.find(f => !f.played && f.matchday === thisFix.matchday);
-          if (companionFix) {
-            const compSim = generateMatchScore(companionFix.home, companionFix.away, 1.0);
-            companionFix.played = true;
-            companionFix.score = `${compSim.homeGoals}-${compSim.awayGoals}`;
-            recordScoreToStandings(companionFix.home, companionFix.away, compSim.homeGoals, compSim.awayGoals);
-            updateFifaWorldPointsAfterMatch(companionFix.home, companionFix.away, compSim.homeGoals, compSim.awayGoals, null);
-
-            const feed = document.getElementById('matchEventsFeed');
-            const compItem = document.createElement('div');
-            compItem.className = 'text-sky-300 text-[11px] bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20';
-            compItem.innerHTML = `📊 <strong>Kết quả trận cùng Bảng ${grp} (Lượt ${companionFix.matchday}):</strong> ${companionFix.home.name} <strong>${compSim.homeGoals} - ${compSim.awayGoals}</strong> ${companionFix.away.name}`;
-            feed.prepend(compItem);
-          }
+      if (!state.isKnockoutMatch) {
+        const schedule = state.groupFixturesByTourney[tourney.id][state.focusedGroup];
+        const current = schedule.find(f => !f.played && f.home === state.homeTeam && f.away === state.awayTeam);
+        current.played = true;
+        current.score = `${actualH}-${actualA}`;
+        recordScoreToStandings(current.home, current.away, actualH, actualA);
+        const nextDay = fixturesForTeam(state.focusedTeamId).find(f => !f.played)?.matchday ?? Infinity;
+        for (const fixture of schedule) {
+          if (fixture.played || (fixture.matchday >= nextDay && fixture.matchday !== current.matchday)) continue;
+          const { homeGoals, awayGoals } = generateMatchScore(fixture.home, fixture.away);
+          fixture.played = true;
+          fixture.score = `${homeGoals}-${awayGoals}`;
+          recordScoreToStandings(fixture.home, fixture.away, homeGoals, awayGoals);
+          updateFifaWorldPointsAfterMatch(fixture.home, fixture.away, homeGoals, awayGoals);
         }
       }
-      renderLeagueStandings();
       const predH = state.predHome;
       const predA = state.predAway;
 
@@ -3653,6 +4106,7 @@
       // Compute Official FIFA World Ranking points change (+/-) for both teams
       const isPenWinHome = (state.penHome !== null && state.penAway !== null) ? (state.penHome > state.penAway) : null;
       const fifaDelta = updateFifaWorldPointsAfterMatch(state.homeTeam, state.awayTeam, actualH, actualA, isPenWinHome);
+      renderLeagueStandings();
       const diffHit = outcomeHit && ((actualH - actualA) === (predH - predA));
 
       let basePoints = 0;
@@ -3714,6 +4168,7 @@
       });
       renderHistory();
 
+      document.getElementById('timerStatusText').textContent = 'Kết thúc trận đấu';
       document.getElementById('simBadge').textContent = state.inExtraTime ? "KẾT THÚC (SAU HIỆP PHỤ)" : "KẾT THÚC TRẬN (FT)";
       document.getElementById('simBadge').className = "px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase bg-slate-700 text-slate-200";
 
@@ -3746,6 +4201,7 @@
       const rect = canvas.parentElement.getBoundingClientRect();
       canvas.width = Math.max(320, rect.width);
       canvas.height = Math.max(220, rect.height || 260);
+      state.pitchDirty = true;
     }
 
     // Real-Time 11v11 Player-Ball Touch, Dribbling, Passing & Interception State
@@ -3857,12 +4313,35 @@
       state.ballPos.y = kickoffPlayer.y;
     }
 
+    function restartPlay(side) {
+      initPitchPlayers();
+      const team = side === 'home' ? state.homeTeam : state.awayTeam;
+      const forward = state.players.find(p => p.id === side + '_9');
+      const receiver = state.players.find(p => p.id === side + '_6');
+      forward.x = side === 'home' ? 0.488 : 0.512;
+      state.ballPos.x = state.ballPos.y = 0.5;
+      state.ballTrail = [];
+      state.shotAnim.active = false;
+      state.ballSim.holder = forward;
+      Object.assign(state.ballSim, {
+        mode: 'passing', targetReceiver: receiver, passStartX: 0.5, passStartY: 0.5,
+        passEndX: receiver.x, passEndY: receiver.y, passProgress: 0, passSpeed: 0.06
+      });
+      state.kickoffUntil = performance.now() + 450;
+      document.getElementById('goalCelebrationBanner').classList.add('hidden');
+      const message = team.name + ' giao bóng từ giữa sân';
+      document.getElementById('liveTouchBadge').textContent = message;
+      const line = document.createElement('div');
+      line.textContent = `${Math.floor(state.simMinute)}′ · ${message}`;
+      document.getElementById('matchEventsFeed').prepend(line);
+    }
+
     function updatePlayersAndBallTouchPhysics() {
       const isSim = state.phase === 'simulating';
       const bs = state.ballSim;
 
       // If a goal shot is flying into the net, let the shot animation control the ball
-      if (state.shotAnim.active) {
+      if (state.shotAnim.active || performance.now() < state.kickoffUntil) {
         return;
       }
 
@@ -4085,7 +4564,18 @@
       renderNetBox(w - padX, goalTop, netDepth, goalH, false, rightRipple);
     }
 
+    let pitchVisible = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([entry]) => {
+        pitchVisible = entry.isIntersecting;
+        state.pitchDirty = true;
+      }).observe(canvas);
+    }
+
     function drawPitch() {
+      requestAnimationFrame(drawPitch);
+      if (!pitchVisible || (!state.pitchDirty && state.phase !== 'simulating')) return;
+      state.pitchDirty = false;
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
@@ -4144,7 +4634,8 @@
       drawGoalNets(w, h, padX, padY, fieldW, fieldH);
 
       // Step player-ball contact & passing physics
-      updatePlayersAndBallTouchPhysics();
+      const steps = state.phase === 'simulating' ? Math.min(4, state.speedMultiplier) : 1;
+      for (let step = 0; step < steps; step++) updatePlayersAndBallTouchPhysics();
 
       // Draw Pass Trajectory Line when a player passes the ball
       if (state.ballSim.passLine && state.ballSim.passLine.alpha > 0) {
@@ -4246,20 +4737,6 @@
           state.ballPos.x = state.shotAnim.targetX + Math.sin(state.shotAnim.netRipple) * 0.004;
           state.ballPos.y = state.shotAnim.targetY + Math.cos(state.shotAnim.netRipple) * 0.004;
 
-          if (state.shotAnim.netHoldFrames <= 0) {
-            state.shotAnim.active = false;
-            state.ballTrail = [];
-            // Restart kick-off from center with conceding team's forward
-            const kickoffSide = state.shotAnim.side === 'home' ? 'away' : 'home';
-            const restartPlayer = state.players.find(p => p.side === kickoffSide && p.role === 'FW') || state.players[0];
-            restartPlayer.x = 0.5;
-            restartPlayer.y = 0.5;
-            state.ballSim.holder = restartPlayer;
-            state.ballSim.mode = 'held';
-            state.ballSim.holdTimer = 20;
-            state.ballPos.x = 0.5;
-            state.ballPos.y = 0.5;
-          }
         }
       }
 
@@ -4300,8 +4777,6 @@
       ctx.lineWidth = 1.8;
       ctx.strokeStyle = '#0f172a';
       ctx.stroke();
-
-      requestAnimationFrame(drawPitch);
     }
 
     // =========================================================================
@@ -4414,21 +4889,7 @@
       container.querySelectorAll('.team-dir-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           SoundFX.click();
-          const tourney = getActiveTournament();
-          const activeTeams = getTeamsInActiveTournament();
-          const chosen = activeTeams.find(t => t.id === btn.dataset.teamId);
-          if (!chosen) return;
-
-          ensureTeamInMainGroup4(tourney.id, chosen);
-          const tableObj = state.standingsByTourney[tourney.id];
-          const entry = tableObj[chosen.id];
-          state.focusedTeamId = chosen.id;
-          if (entry && entry.group !== 'BXH') {
-            state.focusedGroup = entry.group;
-            state.activeGroupFilter = entry.group;
-          }
-          state.roundNumber++;
-          pickRandomMatchInActiveTournament(false);
+          chooseTeam(btn.dataset.teamId);
         });
       });
     }
@@ -4440,21 +4901,25 @@
 
       const selHome = document.getElementById('selectHomeTeam');
       const selAway = document.getElementById('selectAwayTeam');
-      const optionsHtml = pool.map(t => `<option value="${t.id}">${t.iconText || t.icon} ${t.name} (OVR ${t.rating})</option>`).join('');
-      selHome.innerHTML = optionsHtml;
-      selAway.innerHTML = optionsHtml;
-      if (pool.some(t => t.id === state.homeTeam.id)) selHome.value = state.homeTeam.id;
-      if (pool.some(t => t.id === state.awayTeam.id)) selAway.value = state.awayTeam.id;
+      selHome.replaceChildren(...pool.map(t => new Option(t.name, t.id)));
+      selHome.value = state.focusedTeamId;
+      function showOpponents() {
+        const id = selHome.value;
+        const fixtures = fixturesForTeam(id).filter(f => !f.played);
+        const options = state.stageIndex ? pool.filter(t => t.id !== id).map(t => new Option(t.name, t.id))
+          : fixtures.map(f => new Option(`Lượt ${f.matchday} · ${f.home.name} – ${f.away.name}`, f.matchday));
+        selAway.replaceChildren(...options);
+        if (!options.length) selAway.add(new Option('Đã hoàn thành lịch đấu'));
+        document.getElementById('btnApplyCustomMatch').disabled = !options.length;
+      }
+      selHome.onchange = showOpponents;
+      showOpponents();
     }
 
     // =========================================================================
     // 10. BIND CONTROLS ON WINDOW LOAD
     // =========================================================================
     window.addEventListener('load', () => {
-      // Prevent browser double-tap / double-click zoom when tapping score buttons rapidly
-      document.addEventListener('dblclick', (e) => {
-        e.preventDefault();
-      }, { passive: false });
       loadSavedStats();
       updateStatsUI();
       resizeCanvas();
@@ -4545,40 +5010,54 @@
 
       // Lock or Next Match button
       document.getElementById('btnLockPrediction').addEventListener('click', () => {
-        if (state.phase === 'predicting') {
+        if (state.phase === 'wc_qualified_finals') {
+          SoundFX.winExact();
+          state.stageIndex = 6; // Move to World Cup Finals Group Stage (Bảng A -> L)
+          initStandingsForTournament('world_cup', true);
+          updateStageFormatUI();
+          pickNextMatch();
+        } else if (state.phase === 'wc_qualified_knockout') {
+          SoundFX.winExact();
+          state.stageIndex = 9; // Move to World Cup 1/16 Knockout
+          updateStageFormatUI();
+          pickNextMatch();
+        } else if (state.phase === 'complete') {
+          selectTournament(state.activeTournamentId);
+        } else if (state.phase === 'qualified') {
+          state.stageIndex = 1;
+          updateStageFormatUI();
+          pickNextMatch();
+        } else if (state.phase === 'predicting') {
           lockPredictionAndSimulate();
         } else if (state.phase === 'finished') {
           SoundFX.click();
-          state.roundNumber++;
-          pickRandomMatchInActiveTournament();
+          pickNextMatch();
         }
       });
 
-      // Simulation Speed Toggle
-      document.getElementById('btnSimSpeed').addEventListener('click', () => {
-        SoundFX.click();
-        if (state.speedMultiplier === 1) {
-          state.speedMultiplier = 4;
-          document.getElementById('simSpeedText').textContent = 'Tốc độ: Nhanh 4x';
-        } else if (state.speedMultiplier === 4) {
-          state.speedMultiplier = 12;
-          document.getElementById('simSpeedText').textContent = 'Tốc độ: Siêu tốc 12x';
-        } else {
-          state.speedMultiplier = 1;
-          document.getElementById('simSpeedText').textContent = 'Tốc độ: Chuẩn (1p/Hiệp)';
-        }
-      });
+      const settings = document.getElementById('settings');
+      document.getElementById('btnSettings').onclick = () => settings.showModal();
+      document.getElementById('btnSimSpeed').onclick = () => settings.showModal();
+      settings.onchange = () => {
+        state.speedMultiplier = Number(settings.querySelector('[name=speed]:checked').value);
+        if (state.phase !== 'simulating') state.duration = Number(settings.querySelector('[name=duration]:checked').value);
+        syncSettings();
+        try { localStorage.setItem('matchSettings', JSON.stringify([state.duration, state.speedMultiplier])); } catch {}
+      };
+      try {
+        const [duration, speed] = JSON.parse(localStorage.getItem('matchSettings') || '[]');
+        if ([120, 240, 360].includes(duration)) state.duration = duration;
+        if ([1, 4, 12].includes(speed)) state.speedMultiplier = speed;
+      } catch {}
 
       document.getElementById('btnNextMatchOverlay').addEventListener('click', () => {
         SoundFX.click();
-        state.roundNumber++;
-        pickRandomMatchInActiveTournament();
+        pickNextMatch();
       });
 
       document.getElementById('btnSkipMatch').addEventListener('click', () => {
         SoundFX.click();
-        state.roundNumber++;
-        pickRandomMatchInActiveTournament(true);
+        document.getElementById('btnOpenCustomMatch').click();
       });
 
       // Group Filter Tabs
@@ -4657,18 +5136,13 @@
       document.getElementById('btnCancelCustom').addEventListener('click', () => modalCustom.classList.add('hidden'));
       document.getElementById('btnApplyCustomMatch').addEventListener('click', () => {
         SoundFX.click();
-        const pool = getTeamsInActiveTournament();
-        const hId = document.getElementById('selectHomeTeam').value;
-        let aId = document.getElementById('selectAwayTeam').value;
-        if (hId === aId) {
-          const alt = pool.find(t => t.id !== hId);
-          if (alt) aId = alt.id;
-        }
-        const home = pool.find(t => t.id === hId) || pool[0];
-        const away = pool.find(t => t.id === aId) || pool[1];
+        const id = document.getElementById('selectHomeTeam').value;
+        const value = document.getElementById('selectAwayTeam').value;
+        const fixture = state.stageIndex
+          ? { away: getTeamsInActiveTournament().find(t => t.id === value) }
+          : fixturesForTeam(id).find(f => !f.played && f.matchday === Number(value));
         modalCustom.classList.add('hidden');
-        state.roundNumber++;
-        setupMatch(home, away);
+        if (fixture) chooseTeam(id, fixture);
       });
 
       // Rules Modal
@@ -4682,7 +5156,7 @@
 
       // Keyboard shortcuts
       window.addEventListener('keydown', (e) => {
-        if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+        if (document.activeElement?.matches('input,select,button,textarea') || document.querySelector('dialog[open], #modalRules:not(.hidden), #modalCustomMatch:not(.hidden)')) return;
         if (state.phase === 'predicting') {
           if (e.key === 'w' || e.key === 'W') { state.predHome = (state.predHome + 1) % 10; updateScoreDisplay(); SoundFX.click(); }
           if (e.key === 's' || e.key === 'S') { state.predHome = (state.predHome + 9) % 10; updateScoreDisplay(); SoundFX.click(); }
@@ -4691,22 +5165,17 @@
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lockPredictionAndSimulate(); }
         } else if (state.phase === 'finished' && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
-          state.roundNumber++;
-          pickRandomMatchInActiveTournament();
+          pickNextMatch();
         }
       });
 
       document.getElementById('selectCompetitionStage').addEventListener('change', (e) => {
         SoundFX.click();
         state.stageIndex = Number(e.target.value) || 0;
-        updateStageFormatUI();
+        pickNextMatch();
       });
 
-      // Initialize with LPBank V.League 1 selected
-      initStandingsForTournament(state.activeTournamentId);
-      renderTournamentSelectorBar();
-      updateStageFormatUI();
-      renderTeamsDirectory();
-      setupMatch(TEAMS_DB[0], TEAMS_DB[1]);
+      document.getElementById('focusTeam').onchange = e => chooseTeam(e.target.value);
+      selectTournament(state.activeTournamentId);
       requestAnimationFrame(drawPitch);
     });
