@@ -21,11 +21,12 @@
           <i data-lucide="trophy" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <h1 class="font-black text-base sm:text-lg tracking-tight text-white">Sân cỏ <span class="brand-accent">/</span> Dự đoán</h1>
-            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 shadow">
-              MÙA GIẢI 2026/2027
-            </span>
+            <button id="btnSeasonHeader" type="button" title="Xem tổng kết mùa giải & biến động OVR" class="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 shadow hover:bg-amber-300 transition">
+              <span id="currentSeasonHeaderBadge">MÙA GIẢI 2026/2027</span>
+              <span class="text-[9px] bg-slate-950/20 px-1 rounded font-bold">OVR ▲▼</span>
+            </button>
             <span id="activeTournamentHeaderBadge" class="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               21 Giải Đấu Độc Lập
             </span>
@@ -464,7 +465,13 @@
               <i data-lucide="layout-grid" class="w-4 h-4 text-amber-400"></i>
               <span id="standingsCardTitle">Các Bảng Đấu & BXH Giải</span>
             </h3>
-            <span id="standingsFormatPill" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">Vòng bảng A - B - C - D</span>
+            <div class="flex items-center gap-1.5 flex-wrap justify-end">
+              <button id="btnSimulateEndSeason" type="button" title="Mô phỏng toàn bộ các vòng còn lại và chuyển sang tổng kết tăng giảm OVR mùa giải" class="btn-tap px-2 py-0.5 rounded-md text-[10px] font-black bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 hover:brightness-110 flex items-center gap-1 shadow">
+                <i data-lucide="fast-forward" class="w-3 h-3 fill-current"></i>
+                <span>Hết mùa & Nhận OVR</span>
+              </button>
+              <span id="standingsFormatPill" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">Vòng bảng A - B - C - D</span>
+            </div>
           </div>
 
           <div id="viewTournamentGroups">
@@ -629,6 +636,72 @@
 
       <div class="flex justify-end">
         <button id="btnGotItRules" type="button" class="px-5 py-2 rounded-xl text-xs font-extrabold bg-emerald-400 text-slate-950 hover:bg-emerald-300">Bắt đầu trải nghiệm!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Season End & OVR Progression (Capped at 125 OVR) -->
+  <div id="modalSeasonEnd" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+    <div class="glass-card rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col p-4 sm:p-6 border border-amber-400/40 shadow-2xl shadow-amber-500/20">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <i data-lucide="trophy" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-base sm:text-lg text-white flex items-center gap-2">
+              <span>TỔNG KẾT MÙA GIẢI & BIẾN ĐỘNG OVR</span>
+              <span id="seasonEndYearTag" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">MÙA 2026/2027</span>
+            </h3>
+            <p id="seasonEndTournamentSubtitle" class="text-xs text-amber-300 font-medium">LPBank V.League 1 · Bảng vinh danh và biến động chỉ số (Tối đa 125 OVR)</p>
+          </div>
+        </div>
+        <button id="btnCloseSeasonEndModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="overflow-y-auto flex-1 my-3 pr-1 space-y-3.5">
+        <!-- Champion Spotlight Banner -->
+        <div id="seasonChampionBanner" class="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-emerald-500/20 border border-amber-400/40 flex items-center gap-3.5">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Rules explanation note -->
+        <div class="p-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-[11px] text-slate-300 flex items-center justify-between flex-wrap gap-2">
+          <span>⚡ <strong>Quy tắc OVR:</strong> Vô địch: <strong>+5 OVR</strong> • Á quân: <strong>+3 OVR</strong> • Top 4: <strong>+2 OVR</strong> • Nửa trên: <strong>+1 OVR</strong> • Nửa dưới: <strong>-1 ~ -3 OVR</strong></span>
+          <span class="text-amber-300 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">🔒 Giới hạn: Max 125 OVR</span>
+        </div>
+
+        <!-- Team OVR Table -->
+        <div class="rounded-xl border border-white/10 bg-slate-950/60 overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="text-[10px] text-slate-400 uppercase bg-slate-900/90 border-b border-white/10 sticky top-0">
+              <tr>
+                <th class="py-2 px-2 text-center">#</th>
+                <th class="py-2 px-2">Đội bóng</th>
+                <th class="py-2 px-2 hidden sm:table-cell">Thành tích mùa</th>
+                <th class="py-2 px-2 text-center">OVR Cũ</th>
+                <th class="py-2 px-2 text-center">Biến động</th>
+                <th class="py-2 px-2 text-right">OVR Mới (Max 125)</th>
+              </tr>
+            </thead>
+            <tbody id="seasonOvrTableBody" class="divide-y divide-white/5 text-slate-200">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2 flex-wrap shrink-0">
+        <button id="btnKeepReviewSeason" type="button" class="btn-tap px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Đóng & Xem lại</button>
+        <button id="btnStartNextSeason" type="button" class="btn-tap px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 text-slate-950 hover:brightness-110 flex items-center gap-2 shadow-lg shadow-emerald-500/25">
+          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          <span id="btnStartNextSeasonText">BẮT ĐẦU MÙA GIẢI MỚI (MÙA 2027/2028)</span>
+        </button>
       </div>
     </div>
   </div>

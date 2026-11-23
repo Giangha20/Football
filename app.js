@@ -2449,7 +2449,10 @@
       'BUL': 'bg', 'ISR': 'il', 'KOS': 'xk', 'ARM': 'am', 'AZE': 'az', 'KAZ': 'kz',
       'CYP': 'cy', 'EST': 'ee', 'LVA': 'lv', 'LTU': 'lt', 'LUX': 'lu', 'FRO': 'fo',
       'MLT': 'mt', 'MDA': 'md', 'AND': 'ad', 'LIE': 'li', 'SMR': 'sm', 'GIB': 'gi',
-      'NMI': 'mp'
+      'NMI': 'mp',
+      'GRE': 'gr', 'SVN': 'si', 'ALB': 'al', 'TPE': 'tw', 'MAC': 'mo',
+      'MWI': 'mw', 'RWA': 'rw', 'BDI': 'bi', 'ETH': 'et', 'SDN': 'sd',
+      'LBY': 'ly', 'MTN': 'mr', 'GAM': 'gm'
     };
 
     const REAL_CLUB_LOGOS = {
@@ -2650,7 +2653,49 @@
       'flu': 'https://images.fotmob.com/image_resources/logo/teamlogo/9863.png',
       'sao': 'https://images.fotmob.com/image_resources/logo/teamlogo/10242.png',
       'min': 'https://images.fotmob.com/image_resources/logo/teamlogo/10240.png',
-      'gre': 'https://images.fotmob.com/image_resources/logo/teamlogo/8472.png'
+      'gre': 'https://images.fotmob.com/image_resources/logo/teamlogo/8472.png',
+
+      // Pohang Steelers (K League 1)
+      'poang': 'https://images.fotmob.com/image_resources/logo/teamlogo/8449.png',
+      // J1 League
+      'hiro': 'https://images.fotmob.com/image_resources/logo/teamlogo/8407.png',
+      'mach': 'https://upload.wikimedia.org/wikipedia/commons/0/08/FC_Machida_Zelvia_%28logo%29.svg',
+      'gamb': 'https://images.fotmob.com/image_resources/logo/teamlogo/8410.png',
+      'kash': 'https://images.fotmob.com/image_resources/logo/teamlogo/8409.png',
+      'uraw': 'https://images.fotmob.com/image_resources/logo/teamlogo/8418.png',
+      'fctk': 'https://images.fotmob.com/image_resources/logo/teamlogo/8420.png',
+      'cere': 'https://images.fotmob.com/image_resources/logo/teamlogo/8417.png',
+      // K League 1
+      'jeon': 'https://images.fotmob.com/image_resources/logo/teamlogo/8448.png',
+      'fcse': 'https://upload.wikimedia.org/wikipedia/en/9/9e/FC_Seoul_logo.svg',
+      'gang': 'https://upload.wikimedia.org/wikipedia/en/f/fe/Gangwon_FC.svg',
+      'gimch': 'https://images.fotmob.com/image_resources/logo/teamlogo/8450.png',
+      'suwon': 'https://upload.wikimedia.org/wikipedia/en/0/01/Suwon_FC_2016.svg',
+      'gwang': 'https://upload.wikimedia.org/wikipedia/en/6/65/Gwangju_FC.svg',
+      'jeju': 'https://upload.wikimedia.org/wikipedia/en/4/47/Jeju_SK_FC.svg',
+      'daej': 'https://images.fotmob.com/image_resources/logo/teamlogo/8452.png',
+      // Thai League 1
+      'port': 'https://upload.wikimedia.org/wikipedia/en/f/fc/Port_FC_logo.svg',
+      'utd_bkk': 'https://upload.wikimedia.org/wikipedia/en/a/a3/Bangkok_United%2C_2018.png',
+      'muang': 'https://upload.wikimedia.org/wikipedia/en/a/ae/Muangthong_United_F.C._%28emblem%29.png',
+      'ratch': 'https://upload.wikimedia.org/wikipedia/en/4/44/Ratchaburi_Mitr_Phol_logo_2019.png',
+      'chiang': 'https://upload.wikimedia.org/wikipedia/en/0/08/Chiangrai_United_FC_logo.svg',
+      'prachuap': 'https://upload.wikimedia.org/wikipedia/en/f/f3/PT_Prachuap_2018_logo.png',
+      // Chinese Super League
+      'cdrc': 'https://upload.wikimedia.org/wikipedia/en/c/c4/Chengdu_Rongcheng_F.C.svg',
+      'zhej': 'https://images.fotmob.com/image_resources/logo/teamlogo/9762.png',
+      // Southeast Asian Champions & Cups
+      'sela': 'https://upload.wikimedia.org/wikipedia/en/d/d7/Selangor_FC_logo.svg',
+      'lcs': 'https://upload.wikimedia.org/wikipedia/en/e/e3/Lion_City_Sailors_FC_logo.svg',
+      'bFC': 'https://upload.wikimedia.org/wikipedia/en/b/be/Borneo_FC_logo.svg',
+      'kaya': 'https://upload.wikimedia.org/wikipedia/en/1/1f/Kaya_Iloilo_crest.png',
+      'svay': 'https://upload.wikimedia.org/wikipedia/en/a/ab/Svay_Rieng_FC_logo.png',
+      'persib': 'https://upload.wikimedia.org/wikipedia/en/e/ea/Persib_Bandung_Crest.svg',
+      'persija': 'https://upload.wikimedia.org/wikipedia/en/7/76/Persija_Jakarta_Football_Logo.png',
+      'perseb': 'https://upload.wikimedia.org/wikipedia/en/a/a1/Persebaya_logo.svg',
+      'bali': 'https://upload.wikimedia.org/wikipedia/en/5/5e/Bali_United_logo.svg',
+      'tereng': 'https://upload.wikimedia.org/wikipedia/en/2/29/Terengganu_FC_logo.svg',
+      'sabah': 'https://upload.wikimedia.org/wikipedia/en/0/01/Sabah_Football_Club_%28Malaysia%29.png'
 
     };
 
@@ -2887,7 +2932,11 @@
       totalMatches: 0,
       exactHits: 0,
       outcomeHits: 0,
-      history: []
+      history: [],
+
+      // Multi-Season Progression & OVR Evolution (Strictly Max 125 OVR)
+      seasonYear: 2026,
+      seasonSummary: null
     };
 
     function loadSavedStats() {
@@ -2916,6 +2965,315 @@
           outcomeHits: state.outcomeHits
         }));
       } catch (e) {}
+    }
+
+    function saveCustomRatings() {
+      try {
+        const map = {};
+        TEAMS_DB.forEach(t => {
+          map[t.id] = t.rating;
+        });
+        localStorage.setItem('football_custom_ratings', JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function loadCustomRatings() {
+      try {
+        const saved = localStorage.getItem('football_custom_ratings');
+        if (saved) {
+          const map = JSON.parse(saved);
+          TEAMS_DB.forEach(t => {
+            if (typeof map[t.id] === 'number') {
+              // Strictly cap at max 125 OVR
+              t.rating = Math.min(125, Math.max(50, map[t.id]));
+            }
+          });
+        }
+        const savedSeason = parseInt(localStorage.getItem('football_season_year'), 10);
+        if (!isNaN(savedSeason) && savedSeason >= 2026) {
+          state.seasonYear = savedSeason;
+        }
+        updateSeasonHeaderBadge();
+      } catch (e) {}
+    }
+
+    function updateSeasonHeaderBadge() {
+      const badge = document.getElementById('currentSeasonHeaderBadge');
+      if (badge) {
+        badge.textContent = `MÙA GIẢI ${state.seasonYear}/${state.seasonYear + 1}`;
+      }
+      const modalYearTag = document.getElementById('seasonEndYearTag');
+      if (modalYearTag) {
+        modalYearTag.textContent = `MÙA ${state.seasonYear}/${state.seasonYear + 1}`;
+      }
+      const nextBtnText = document.getElementById('btnStartNextSeasonText');
+      if (nextBtnText) {
+        nextBtnText.textContent = `BẮT ĐẦU MÙA GIẢI MỚI (MÙA ${state.seasonYear + 1}/${state.seasonYear + 2})`;
+      }
+    }
+
+    // =========================================================================
+    // END-OF-SEASON OVR PROGRESSION ENGINE (MAX 125 OVR STRICTLY ENFORCED)
+    // =========================================================================
+    function handleSeasonEndAndOvrProgression(tourneyParam) {
+      const tourney = tourneyParam || getActiveTournament();
+      initStandingsForTournament(tourney.id);
+      const table = state.standingsByTourney[tourney.id];
+      if (!table) return null;
+
+      const rows = Object.values(table).sort(rankStandingRows);
+      const count = rows.length;
+      const ovrChanges = [];
+
+      rows.forEach((r, idx) => {
+        const rank = idx + 1;
+        const t = r.team;
+        const oldRating = t.rating;
+        let delta = 0;
+        let achievement = '';
+
+        if (rank === 1) {
+          delta = 5; // Champion
+          achievement = '🏆 VÔ ĐỊCH MÙA GIẢI';
+        } else if (rank === 2) {
+          delta = 3; // Runner-up
+          achievement = '🥈 Á QUÂN XUẤT SẮC';
+        } else if (rank <= 4) {
+          delta = 2; // Top 4
+          achievement = '🥉 TOP 4 DẪN ĐẦU';
+        } else if (rank <= Math.ceil(count * 0.38)) {
+          delta = 1; // Upper tier
+          achievement = '📈 NHÓM DẪN ĐẦU';
+        } else if (rank > count - 2 && count >= 8) {
+          if (rank === count) {
+            delta = -3;
+            achievement = '🔻 ĐỘI CHÓT BẢNG';
+          } else {
+            delta = -2;
+            achievement = '⚠️ XUỐNG HẠNG';
+          }
+        } else if (rank > Math.floor(count * 0.72) && count >= 6) {
+          delta = -1;
+          achievement = '📉 SA SÚT PHONG ĐỘ';
+        } else {
+          delta = 0;
+          achievement = '⚖️ TRUNG VỊ ỔN ĐỊNH';
+        }
+
+        // CRITICAL CONSTRAINT: DO NOT EXCEED 125 OVR!
+        const newRating = Math.min(125, Math.max(50, oldRating + delta));
+        const actualDelta = newRating - oldRating;
+
+        t.rating = newRating;
+
+        ovrChanges.push({
+          team: t,
+          rank,
+          played: r.played,
+          pts: r.pts,
+          gd: r.gf - r.ga,
+          oldRating,
+          delta: actualDelta,
+          newRating,
+          achievement
+        });
+      });
+
+      // Fluctuation for other teams across the world (-1 to +1), strictly capped at 125 OVR
+      const tourneyTeamIds = new Set(rows.map(r => r.team.id));
+      TEAMS_DB.forEach(t => {
+        if (!tourneyTeamIds.has(t.id)) {
+          const rand = Math.random();
+          let subtle = 0;
+          if (rand < 0.22) subtle = 1;
+          else if (rand > 0.82) subtle = -1;
+          t.rating = Math.min(125, Math.max(50, t.rating + subtle));
+        }
+      });
+
+      saveCustomRatings();
+      state.seasonSummary = {
+        tourney,
+        seasonYear: state.seasonYear,
+        ovrChanges
+      };
+
+      showSeasonEndModal(tourney, ovrChanges);
+      return ovrChanges;
+    }
+
+    function showSeasonEndModal(tourneyParam, ovrChangesParam) {
+      const tourney = tourneyParam || state.seasonSummary?.tourney || getActiveTournament();
+      const ovrChanges = ovrChangesParam || state.seasonSummary?.ovrChanges;
+
+      if (!ovrChanges || !ovrChanges.length) {
+        handleSeasonEndAndOvrProgression(tourney);
+        return;
+      }
+
+      const modal = document.getElementById('modalSeasonEnd');
+      if (!modal) return;
+
+      updateSeasonHeaderBadge();
+
+      const subtitle = document.getElementById('seasonEndTournamentSubtitle');
+      if (subtitle) {
+        subtitle.textContent = `${tourney.icon} ${tourney.name} · Bảng tổng kết và biến động chỉ số OVR (Tối đa 125 OVR)`;
+      }
+
+      // Champion spotlight
+      const champion = ovrChanges[0];
+      const champBanner = document.getElementById('seasonChampionBanner');
+      if (champBanner && champion) {
+        const deltaStr = champion.delta >= 0 ? `+${champion.delta}` : `${champion.delta}`;
+        champBanner.innerHTML = `
+          <div class="relative shrink-0">
+            ${getTeamLogoHtml(champion.team, 'w-16 h-16')}
+            <span class="absolute -top-2 -right-2 text-xl drop-shadow">👑</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950">
+                🏆 QUÁN QUÂN MÙA GIẢI ${state.seasonYear}
+              </span>
+              <span class="text-xs text-amber-200 font-semibold">${champion.pts} điểm (${champion.played} trận)</span>
+            </div>
+            <h4 class="text-base sm:text-lg font-black text-white truncate mt-0.5">${champion.team.name}</h4>
+            <div class="flex items-center gap-2 mt-1 text-xs flex-wrap">
+              <span class="text-slate-300">Chỉ số OVR: <strong class="text-white">${champion.oldRating}</strong> ➔ <strong class="text-emerald-300 font-black text-sm">${champion.newRating}</strong></span>
+              <span class="px-2 py-0.5 rounded-md text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">▲ ${deltaStr} OVR</span>
+              ${champion.newRating >= 125 ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-400 text-slate-950">⭐ MAX 125</span>' : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      // Populate Table Body
+      const tbody = document.getElementById('seasonOvrTableBody');
+      if (tbody) {
+        tbody.innerHTML = ovrChanges.map(item => {
+          let deltaBadge = '';
+          if (item.delta > 0) {
+            deltaBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">▲ +${item.delta}</span>`;
+          } else if (item.delta < 0) {
+            deltaBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-black bg-rose-500/20 text-rose-300 border border-rose-500/30">▼ ${item.delta}</span>`;
+          } else {
+            deltaBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-800 text-slate-400 border border-white/5">0</span>`;
+          }
+
+          const isMax = item.newRating >= 125;
+          const maxBadge = isMax ? `<span class="ml-1 text-[9px] px-1.5 py-0.2 rounded font-black bg-amber-400 text-slate-950">MAX</span>` : '';
+
+          let rankBadge = `${item.rank}`;
+          if (item.rank === 1) rankBadge = '🥇';
+          else if (item.rank === 2) rankBadge = '🥈';
+          else if (item.rank === 3) rankBadge = '🥉';
+
+          return `
+            <tr class="${item.rank === 1 ? 'bg-amber-500/10 font-bold' : ''} hover:bg-white/5 transition">
+              <td class="py-2 px-2 text-center font-mono font-bold text-slate-400">${rankBadge}</td>
+              <td class="py-2 px-2 truncate max-w-[170px]">
+                <div class="flex items-center gap-2">
+                  ${getTeamLogoHtml(item.team, 'w-5 h-5')}
+                  <span class="truncate font-semibold text-white">${item.team.name}</span>
+                </div>
+              </td>
+              <td class="py-2 px-2 hidden sm:table-cell text-[11px] text-slate-300">${item.achievement}</td>
+              <td class="py-2 px-2 text-center font-mono text-slate-400">${item.oldRating}</td>
+              <td class="py-2 px-2 text-center">${deltaBadge}</td>
+              <td class="py-2 px-2 text-right font-mono font-black text-white">${item.newRating}${maxBadge}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      modal.classList.remove('hidden');
+      SoundFX.winExact();
+      if (window.confetti) {
+        window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } });
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function advanceToNextSeason() {
+      SoundFX.click();
+      state.seasonYear = (state.seasonYear || 2026) + 1;
+      try {
+        localStorage.setItem('football_season_year', state.seasonYear);
+      } catch (e) {}
+
+      updateSeasonHeaderBadge();
+
+      // Reset Active Tournament for fresh new season
+      const tourney = getActiveTournament();
+      initStandingsForTournament(tourney.id, true);
+
+      state.roundNumber = 1;
+      state.stageIndex = 0;
+      state.phase = 'predicting';
+      state.seasonSummary = null;
+
+      // Close modal
+      const modal = document.getElementById('modalSeasonEnd');
+      if (modal) modal.classList.add('hidden');
+
+      const overlay = document.getElementById('resultOverlay');
+      if (overlay) overlay.classList.add('hidden');
+
+      // Re-render UI
+      renderLeagueStandings();
+      renderFifaWorldRankings();
+      renderTeamsDirectory();
+      updateStageFormatUI();
+      pickNextMatch();
+
+      if (window.confetti) {
+        window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+      }
+    }
+
+    function simulateRemainingSeasonMatches(tourneyParam) {
+      SoundFX.whistle();
+      const tourney = tourneyParam || getActiveTournament();
+      initStandingsForTournament(tourney.id);
+
+      const allGroups = state.groupFixturesByTourney[tourney.id] || {};
+      const stTable = state.standingsByTourney[tourney.id];
+
+      function record(teamH, teamA, gH, gA) {
+        const rH = stTable[teamH.id];
+        const rA = stTable[teamA.id];
+        if (!rH || !rA) return;
+        rH.played++; rA.played++;
+        rH.gf += gH; rH.ga += gA;
+        rA.gf += gA; rA.ga += gH;
+        if (gH > gA) {
+          rH.won++; rH.pts += 3; rA.lost++;
+        } else if (gH < gA) {
+          rA.won++; rA.pts += 3; rH.lost++;
+        } else {
+          rH.drawn++; rA.drawn++; rH.pts += 1; rA.pts += 1;
+        }
+      }
+
+      let simulatedCount = 0;
+      for (const [grpName, grpFixtures] of Object.entries(allGroups)) {
+        for (const f of grpFixtures) {
+          if (!f.played) {
+            const { homeGoals, awayGoals } = generateMatchScore(f.home, f.away);
+            f.played = true;
+            f.score = `${homeGoals}-${awayGoals}`;
+            record(f.home, f.away, homeGoals, awayGoals);
+            updateFifaWorldPointsAfterMatch(f.home, f.away, homeGoals, awayGoals);
+            simulatedCount++;
+          }
+        }
+      }
+
+      state.phase = 'complete';
+      renderLeagueStandings();
+      renderFifaWorldRankings();
+      handleSeasonEndAndOvrProgression(tourney);
     }
 
     // =========================================================================
@@ -3625,7 +3983,9 @@
           state.phase = 'qualified';
           document.getElementById('btnLockPrediction').textContent = 'Vào vòng loại trực tiếp';
         } else {
-          document.getElementById('btnLockPrediction').textContent = 'Bắt đầu mùa giải mới';
+          state.phase = 'complete';
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>XEM TỔNG KẾT MÙA & OVR</span>`;
+          handleSeasonEndAndOvrProgression(getActiveTournament());
         }
       }
     }
@@ -3745,7 +4105,7 @@
       state.pitchDirty = true;
       initPitchPlayers();
       updateScoreDisplay();
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) window.lucide.createIcons();
     }
 
     // =========================================================================
@@ -3801,7 +4161,7 @@
         lockBtn.classList.add('opacity-50', 'cursor-not-allowed');
         lockBtn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>ĐANG GIẢ LẬP TRÊN SÂN...</span>`;
       }
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) window.lucide.createIcons();
     }
 
     // =========================================================================
@@ -4305,11 +4665,27 @@
 
       document.getElementById('resultOverlay').classList.remove('hidden');
 
+      const focusId = state.focusedTeamId || state.homeTeam.id;
+      const fixturesOfFocus = fixturesForTeam(focusId);
+      const remainingMatches = fixturesOfFocus.filter(f => !f.played);
+      const isSeasonConcluded = !state.isKnockoutMatch && remainingMatches.length === 0;
+
       const lockBtn = document.getElementById('btnLockPrediction');
       lockBtn.disabled = false;
       lockBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      lockBtn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>TRẬN TIẾP THEO CÙNG GIẢI</span>`;
-      if (window.lucide) lucide.createIcons();
+
+      if (isSeasonConcluded) {
+        state.phase = 'complete';
+        handleSeasonEndAndOvrProgression(tourney);
+        lockBtn.innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>XEM TỔNG KẾT MÙA & OVR</span>`;
+        const nextOverlayBtn = document.getElementById('btnNextMatchOverlay');
+        if (nextOverlayBtn) {
+          nextOverlayBtn.innerHTML = `<i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i><span>Tổng Kết Mùa Giải & OVR</span>`;
+        }
+      } else {
+        lockBtn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>TRẬN TIẾP THEO CÙNG GIẢI</span>`;
+      }
+      if (window.lucide) window.lucide.createIcons();
     }
 
     // =========================================================================
@@ -5042,6 +5418,7 @@
     // =========================================================================
     window.addEventListener('load', () => {
       loadSavedStats();
+      loadCustomRatings();
       updateStatsUI();
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
@@ -5143,7 +5520,7 @@
           updateStageFormatUI();
           pickNextMatch();
         } else if (state.phase === 'complete') {
-          selectTournament(state.activeTournamentId);
+          showSeasonEndModal();
         } else if (state.phase === 'qualified') {
           state.stageIndex = 1;
           updateStageFormatUI();
@@ -5173,8 +5550,51 @@
 
       document.getElementById('btnNextMatchOverlay').addEventListener('click', () => {
         SoundFX.click();
-        pickNextMatch();
+        if (state.phase === 'complete') {
+          showSeasonEndModal();
+        } else {
+          pickNextMatch();
+        }
       });
+
+      // Season End & OVR Progression Modal Controls
+      const btnSimEnd = document.getElementById('btnSimulateEndSeason');
+      if (btnSimEnd) {
+        btnSimEnd.addEventListener('click', () => {
+          simulateRemainingSeasonMatches();
+        });
+      }
+
+      const btnSeasonHdr = document.getElementById('btnSeasonHeader');
+      if (btnSeasonHdr) {
+        btnSeasonHdr.addEventListener('click', () => {
+          SoundFX.click();
+          showSeasonEndModal();
+        });
+      }
+
+      const btnCloseSeason = document.getElementById('btnCloseSeasonEndModal');
+      if (btnCloseSeason) {
+        btnCloseSeason.addEventListener('click', () => {
+          SoundFX.click();
+          document.getElementById('modalSeasonEnd')?.classList.add('hidden');
+        });
+      }
+
+      const btnKeepReview = document.getElementById('btnKeepReviewSeason');
+      if (btnKeepReview) {
+        btnKeepReview.addEventListener('click', () => {
+          SoundFX.click();
+          document.getElementById('modalSeasonEnd')?.classList.add('hidden');
+        });
+      }
+
+      const btnNextSeason = document.getElementById('btnStartNextSeason');
+      if (btnNextSeason) {
+        btnNextSeason.addEventListener('click', () => {
+          advanceToNextSeason();
+        });
+      }
 
       document.getElementById('btnSkipMatch').addEventListener('click', () => {
         SoundFX.click();
@@ -5228,7 +5648,7 @@
         const icon = document.getElementById('iconSound');
         icon.setAttribute('data-lucide', SoundFX.enabled ? 'volume-2' : 'volume-x');
         icon.className = SoundFX.enabled ? 'w-5 h-5 text-emerald-400' : 'w-5 h-5 text-slate-500';
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) window.lucide.createIcons();
         if (SoundFX.enabled) SoundFX.click();
       });
 
