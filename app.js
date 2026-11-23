@@ -5183,6 +5183,14 @@
 
     function drawPitch() {
       requestAnimationFrame(drawPitch);
+
+      // ALWAYS run player physics regardless of 2D canvas visibility
+      // so 3D stickmen get updated positions when 3D tab is active
+      if (state.phase === 'simulating') {
+        const steps = Math.min(4, state.speedMultiplier);
+        for (let step = 0; step < steps; step++) updatePlayersAndBallTouchPhysics();
+      }
+
       if (window.Stickman3D && window.Stickman3D.isActive()) {
         window.Stickman3D.update(state);
       }
@@ -5244,10 +5252,6 @@
 
       // Draw Protruding Left & Right Goal Nets
       drawGoalNets(w, h, padX, padY, fieldW, fieldH);
-
-      // Step player-ball contact & passing physics
-      const steps = state.phase === 'simulating' ? Math.min(4, state.speedMultiplier) : 1;
-      for (let step = 0; step < steps; step++) updatePlayersAndBallTouchPhysics();
 
       // Draw Pass Trajectory Line when a player passes the ball
       if (state.ballSim.passLine && state.ballSim.passLine.alpha > 0) {
