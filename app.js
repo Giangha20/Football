@@ -2836,6 +2836,8 @@
       fifaFilter: 'nations',
       fifaPointsMap: {},
       fifaLastDeltaMap: {},
+      fifaPrevRankMap: {},
+      fifaPrevClubRankMap: {},
       phase: 'predicting',       // 'predicting' | 'simulating' | 'finished'
       simInterval: null,
       goalPopupTimeout: null,
@@ -2977,6 +2979,26 @@
       });
     }
 
+    // Snapshot previous ranks before a round so live +/- rank changes (▲/▼) can be displayed
+    function snapshotFifaRanks() {
+      initFifaWorldPoints();
+      const allNations = TEAMS_DB
+        .filter(t => t.type === 'nations')
+        .map(t => ({ id: t.id, pts: state.fifaPointsMap[t.id] || 1200 }))
+        .sort((a, b) => b.pts - a.pts);
+      allNations.forEach((n, idx) => {
+        state.fifaPrevRankMap[n.id] = idx + 1;
+      });
+
+      const allClubs = TEAMS_DB
+        .filter(t => t.type !== 'nations')
+        .map(t => ({ id: t.id, pts: state.fifaPointsMap[t.id] || 1200 }))
+        .sort((a, b) => b.pts - a.pts);
+      allClubs.forEach((c, idx) => {
+        state.fifaPrevClubRankMap[c.id] = idx + 1;
+      });
+    }
+
     // Official FIFA World Ranking Points Calculation: P = P_before + I * (W - We)
     function updateFifaWorldPointsAfterMatch(home, away, actualH, actualA, isPenWinHome = null) {
       initFifaWorldPoints();
@@ -3058,15 +3080,15 @@
           nations: 'Quốc gia Thế giới (Đủ 186 ĐTQG FIFA)',
           asean: 'Đội tuyển Đông Nam Á (BXH FIFA Đông Nam Á - 11 Quốc gia AFF)',
           afc: 'Đội tuyển Châu Á (BXH FIFA Châu Á - 47 Quốc gia AFC)',
-          clubs: 'Câu lạc bộ Thế giới & Châu Á'
+          clubs: 'Câu lạc bộ Thế giới & Châu Á (Đủ 215 CLB)'
         };
         const unitName = labelMap[state.fifaFilter] || 'Đội bóng';
-        countLbl.textContent = `Hiển thị đầy đủ: ${filtered.length} / ${ranked.length} ${unitName} • Công thức chuẩn FIFA: P = P_trước + I × (W - We)`;
+        countLbl.textContent = `Hiển thị: ${filtered.length} / ${ranked.length} ${unitName} • Cập nhật trực tiếp kết quả các trận đấu song song • Chuẩn FIFA: P = P_trước + I × (W - We)`;
       }
 
       tbody.innerHTML = filtered.map(item => {
         const isCurrent = (item.team.id === state.homeTeam.id || item.team.id === state.awayTeam.id);
-        let deltaHtml = '<span class="text-slate-500 font-mono">0.0</span>';
+        let deltaHtml = '<span class="text-slate-500 font-mono">0.00</span>';
         if (item.delta > 0) {
           deltaHtml = `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono">+${item.delta.toFixed(2)} ▲</span>`;
         } else if (item.delta < 0) {
@@ -3076,11 +3098,26 @@
           ? 'bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-md'
           : (item.rank <= 10 ? 'bg-sky-500/20 text-sky-300 font-bold px-2 py-0.5 rounded-md' : 'text-slate-400 font-mono px-2');
 
+        const isNations = (state.fifaFilter === 'nations' || state.fifaFilter === 'asean' || state.fifaFilter === 'afc');
+        const prevRank = isNations ? state.fifaPrevRankMap[item.team.id] : state.fifaPrevClubRankMap[item.team.id];
+        let rankShiftHtml = '';
+        if (prevRank !== undefined && prevRank !== null) {
+          const shift = prevRank - item.rank;
+          if (shift > 0) {
+            rankShiftHtml = `<span class="text-[10px] text-emerald-400 font-extrabold font-mono" title="Tăng ${shift} bậc so với trước">▲${shift}</span>`;
+          } else if (shift < 0) {
+            rankShiftHtml = `<span class="text-[10px] text-rose-400 font-extrabold font-mono" title="Giảm ${Math.abs(shift)} bậc so với trước">▼${Math.abs(shift)}</span>`;
+          } else {
+            rankShiftHtml = `<span class="text-[10px] text-slate-500 font-mono">-</span>`;
+          }
+        }
+
         return `
           <tr data-fifa-team="${item.team.id}" class="fifa-row cursor-pointer hover:bg-slate-800/70 transition ${isCurrent ? 'bg-sky-500/15 font-bold text-white' : ''}" title="Bấm để đưa ${item.team.name} vào thi đấu">
             <td class="py-2 px-2">
               <div class="flex items-center gap-1.5">
                 <span class="${rankBadgeClass}">#${item.rank}</span>
+                ${rankShiftHtml}
                 ${(state.fifaFilter === 'asean' || state.fifaFilter === 'afc') && item.worldRank ? `<span class="text-[10px] text-slate-400 font-mono">(TG #${item.worldRank})</span>` : ''}
               </div>
             </td>
@@ -3186,7 +3223,7 @@
           sortedTeams.forEach((t, idx) => {
             table[t.id] = {
               team: t,
-              group: `Vòng loại ${groupLetters[idx % numRegionalGroups]}`,
+              group: groupLetters[idx % numRegionalGroups],
               played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, pts: 0
             };
           });
@@ -3277,7 +3314,7 @@
       const schedBanner = document.getElementById('groupScheduleBanner');
       if (numGroups > 0) {
         // Determine current active group & focused team
-        const currentGrp = tableObj[state.focusedTeamId].group;
+        const currentGrp = tableObj[state.focusedTeamId]?.group || Object.keys(state.groupFixturesByTourney[tourney.id])[0] || 'A';
         state.focusedGroup = currentGrp;
         const focusTeam = tableObj[state.focusedTeamId]?.team || state.homeTeam;
         const grpFixtures = (state.groupFixturesByTourney[tourney.id] && state.groupFixturesByTourney[tourney.id][currentGrp]) || [];
@@ -3471,7 +3508,9 @@
       stageSelect.hidden = stages.length <= 1;
       const currentStageName = stages[state.stageIndex] || regularStage;
 
-      const isKnockout = tourney.id === 'world_cup' ? state.stageIndex >= 9 : state.stageIndex > 0;
+      const isKnockout = tourney.id === 'world_cup' 
+        ? state.stageIndex >= 9 
+        : (tourney.knockoutPossible && tourney.stages && state.stageIndex >= (tourney.stages.length - 4));
       state.isKnockoutMatch = isKnockout;
 
       let formatDesc = '';
@@ -3539,12 +3578,13 @@
       const pool = getTeamsInActiveTournament();
       const focus = pool.find(t => t.id === state.focusedTeamId) || pool[0];
       state.focusedTeamId = focus.id;
-      state.focusedGroup = state.standingsByTourney[state.activeTournamentId][focus.id].group;
+      const focusRow = state.standingsByTourney[state.activeTournamentId]?.[focus.id];
+      state.focusedGroup = focusRow ? focusRow.group : 'A';
       state.activeGroupFilter = state.focusedGroup;
       const picker = document.getElementById('focusTeam');
       picker.replaceChildren(...pool.map(t => new Option(t.name, t.id)));
       picker.value = focus.id;
-      if (state.stageIndex > 0) {
+      if (state.isKnockoutMatch) {
         const opponents = pool.filter(t => t !== focus);
         setupMatch(focus, requested?.away || opponents[Math.floor(Math.random() * opponents.length)]);
         return;
@@ -4079,22 +4119,103 @@
 
 
 
+      // 1. Snapshot previous ranks before this round's matches so live rank shift (▲/▼) is computed
+      snapshotFifaRanks();
+
+      const playedTeamsThisRound = new Set();
+      playedTeamsThisRound.add(state.homeTeam.id);
+      playedTeamsThisRound.add(state.awayTeam.id);
+
+      let concurrentTourneyMatches = 0;
+      let concurrentWorldMatches = 0;
+
+      // 2. Tournament Fixtures: Simulate User's match + other matches in current group + ALL other groups of this tournament!
       if (!state.isKnockoutMatch) {
-        const schedule = state.groupFixturesByTourney[tourney.id][state.focusedGroup];
-        const current = schedule.find(f => !f.played && f.home === state.homeTeam && f.away === state.awayTeam);
-        current.played = true;
-        current.score = `${actualH}-${actualA}`;
-        recordScoreToStandings(current.home, current.away, actualH, actualA);
-        const nextDay = fixturesForTeam(state.focusedTeamId).find(f => !f.played)?.matchday ?? Infinity;
-        for (const fixture of schedule) {
-          if (fixture.played || (fixture.matchday >= nextDay && fixture.matchday !== current.matchday)) continue;
-          const { homeGoals, awayGoals } = generateMatchScore(fixture.home, fixture.away);
-          fixture.played = true;
-          fixture.score = `${homeGoals}-${awayGoals}`;
-          recordScoreToStandings(fixture.home, fixture.away, homeGoals, awayGoals);
-          updateFifaWorldPointsAfterMatch(fixture.home, fixture.away, homeGoals, awayGoals);
+        const allGroups = state.groupFixturesByTourney[tourney.id] || {};
+        const focusedSchedule = allGroups[state.focusedGroup] || [];
+        const current = focusedSchedule.find(f => !f.played && f.home.id === state.homeTeam.id && f.away.id === state.awayTeam.id);
+        const currentMatchday = current ? current.matchday : state.roundNumber;
+
+        if (current) {
+          current.played = true;
+          current.score = `${actualH}-${actualA}`;
+        }
+        recordScoreToStandings(state.homeTeam, state.awayTeam, actualH, actualA);
+
+        // Iterate over ALL groups in the active tournament (Group A, B, C, D, E, F, G, H, I, J, K, L...)
+        for (const [grpName, grpFixtures] of Object.entries(allGroups)) {
+          for (const fixture of grpFixtures) {
+            if (fixture.played) continue;
+            // Matches scheduled for this same matchday/round
+            if (fixture.matchday === currentMatchday) {
+              const { homeGoals, awayGoals } = generateMatchScore(fixture.home, fixture.away);
+              fixture.played = true;
+              fixture.score = `${homeGoals}-${awayGoals}`;
+              recordScoreToStandings(fixture.home, fixture.away, homeGoals, awayGoals);
+              updateFifaWorldPointsAfterMatch(fixture.home, fixture.away, homeGoals, awayGoals);
+              playedTeamsThisRound.add(fixture.home.id);
+              playedTeamsThisRound.add(fixture.away.id);
+              concurrentTourneyMatches++;
+            }
+          }
+        }
+      } else {
+        // Knockout stage: Pair up other tournament teams for this round
+        const pool = getTeamsInActiveTournament().filter(t => !playedTeamsThisRound.has(t.id));
+        for (let i = 0; i + 1 < pool.length; i += 2) {
+          const t1 = pool[i];
+          const t2 = pool[i + 1];
+          const { homeGoals, awayGoals } = generateMatchScore(t1, t2);
+          let g1 = homeGoals, g2 = awayGoals;
+          let penWin = null;
+          if (g1 === g2) {
+            penWin = Math.random() > 0.5;
+          }
+          updateFifaWorldPointsAfterMatch(t1, t2, g1, g2, penWin);
+          playedTeamsThisRound.add(t1.id);
+          playedTeamsThisRound.add(t2.id);
+          concurrentTourneyMatches++;
         }
       }
+
+      // 3. Official FIFA World Ranking points for the User's match
+      const isPenWinHome = (state.penHome !== null && state.penAway !== null) ? (state.penHome > state.penAway) : null;
+      const fifaDelta = updateFifaWorldPointsAfterMatch(state.homeTeam, state.awayTeam, actualH, actualA, isPenWinHome);
+
+      // 4. Worldwide Concurrent Matches:
+      // When playing as National Teams: Simulate International Matchday fixtures for other nations across the world (186 nations)!
+      // When playing as Clubs: Simulate Club Matchday fixtures for other clubs across world leagues!
+      const isNationalMode = tourney.group === 'nations';
+      if (isNationalMode) {
+        const otherNations = TEAMS_DB.filter(t => t.type === 'nations' && !playedTeamsThisRound.has(t.id));
+        otherNations.sort((a, b) => b.rating - a.rating);
+        for (let i = 0; i + 1 < otherNations.length; i += 2) {
+          const n1 = otherNations[i];
+          const n2 = otherNations[i + 1];
+          const { homeGoals, awayGoals } = generateMatchScore(n1, n2);
+          updateFifaWorldPointsAfterMatch(n1, n2, homeGoals, awayGoals);
+          playedTeamsThisRound.add(n1.id);
+          playedTeamsThisRound.add(n2.id);
+          concurrentWorldMatches++;
+        }
+      } else {
+        const otherClubs = TEAMS_DB.filter(t => t.type !== 'nations' && !playedTeamsThisRound.has(t.id));
+        otherClubs.sort((a, b) => b.rating - a.rating);
+        for (let i = 0; i + 1 < otherClubs.length; i += 2) {
+          const c1 = otherClubs[i];
+          const c2 = otherClubs[i + 1];
+          const { homeGoals, awayGoals } = generateMatchScore(c1, c2);
+          updateFifaWorldPointsAfterMatch(c1, c2, homeGoals, awayGoals);
+          playedTeamsThisRound.add(c1.id);
+          playedTeamsThisRound.add(c2.id);
+          concurrentWorldMatches++;
+        }
+      }
+
+      // 5. Instantly Re-render both Tournament Standings and FIFA World Rankings!
+      renderLeagueStandings();
+      renderFifaWorldRankings();
+
       const predH = state.predHome;
       const predA = state.predAway;
 
@@ -4103,11 +4224,6 @@
       const actualSign = Math.sign(actualH - actualA);
       const predSign = Math.sign(predH - predA);
       const outcomeHit = (actualOutcome === state.predOutcome) || (actualSign === predSign);
-
-      // Compute Official FIFA World Ranking points change (+/-) for both teams
-      const isPenWinHome = (state.penHome !== null && state.penAway !== null) ? (state.penHome > state.penAway) : null;
-      const fifaDelta = updateFifaWorldPointsAfterMatch(state.homeTeam, state.awayTeam, actualH, actualA, isPenWinHome);
-      renderLeagueStandings();
       const diffHit = outcomeHit && ((actualH - actualA) === (predH - predA));
 
       let basePoints = 0;
@@ -4127,7 +4243,7 @@
         badgeClass = 'bg-emerald-500/25 text-emerald-300 border-emerald-400/50';
         SoundFX.winExact();
         if (window.confetti) {
-          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+          window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
         }
       } else if (diffHit) {
         basePoints = 75;
@@ -4179,9 +4295,13 @@
 
       document.getElementById('resultHeadline').textContent = `${state.homeTeam.name} ${actualH} - ${actualA} ${state.awayTeam.name}${penNote}`;
       const fifaSummary = `Điểm FIFA: ${state.homeTeam.code} ${fifaDelta.deltaHome >= 0 ? '+' : ''}${fifaDelta.deltaHome} | ${state.awayTeam.code} ${fifaDelta.deltaAway >= 0 ? '+' : ''}${fifaDelta.deltaAway}`;
+      const totalConcurrentMatches = concurrentTourneyMatches + concurrentWorldMatches;
+      const concurrentNote = totalConcurrentMatches > 0
+        ? ` • Đồng thời: ${concurrentTourneyMatches} trận bảng đấu & ${concurrentWorldMatches} trận ${isNationalMode ? 'quốc tế' : 'CLB'} khác đã thi đấu`
+        : '';
       document.getElementById('resultSubtext').textContent = totalEarned > 0
-        ? `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • Nhận +${totalEarned}đ (Chuỗi: ${state.streak}🔥) • ${fifaSummary}`
-        : `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • 0đ lượt này • ${fifaSummary}`;
+        ? `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • Nhận +${totalEarned}đ (Chuỗi: ${state.streak}🔥) • ${fifaSummary}${concurrentNote}`
+        : `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • 0đ lượt này • ${fifaSummary}${concurrentNote}`;
 
       document.getElementById('resultOverlay').classList.remove('hidden');
 
@@ -5173,10 +5293,15 @@
       document.getElementById('selectCompetitionStage').addEventListener('change', (e) => {
         SoundFX.click();
         state.stageIndex = Number(e.target.value) || 0;
+        if (state.activeTournamentId === 'world_cup') {
+          initStandingsForTournament('world_cup', true);
+        }
+        updateStageFormatUI();
         pickNextMatch();
       });
 
       document.getElementById('focusTeam').onchange = e => chooseTeam(e.target.value);
+      snapshotFifaRanks();
       selectTournament(state.activeTournamentId);
       requestAnimationFrame(drawPitch);
     });
