@@ -2938,6 +2938,7 @@
       seasonYear: 2026,
       seasonSummary: null
     };
+    window.footballState = state;
 
     function loadSavedStats() {
       try {
@@ -3102,11 +3103,87 @@
       return ovrChanges;
     }
 
+    function isTournamentCompleted(tourneyParam) {
+      const tourney = tourneyParam || getActiveTournament();
+      const allGroups = state.groupFixturesByTourney[tourney.id] || {};
+      let totalFixtures = 0;
+      let playedFixtures = 0;
+
+      for (const [grpName, grpFixtures] of Object.entries(allGroups)) {
+        for (const f of grpFixtures) {
+          totalFixtures++;
+          if (f.played) playedFixtures++;
+        }
+      }
+
+      if (totalFixtures === 0) return false;
+      return playedFixtures >= totalFixtures;
+    }
+
+    function openSeasonHeaderAction() {
+      const tourney = getActiveTournament();
+      if (isTournamentCompleted(tourney) && state.seasonSummary) {
+        showSeasonEndModal(tourney, state.seasonSummary.ovrChanges);
+      } else {
+        showSeasonProgressModal(tourney);
+      }
+    }
+
+    function showSeasonProgressModal(tourneyParam) {
+      const tourney = tourneyParam || getActiveTournament();
+      const modal = document.getElementById('modalSeasonProgress');
+      if (!modal) return;
+
+      const allGroups = state.groupFixturesByTourney[tourney.id] || {};
+      let totalFixtures = 0;
+      let playedFixtures = 0;
+      for (const [grpName, grpFixtures] of Object.entries(allGroups)) {
+        for (const f of grpFixtures) {
+          totalFixtures++;
+          if (f.played) playedFixtures++;
+        }
+      }
+
+      const stTable = state.standingsByTourney[tourney.id];
+      const rows = stTable ? Object.values(stTable).sort(rankStandingRows) : [];
+      const leader = rows[0]?.team?.name || 'Đang cập nhật';
+      const playedCount = rows[0]?.played || 0;
+
+      const detailsEl = document.getElementById('seasonProgressDetails');
+      if (detailsEl) {
+        detailsEl.innerHTML = `
+          <div class="flex items-center justify-between py-1 border-b border-white/5">
+            <span class="text-slate-400">Giải đấu hiện tại:</span>
+            <span class="font-bold text-white">${tourney.icon} ${tourney.name}</span>
+          </div>
+          <div class="flex items-center justify-between py-1 border-b border-white/5">
+            <span class="text-slate-400">Tiến độ mùa giải:</span>
+            <span class="font-mono font-bold text-emerald-400">${playedFixtures} / ${totalFixtures} trận đã đá</span>
+          </div>
+          <div class="flex items-center justify-between py-1 border-b border-white/5">
+            <span class="text-slate-400">Số vòng đã thi đấu:</span>
+            <span class="font-mono font-bold text-amber-300">Vòng ${state.roundNumber || playedCount}</span>
+          </div>
+          <div class="flex items-center justify-between py-1">
+            <span class="text-slate-400">Đội dẫn đầu bảng:</span>
+            <span class="font-bold text-amber-300">${leader}</span>
+          </div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
     function showSeasonEndModal(tourneyParam, ovrChangesParam) {
       const tourney = tourneyParam || state.seasonSummary?.tourney || getActiveTournament();
       const ovrChanges = ovrChangesParam || state.seasonSummary?.ovrChanges;
 
       if (!ovrChanges || !ovrChanges.length) {
+        if (!isTournamentCompleted(tourney)) {
+          showSeasonProgressModal(tourney);
+          return;
+        }
         handleSeasonEndAndOvrProgression(tourney);
         return;
       }
@@ -3128,7 +3205,7 @@
         const deltaStr = champion.delta >= 0 ? `+${champion.delta}` : `${champion.delta}`;
         champBanner.innerHTML = `
           <div class="relative shrink-0">
-            ${getTeamLogoHtml(champion.team, 'w-16 h-16')}
+            ${getTeamLogoHtml(champion.team, 'w-14 h-14 sm:w-16 sm:h-16')}
             <span class="absolute -top-2 -right-2 text-xl drop-shadow">👑</span>
           </div>
           <div class="min-w-0 flex-1">
@@ -3148,7 +3225,7 @@
         `;
       }
 
-      // Populate Table Body
+      // Populate Table Body (Scrollable to view all remaining teams)
       const tbody = document.getElementById('seasonOvrTableBody');
       if (tbody) {
         tbody.innerHTML = ovrChanges.map(item => {
@@ -3195,6 +3272,33 @@
       if (window.lucide) window.lucide.createIcons();
     }
 
+    function replayCurrentSeason() {
+      SoundFX.click();
+      const tourney = getActiveTournament();
+      initStandingsForTournament(tourney.id, true);
+
+      state.roundNumber = 1;
+      state.stageIndex = 0;
+      state.phase = 'predicting';
+      state.seasonSummary = null;
+
+      // Close modals
+      document.getElementById('modalSeasonEnd')?.classList.add('hidden');
+      document.getElementById('modalSeasonProgress')?.classList.add('hidden');
+      document.getElementById('resultOverlay')?.classList.add('hidden');
+
+      // Re-render UI
+      renderLeagueStandings();
+      renderFifaWorldRankings();
+      renderTeamsDirectory();
+      updateStageFormatUI();
+      pickNextMatch();
+
+      if (window.confetti) {
+        window.confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+      }
+    }
+
     function advanceToNextSeason() {
       SoundFX.click();
       state.seasonYear = (state.seasonYear || 2026) + 1;
@@ -3204,7 +3308,7 @@
 
       updateSeasonHeaderBadge();
 
-      // Reset Active Tournament for fresh new season
+      // Reset Active Tournament for fresh new season with upgraded/downgraded OVRs
       const tourney = getActiveTournament();
       initStandingsForTournament(tourney.id, true);
 
@@ -3213,12 +3317,10 @@
       state.phase = 'predicting';
       state.seasonSummary = null;
 
-      // Close modal
-      const modal = document.getElementById('modalSeasonEnd');
-      if (modal) modal.classList.add('hidden');
-
-      const overlay = document.getElementById('resultOverlay');
-      if (overlay) overlay.classList.add('hidden');
+      // Close modals
+      document.getElementById('modalSeasonEnd')?.classList.add('hidden');
+      document.getElementById('modalSeasonProgress')?.classList.add('hidden');
+      document.getElementById('resultOverlay')?.classList.add('hidden');
 
       // Re-render UI
       renderLeagueStandings();
@@ -3985,7 +4087,11 @@
         } else {
           state.phase = 'complete';
           document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>XEM TỔNG KẾT MÙA & OVR</span>`;
-          handleSeasonEndAndOvrProgression(getActiveTournament());
+          if (!isTournamentCompleted(getActiveTournament())) {
+            simulateRemainingSeasonMatches(getActiveTournament());
+          } else {
+            handleSeasonEndAndOvrProgression(getActiveTournament());
+          }
         }
       }
     }
@@ -4104,6 +4210,7 @@
       document.getElementById('liveTouchBadge').textContent = 'Chờ giao bóng';
       state.pitchDirty = true;
       initPitchPlayers();
+      if (window.Stickman3D) window.Stickman3D.updateTeamNames(home, away);
       updateScoreDisplay();
       if (window.lucide) window.lucide.createIcons();
     }
@@ -4238,6 +4345,7 @@
       setTimeout(() => {
         SoundFX.netSwish();
         SoundFX.goal();
+        if (window.Stickman3D) window.Stickman3D.onGoalScored(side);
         triggerGoalCelebrationPopup(scorer, minute, teamName, homeScore, awayScore);
       }, 380);
     }
@@ -4676,7 +4784,11 @@
 
       if (isSeasonConcluded) {
         state.phase = 'complete';
-        handleSeasonEndAndOvrProgression(tourney);
+        if (!isTournamentCompleted(tourney)) {
+          simulateRemainingSeasonMatches(tourney);
+        } else {
+          handleSeasonEndAndOvrProgression(tourney);
+        }
         lockBtn.innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>XEM TỔNG KẾT MÙA & OVR</span>`;
         const nextOverlayBtn = document.getElementById('btnNextMatchOverlay');
         if (nextOverlayBtn) {
@@ -4736,7 +4848,7 @@
         { x: 0.32,  y: 0.50, role: 'MF' },
         { x: 0.35,  y: 0.75, role: 'MF' },
         { x: 0.47,  y: 0.20, role: 'FW' },
-        { x: 0.49,  y: 0.50, role: 'FW' },
+        { x: 0.48,  y: 0.45, role: 'FW' },
         { x: 0.47,  y: 0.80, role: 'FW' }
       ];
       const away433 = [
@@ -4749,7 +4861,7 @@
         { x: 0.68,  y: 0.50, role: 'MF' },
         { x: 0.65,  y: 0.75, role: 'MF' },
         { x: 0.53,  y: 0.20, role: 'FW' },
-        { x: 0.51,  y: 0.50, role: 'FW' },
+        { x: 0.52,  y: 0.55, role: 'FW' },
         { x: 0.53,  y: 0.80, role: 'FW' }
       ];
 
@@ -5071,6 +5183,9 @@
 
     function drawPitch() {
       requestAnimationFrame(drawPitch);
+      if (window.Stickman3D && window.Stickman3D.isActive()) {
+        window.Stickman3D.update(state);
+      }
       if (!pitchVisible || (!state.pitchDirty && state.phase !== 'simulating')) return;
       state.pitchDirty = false;
       const w = canvas.width;
@@ -5569,7 +5684,7 @@
       if (btnSeasonHdr) {
         btnSeasonHdr.addEventListener('click', () => {
           SoundFX.click();
-          showSeasonEndModal();
+          openSeasonHeaderAction();
         });
       }
 
@@ -5589,12 +5704,101 @@
         });
       }
 
+      const btnReplay = document.getElementById('btnReplaySeason');
+      if (btnReplay) {
+        btnReplay.addEventListener('click', () => {
+          replayCurrentSeason();
+        });
+      }
+
       const btnNextSeason = document.getElementById('btnStartNextSeason');
       if (btnNextSeason) {
         btnNextSeason.addEventListener('click', () => {
           advanceToNextSeason();
         });
       }
+
+      // Season Progress Modal Controls
+      const btnCloseProg = document.getElementById('btnCloseProgressModal');
+      if (btnCloseProg) {
+        btnCloseProg.addEventListener('click', () => {
+          SoundFX.click();
+          document.getElementById('modalSeasonProgress')?.classList.add('hidden');
+        });
+      }
+
+      const btnContinueProg = document.getElementById('btnContinuePlayingSeason');
+      if (btnContinueProg) {
+        btnContinueProg.addEventListener('click', () => {
+          SoundFX.click();
+          document.getElementById('modalSeasonProgress')?.classList.add('hidden');
+        });
+      }
+
+      const btnSimEndNow = document.getElementById('btnSimulateToEndNow');
+      if (btnSimEndNow) {
+        btnSimEndNow.addEventListener('click', () => {
+          document.getElementById('modalSeasonProgress')?.classList.add('hidden');
+          simulateRemainingSeasonMatches();
+        });
+      }
+
+      // 3D Stickman Sub-panel Tabs (Mục con để tránh lag web)
+      const tab2D = document.getElementById('tabSim2D');
+      const tab3D = document.getElementById('tabSim3D');
+      const panel2D = document.getElementById('panelSim2D');
+      const panel3D = document.getElementById('panelSim3D');
+      const controls3D = document.getElementById('controls3D');
+
+      if (tab2D && tab3D) {
+        tab2D.addEventListener('click', () => {
+          SoundFX.click();
+          tab2D.className = 'sim-tab px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 transition flex items-center gap-1.5 shadow font-bold';
+          tab2D.setAttribute('aria-selected', 'true');
+          tab3D.className = 'sim-tab px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5';
+          tab3D.setAttribute('aria-selected', 'false');
+
+          panel2D?.classList.remove('hidden');
+          panel3D?.classList.add('hidden');
+          controls3D?.classList.add('hidden');
+
+          // Pause 3D WebGL loop to guarantee 0% CPU/GPU overhead when 2D is shown
+          if (window.Stickman3D) window.Stickman3D.setActive(false);
+          resizeCanvas();
+        });
+
+        tab3D.addEventListener('click', () => {
+          SoundFX.click();
+          tab3D.className = 'sim-tab px-3.5 py-1.5 rounded-lg bg-amber-400 text-slate-950 transition flex items-center gap-1.5 shadow font-black';
+          tab3D.setAttribute('aria-selected', 'true');
+          tab2D.className = 'sim-tab px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5';
+          tab2D.setAttribute('aria-selected', 'false');
+
+          panel3D?.classList.remove('hidden');
+          panel2D?.classList.add('hidden');
+          controls3D?.classList.remove('hidden');
+
+          // Activate 3D Stickman WebGL loop
+          if (window.Stickman3D) {
+            window.Stickman3D.setActive(true);
+            window.Stickman3D.updateTeamNames(state.homeTeam, state.awayTeam);
+          }
+        });
+      }
+
+      // 3D Camera Controls
+      document.getElementById('btnCamBroadcast')?.addEventListener('click', () => {
+        SoundFX.click();
+        window.Stickman3D?.setCameraMode('broadcast');
+      });
+      document.getElementById('btnCamTactical')?.addEventListener('click', () => {
+        SoundFX.click();
+        window.Stickman3D?.setCameraMode('tactical');
+      });
+      document.getElementById('btnCamBehindGoal')?.addEventListener('click', () => {
+        SoundFX.click();
+        window.Stickman3D?.setCameraMode('behind_goal');
+      });
 
       document.getElementById('btnSkipMatch').addEventListener('click', () => {
         SoundFX.click();

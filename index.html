@@ -2,12 +2,19 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Siêu Dự Đoán Bóng Đá — Mùa Giải 2026/2027 & VCK FIFA World Cup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Siêu Dự Đoán Bóng Đá — Mùa Giải 2026/2027 & Giả Lập 3D Người Que</title>
   <!-- Google Fonts: Be Vietnam Pro & Inter with Full Vietnamese Subsets -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS Engine -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js 3D Engine for Authentic Stickman Simulation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Lucide Icons & Confetti FX -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="antialiased selection:bg-emerald-500 selection:text-slate-950">
@@ -359,8 +366,34 @@
             </div>
           </div>
 
-          <!-- Interactive HTML5 Football Pitch Canvas with Protruding Goal Nets -->
-          <div class="relative w-full rounded-2xl overflow-hidden border-2 border-emerald-500/40 bg-emerald-950 shadow-2xl">
+          <!-- SUB-PANEL TABS: 2D Pitch vs 3D Stickman (Mục con để tránh lag web) -->
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 flex-wrap gap-2">
+            <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/15 text-xs font-extrabold" role="tablist">
+              <button id="tabSim2D" type="button" role="tab" aria-selected="true" class="sim-tab px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 transition flex items-center gap-1.5 shadow">
+                <i data-lucide="layout" class="w-3.5 h-3.5"></i>
+                <span>Sân 2D Chiến Thuật</span>
+              </button>
+              <button id="tabSim3D" type="button" role="tab" aria-selected="false" class="sim-tab px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5">
+                <i data-lucide="box" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Giả Lập 3D Người Que</span>
+                <span class="text-[9px] px-1 py-0.2 rounded bg-amber-400/20 text-amber-300 border border-amber-400/40 font-black">MỚI 3D</span>
+              </button>
+            </div>
+
+            <!-- 3D Camera Controls & Anti-Lag Indicator (Hiển thị khi ở tab 3D) -->
+            <div id="controls3D" class="hidden flex items-center gap-2 flex-wrap text-xs">
+              <div class="flex items-center gap-1 bg-slate-950/80 px-2 py-1 rounded-lg border border-white/10">
+                <span class="text-slate-400 text-[11px] hidden sm:inline">Góc quay:</span>
+                <button type="button" id="btnCamBroadcast" class="cam-btn px-2 py-0.5 rounded text-[11px] font-bold bg-amber-400 text-slate-950">Truyền hình</button>
+                <button type="button" id="btnCamTactical" class="cam-btn px-2 py-0.5 rounded text-[11px] font-bold text-slate-300 hover:bg-white/10">Toàn cảnh</button>
+                <button type="button" id="btnCamBehindGoal" class="cam-btn px-2 py-0.5 rounded text-[11px] font-bold text-slate-300 hover:bg-white/10">Cầu môn</button>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 hidden md:inline-block">⚡ 60 FPS Tối ưu</span>
+            </div>
+          </div>
+
+          <!-- PANEL 1: Interactive HTML5 Football Pitch Canvas 2D -->
+          <div id="panelSim2D" class="relative w-full rounded-2xl overflow-hidden border-2 border-emerald-500/40 bg-emerald-950 shadow-2xl">
             <canvas id="pitchCanvas" class="w-full h-60 sm:h-72 block"></canvas>
 
             <!-- BIG "VÀOOOO!" GOAL CELEBRATION OVERLAY BANNER (Appears right after ball hits the net) -->
@@ -384,11 +417,11 @@
             </div>
 
             <!-- Post-Match Result Overlay Banner -->
-            <div id="resultOverlay" class="hidden absolute inset-0 z-30 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center">
+            <div id="resultOverlay" class="hidden absolute inset-0 z-30 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-4 text-center max-h-full overflow-y-auto">
               <div id="resultBadge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                 CHÍNH XÁC TUYỆT ĐỐI!
               </div>
-              <h3 id="resultHeadline" class="text-xl sm:text-2xl font-black text-white mb-1">
+              <h3 id="resultHeadline" class="text-lg sm:text-2xl font-black text-white mb-1">
                 Kết quả: Real Madrid 2 - 1 Man City
               </h3>
               <p id="resultSubtext" class="text-xs sm:text-sm text-slate-300 mb-3">
@@ -398,6 +431,17 @@
                 <i data-lucide="play" class="w-4 h-4 fill-current"></i>
                 <span>TRẬN TIẾP THEO CÙNG GIẢI ĐẤU</span>
               </button>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Authentic 3D Stickman Football Simulation (Three.js WebGL) -->
+          <div id="panelSim3D" class="hidden relative w-full rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-slate-950 shadow-2xl">
+            <div id="canvas3DContainer" class="w-full h-72 sm:h-96 relative"></div>
+
+            <!-- 3D Touch Hint & Controls Overlay -->
+            <div class="absolute bottom-2 left-2 z-10 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-sm border border-white/10 text-[10px] sm:text-xs text-amber-300 font-semibold pointer-events-none flex items-center gap-1.5">
+              <i data-lucide="hand" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Chạm & kéo để xoay góc nhìn 3D • Cuộn phóng to / thu nhỏ</span>
             </div>
           </div>
 
@@ -641,31 +685,31 @@
   </div>
 
   <!-- MODAL: Season End & OVR Progression (Capped at 125 OVR) -->
-  <div id="modalSeasonEnd" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-    <div class="glass-card rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col p-4 sm:p-6 border border-amber-400/40 shadow-2xl shadow-amber-500/20">
+  <div id="modalSeasonEnd" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="glass-card rounded-2xl max-w-2xl w-full max-h-[85vh] max-h-[85dvh] flex flex-col p-3.5 sm:p-5 border border-amber-400/40 shadow-2xl shadow-amber-500/20 min-h-0 overflow-hidden m-auto">
       <!-- Header -->
-      <div class="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+      <div class="flex items-center justify-between pb-2.5 border-b border-white/10 shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-amber-500/30 shrink-0">
             <i data-lucide="trophy" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
           </div>
           <div>
-            <h3 class="font-black text-base sm:text-lg text-white flex items-center gap-2">
+            <h3 class="font-black text-sm sm:text-base md:text-lg text-white flex items-center gap-2 flex-wrap">
               <span>TỔNG KẾT MÙA GIẢI & BIẾN ĐỘNG OVR</span>
               <span id="seasonEndYearTag" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">MÙA 2026/2027</span>
             </h3>
             <p id="seasonEndTournamentSubtitle" class="text-xs text-amber-300 font-medium">LPBank V.League 1 · Bảng vinh danh và biến động chỉ số (Tối đa 125 OVR)</p>
           </div>
         </div>
-        <button id="btnCloseSeasonEndModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition">
+        <button id="btnCloseSeasonEndModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition shrink-0 ml-2">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <!-- Scrollable Content -->
-      <div class="overflow-y-auto flex-1 my-3 pr-1 space-y-3.5">
+      <!-- Scrollable Content: Allows scrolling through all remaining teams -->
+      <div class="overflow-y-auto flex-1 my-2.5 pr-1 space-y-3 min-h-0">
         <!-- Champion Spotlight Banner -->
-        <div id="seasonChampionBanner" class="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-emerald-500/20 border border-amber-400/40 flex items-center gap-3.5">
+        <div id="seasonChampionBanner" class="p-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-emerald-500/20 border border-amber-400/40 flex items-center gap-3">
           <!-- Populated by JS -->
         </div>
 
@@ -675,10 +719,10 @@
           <span class="text-amber-300 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">🔒 Giới hạn: Max 125 OVR</span>
         </div>
 
-        <!-- Team OVR Table -->
-        <div class="rounded-xl border border-white/10 bg-slate-950/60 overflow-hidden">
-          <table class="w-full text-left text-xs">
-            <thead class="text-[10px] text-slate-400 uppercase bg-slate-900/90 border-b border-white/10 sticky top-0">
+        <!-- Team OVR Table: Scrollable to view all remaining teams -->
+        <div class="rounded-xl border border-white/10 bg-slate-950/60 overflow-hidden overflow-x-auto max-h-[44vh] max-h-[44dvh] overflow-y-auto">
+          <table class="w-full text-left text-xs min-w-[460px]">
+            <thead class="text-[10px] text-slate-400 uppercase bg-slate-900/95 border-b border-white/10 sticky top-0 z-10 backdrop-blur-sm">
               <tr>
                 <th class="py-2 px-2 text-center">#</th>
                 <th class="py-2 px-2">Đội bóng</th>
@@ -689,24 +733,70 @@
               </tr>
             </thead>
             <tbody id="seasonOvrTableBody" class="divide-y divide-white/5 text-slate-200">
-              <!-- Populated by JS -->
+              <!-- Populated by JS with all teams -->
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Action Footer -->
-      <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2 flex-wrap shrink-0">
+      <!-- Action Footer with Replay, Advance & Close Buttons -->
+      <div class="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2 flex-wrap shrink-0">
         <button id="btnKeepReviewSeason" type="button" class="btn-tap px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Đóng & Xem lại</button>
-        <button id="btnStartNextSeason" type="button" class="btn-tap px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 text-slate-950 hover:brightness-110 flex items-center gap-2 shadow-lg shadow-emerald-500/25">
-          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-          <span id="btnStartNextSeasonText">BẮT ĐẦU MÙA GIẢI MỚI (MÙA 2027/2028)</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="btnReplaySeason" type="button" class="btn-tap px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 flex items-center gap-1.5 transition">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            <span>CHƠI LẠI MÙA GIẢI</span>
+          </button>
+          <button id="btnStartNextSeason" type="button" class="btn-tap px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 text-slate-950 hover:brightness-110 flex items-center gap-2 shadow-lg shadow-emerald-500/25">
+            <i data-lucide="fast-forward" class="w-4 h-4 fill-current"></i>
+            <span id="btnStartNextSeasonText">TIẾP TỤC MÙA MỚI (MÙA 2027/2028)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Season In-Progress (Chỉ khi kết thúc giải đấu mới nhận OVR) -->
+  <div id="modalSeasonProgress" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="glass-card rounded-2xl max-w-lg w-full p-4 sm:p-5 border border-sky-400/40 shadow-2xl space-y-4 m-auto">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="font-extrabold text-base sm:text-lg text-white flex items-center gap-2">
+          <i data-lucide="calendar" class="w-5 h-5 text-sky-400"></i>
+          <span>MÙA GIẢI ĐANG DIỄN RA</span>
+        </h3>
+        <button id="btnCloseProgressModal" type="button" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+        <div class="p-3 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-200">
+          <p class="font-bold mb-1 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>Quy định nhận OVR:</span>
+          </p>
+          <p>Phải kết thúc toàn bộ giải đấu này thì các đội bóng mới chính thức được nhận điểm biến động OVR (Vô địch +5, Á quân +3, Top 4 +2, Nửa trên +1, Nửa dưới -1 ~ -3, tối đa 125 OVR)!</p>
+        </div>
+
+        <div id="seasonProgressDetails" class="p-3 rounded-xl bg-slate-900/90 border border-white/10 space-y-1.5 text-xs">
+          <!-- Populated by JS with current round and matches played -->
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/10 flex-wrap">
+        <button id="btnContinuePlayingSeason" type="button" class="btn-tap px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Tiếp tục thi đấu</button>
+        <button id="btnSimulateToEndNow" type="button" class="btn-tap px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 hover:brightness-110 flex items-center gap-1.5 shadow-lg">
+          <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
+          <span>Mô phỏng hết mùa để nhận OVR ngay</span>
         </button>
       </div>
     </div>
   </div>
 
-<dialog id="settings" aria-labelledby="settingsTitle"><form method="dialog"><h2 id="settingsTitle">Cài đặt trận đấu</h2><fieldset id="durationChoices"><legend>Thời gian hai hiệp chính</legend><div class="segments"><label><input type="radio" name="duration" value="120"><span>2 phút</span></label><label><input type="radio" name="duration" value="240"><span>4 phút</span></label><label><input type="radio" name="duration" value="360"><span>6 phút</span></label></div></fieldset><fieldset id="speedChoices"><legend>Tốc độ mô phỏng</legend><div class="segments"><label><input type="radio" name="speed" value="1"><span>1×</span></label><label><input type="radio" name="speed" value="4"><span>4×</span></label><label><input type="radio" name="speed" value="12"><span>12×</span></label></div></fieldset><button class="settings-done">Xong</button></form></dialog>
+  <dialog id="settings" aria-labelledby="settingsTitle"><form method="dialog"><h2 id="settingsTitle">Cài đặt trận đấu</h2><fieldset id="durationChoices"><legend>Thời gian hai hiệp chính</legend><div class="segments"><label><input type="radio" name="duration" value="120"><span>2 phút</span></label><label><input type="radio" name="duration" value="240"><span>4 phút</span></label><label><input type="radio" name="duration" value="360"><span>6 phút</span></label></div></fieldset><fieldset id="speedChoices"><legend>Tốc độ mô phỏng</legend><div class="segments"><label><input type="radio" name="speed" value="1"><span>1×</span></label><label><input type="radio" name="speed" value="4"><span>4×</span></label><label><input type="radio" name="speed" value="12"><span>12×</span></label></div></fieldset><button class="settings-done">Xong</button></form></dialog>
+
+  <!-- Scripts -->
+  <script src="stickman3d.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
