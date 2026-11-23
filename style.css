@@ -1,13 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 /* ===================================================================== */
-    /* 100% OFFLINE SELF-CONTAINED CSS UTILITY ENGINE (NO EXTERNAL CDN)      */
-    /* ===================================================================== */
-    *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: rgba(255,255,255,0.12); }
-    html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { margin: 0; line-height: inherit; }
-    h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
-    ul { list-style: none; }
-    button, input, select { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; background-color: transparent; }
-    button, select { text-transform: none; cursor: pointer; }
+/* 100% SELF-CONTAINED CSS UTILITY ENGINE WITH BE VIETNAM PRO TYPOGRAPHY */
+/* ===================================================================== */
+*, ::before, ::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: rgba(255,255,255,0.12);
+  font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  margin: 0;
+  line-height: inherit;
+  font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+button, input, select, textarea {
+  font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+button, select { text-transform: none; cursor: pointer; }
     table { text-indent: 0; border-color: inherit; border-collapse: collapse; }
     img, svg, canvas { display: block; vertical-align: middle; }
     img { max-width: 100%; height: auto; }
@@ -387,7 +418,7 @@
       .lg\:col-span-4 { grid-column: span 4 / span 4; }
     }
 
-    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    * { font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; }
     body {
       background:
         radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.16) 0%, transparent 45%),
@@ -495,135 +526,142 @@ fieldset:disabled {opacity:.55;}
 select {max-width:100%;}
 button:disabled {cursor:default;}
 #groupScheduleBanner {max-height:225px;overflow:auto;}
-@media(max-width:639px) {
- header.sticky {position:static;}
- header > div {gap:8px; padding-left:8px; padding-right:8px;}
- header button {min-height:36px;}
- .picker-row {grid-template-columns:1fr;gap:10px;}
- .stadium-hero .grid-cols-11 {grid-template-columns:minmax(0,1fr) 98px minmax(0,1fr);gap:4px;}
- .stadium-hero .grid-cols-11 > div {grid-column:auto;}
- .stadium-hero .grid-cols-11 .col-span-4 > .flex {flex-wrap:wrap;justify-content:center;}
- .score-ctrl {width:40px;height:40px;}
- #predHomeScore,#predAwayScore {width:40px; height:48px; font-size:24px;}
- #btnLockPrediction {min-width:100% !important; padding:12px 10px !important; font-size:13px !important; line-height:1.3; white-space:normal; text-align:center;}
- #btnLockPrediction span {font-size:13px !important; letter-spacing:0;}
- #selectCompetitionStage {white-space:normal;width:100%; font-size:11px !important; padding:6px 8px !important;}
- .mode-tab,.preset-btn,.outcome-btn {min-height:38px;}
- .picker-row select {font-size:15px; padding:8px 10px;}
- #timerContainer > .flex {flex-wrap:wrap;}
-
- /* Fix button text overflow on mobile */
- .outcome-btn {
-   padding: 6px 3px !important;
-   min-height: 52px !important;
-   overflow: hidden;
- }
- .outcome-btn > span:first-child {
-   font-size: 8.5px !important;
-   letter-spacing: 0 !important;
-   line-height: 1.15 !important;
-   white-space: normal !important;
-   word-break: break-word;
-   text-align: center;
- }
- .outcome-btn > span:last-child {
-   font-size: 10.5px !important;
-   line-height: 1.2 !important;
-   white-space: normal !important;
-   word-break: break-word;
-   text-align: center;
-   display: -webkit-box;
-   -webkit-line-clamp: 2;
-   -webkit-box-orient: vertical;
-   overflow: hidden;
-   max-width: 100%;
- }
- .mode-tab {
-   font-size: 10px !important;
-   padding: 5px 6px !important;
-   white-space: normal !important;
-   text-align: center;
-   line-height: 1.2;
-   flex: 1 1 auto;
-   min-width: 0;
- }
- .league-pill {
-   padding: 6px 8px !important;
-   overflow: hidden;
- }
- .league-pill .text-xs {
-   font-size: 10px !important;
-   line-height: 1.25 !important;
-   white-space: normal !important;
-   word-break: break-word;
-   display: -webkit-box;
-   -webkit-line-clamp: 2;
-   -webkit-box-orient: vertical;
-   overflow: hidden;
- }
- .preset-btn {
-   font-size: 10.5px !important;
-   padding: 5px 6px !important;
-   min-height: 32px !important;
- }
- #btnSimSpeed, #btnSkipMatch {
-   padding: 10px 10px !important;
-   font-size: 11px !important;
-   min-height: 38px;
- }
- #btnOpenCustomMatch {
-   padding: 5px 8px !important;
-   font-size: 11px !important;
- }
- #tournamentName span {
-   font-size: 11px !important;
-   max-width: 180px;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   white-space: nowrap;
- }
- #officialFormatText {
-   font-size: 10px !important;
-   line-height: 1.3 !important;
-   white-space: normal !important;
-   word-break: break-word;
- }
- #stageRuleStatusTag {
-   font-size: 10px !important;
- }
- .fifa-filter-btn {
-   font-size: 10px !important;
-   padding: 5px 6px !important;
-   white-space: normal !important;
-   text-align: center;
- }
-}
 [hidden] { display:none !important; }
-.settings-trigger {white-space:nowrap;}
-@media(max-width:639px) {
-  header > div {position:relative;}
-  header .settings-trigger {position:absolute;right:8px;top:8px; padding:6px 10px !important; font-size:11px !important;}
-  header > div > div:last-child {flex-basis:100%;flex-wrap:wrap; gap:4px !important;}
-  header > div > div:last-child > .glass-card {min-height:32px; padding:4px 8px !important;}
-  #btnJumpFifaSection {margin-left:auto; font-size:10px !important; padding:4px 8px !important;}
-  #btnJumpFifaSection span {display:inline !important;}
-  #btnToggleSound, #btnOpenRules {padding:6px !important;}
-}
+.settings-trigger { white-space:nowrap; }
 
+/* ===================================================================== */
+/* MOBILE & RESPONSIVE OPTIMIZATIONS (Max-Width: 639px)                  */
+/* ===================================================================== */
+@media (max-width: 639px) {
+  header.sticky { position: static; }
+  header > div { position: relative; gap: 8px; padding-left: 8px; padding-right: 8px; }
+  header button { min-height: 36px; }
+  header .settings-trigger { position: absolute; right: 8px; top: 8px; padding: 6px 10px !important; font-size: 11px !important; }
+  header > div > div:last-child { flex-basis: 100%; flex-wrap: wrap; gap: 4px !important; }
+  header > div > div:last-child > .glass-card { min-height: 32px; padding: 4px 8px !important; }
+  #btnJumpFifaSection { margin-left: auto; font-size: 10.5px !important; padding: 4px 8px !important; }
+  #btnJumpFifaSection span { display: inline !important; }
+  #btnToggleSound, #btnOpenRules { padding: 6px !important; }
 
-/* ── Mobile text-overflow fixes ── */
-@media(max-width:639px) {
-  .outcome-btn { padding: 8px 4px !important; font-size: 11px !important; }
-  .outcome-btn span { font-size: 9px !important; white-space: normal !important; word-break: break-word; line-height: 1.2; }
-  .outcome-btn span.truncate { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-  .mode-tab { font-size: 10px !important; padding: 6px 8px !important; white-space: normal !important; text-align: center; }
-  .league-pill { overflow: hidden; }
-  .league-pill .text-xs { font-size: 10px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #btnLockPrediction span { font-size: 13px !important; }
-  .preset-btn { font-size: 11px !important; padding: 6px 8px !important; }
-  #tournamentName span { font-size: 10px !important; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
-  #officialFormatText { font-size: 9px !important; white-space: normal !important; word-break: break-word; }
-  #stageRuleStatusTag { font-size: 9px !important; }
-  #selectCompetitionStage { font-size: 11px !important; }
-  #badgeMatchType { font-size: 10px !important; }
+  .picker-row { grid-template-columns: 1fr; gap: 10px; }
+  .picker-row select { font-size: 14px; padding: 8px 10px; }
+  .stadium-hero .grid-cols-11 { grid-template-columns: minmax(0,1fr) 98px minmax(0,1fr); gap: 4px; }
+  .stadium-hero .grid-cols-11 > div { grid-column: auto; }
+  .stadium-hero .grid-cols-11 .col-span-4 > .flex { flex-wrap: wrap; justify-content: center; }
+
+  .score-ctrl { width: 38px; height: 38px; }
+  #predHomeScore, #predAwayScore { width: 42px; height: 48px; font-size: 24px; }
+
+  #btnLockPrediction {
+    min-width: 100% !important;
+    padding: 12px 10px !important;
+    font-size: 13px !important;
+    line-height: 1.35;
+    white-space: normal;
+    text-align: center;
+  }
+  #btnLockPrediction span { font-size: 13px !important; letter-spacing: 0; }
+
+  #selectCompetitionStage { white-space: normal; width: 100%; font-size: 11px !important; padding: 6px 8px !important; }
+  #timerContainer > .flex { flex-wrap: wrap; }
+
+  /* 3 Outcome prediction buttons (Chủ Thắng / Hòa / Khách Thắng) */
+  .outcome-btn {
+    padding: 7px 4px !important;
+    min-height: 52px !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .outcome-btn > span:first-child {
+    font-size: 10px !important;
+    letter-spacing: 0 !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    word-break: break-word;
+    text-align: center;
+    font-weight: 700;
+  }
+  .outcome-btn > span:last-child {
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    word-break: break-word;
+    text-align: center;
+    font-weight: 800;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  /* Mode tabs & Category filters */
+  .mode-tab {
+    font-size: 10.5px !important;
+    padding: 6px 8px !important;
+    white-space: normal !important;
+    text-align: center;
+    line-height: 1.25;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .league-pill {
+    padding: 6px 8px !important;
+    overflow: hidden;
+  }
+  .league-pill .text-xs {
+    font-size: 10.5px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .preset-btn {
+    font-size: 11px !important;
+    padding: 5px 6px !important;
+    min-height: 34px !important;
+  }
+  #btnSimSpeed, #btnSkipMatch {
+    padding: 8px 10px !important;
+    font-size: 11.5px !important;
+    min-height: 38px;
+  }
+  #btnOpenCustomMatch {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+  #tournamentName span {
+    font-size: 11px !important;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  #officialFormatText {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    word-break: break-word;
+  }
+  #stageRuleStatusTag {
+    font-size: 10px !important;
+  }
+  #badgeMatchType {
+    font-size: 10.5px !important;
+  }
+  .fifa-filter-btn {
+    font-size: 10.5px !important;
+    padding: 6px 8px !important;
+    white-space: normal !important;
+    text-align: center;
+    line-height: 1.25;
+  }
 }

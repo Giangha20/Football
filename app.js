@@ -25,7 +25,8 @@
       'history': '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
       'x': '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
       'award': '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',
-      'loader-2': '<path d="M21 12a9 9 0 1 1-6.219-8.56"/>'
+      'loader-2': '<path d="M21 12a9 9 0 1 1-6.219-8.56"/>',
+      'settings': '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>'
     };
 
     window.lucide = {
@@ -3576,10 +3577,10 @@
 
         if (isWorldCupQualifiers) {
           state.phase = 'wc_qualified_finals';
-          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG BẢNG VCK WORLD CUP 🏆</span>`;
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG BẢNG VCK WORLD CUP</span>`;
         } else if (isWorldCupFinalsGroup) {
           state.phase = 'wc_qualified_knockout';
-          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="zap" class="w-5 h-5 text-amber-400"></i><span>VÀO VÒNG 1/16 VCK WORLD CUP (KNOCK-OUT) 🔥</span>`;
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="zap" class="w-5 h-5 text-amber-400"></i><span>VÀO VÒNG 1/16 VCK WORLD CUP (KNOCK-OUT)</span>`;
         } else if (qualified) {
           state.phase = 'qualified';
           document.getElementById('btnLockPrediction').textContent = 'Vào vòng loại trực tiếp';
@@ -4695,7 +4696,7 @@
 
         // Player short name label
         if (p.name) {
-          ctx.font = isBallHolder ? 'extrabold 9.5px Inter, sans-serif' : 'bold 8.5px Inter, sans-serif';
+          ctx.font = isBallHolder ? 'bold 10px "Be Vietnam Pro", sans-serif' : '600 9px "Be Vietnam Pro", sans-serif';
           ctx.fillStyle = isBallHolder ? '#fde047' : 'rgba(255,255,255,0.88)';
           ctx.textAlign = 'center';
           ctx.fillText(p.name, px, py + 15);
