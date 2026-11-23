@@ -216,17 +216,10 @@
       {
         id: 'world_cup', name: 'FIFA World Cup (Mùa giải 2026/2027)', shortName: 'FIFA World Cup', icon: '🌍', group: 'nations',
         formatType: 'cup', totalRounds: 14, knockoutPossible: true, groupCount: 12, fifaI: 50,
-        formatBadge: 'Vòng loại 6 Khu vực (Châu Á, Châu Âu, Nam Mỹ, Châu Phi, Bắc Trung Mỹ, Châu Đại Dương) + VCK 48 Đội (Bảng A -> L) + Vòng 1/16, 1/8, Tứ kết, Bán kết & Chung kết',
+        formatBadge: 'Vòng loại Châu lục ➔ VCK 48 Đội (Bảng A -> L) ➔ Vòng 1/16, 1/8, Tứ kết, Bán kết & Chung kết',
         stages: [
-          'Vòng loại World Cup — Khu vực Châu Á (AFC Qualifiers)',
-          'Vòng loại World Cup — Khu vực Châu Âu (UEFA Qualifiers)',
-          'Vòng loại World Cup — Khu vực Nam Mỹ (CONMEBOL Qualifiers)',
-          'Vòng loại World Cup — Khu vực Châu Phi (CAF Qualifiers)',
-          'Vòng loại World Cup — Khu vực Bắc Trung Mỹ (CONCACAF Qualifiers)',
-          'Vòng loại World Cup — Châu Đại Dương & Play-off (OFC)',
-          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội) • Lượt 1',
-          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội) • Lượt 2',
-          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội) • Lượt 3 (Quyết định)',
+          'Vòng loại World Cup (Khu vực Châu lục)',
+          'Vòng bảng VCK FIFA World Cup (Bảng A -> L • 48 Đội)',
           'Vòng 1/16 VCK FIFA World Cup (32 Đội - Knock-out)',
           'Vòng 1/8 VCK FIFA World Cup (16 Đội - Knock-out)',
           'Tứ kết FIFA World Cup (8 Đội - Knock-out)',
@@ -234,7 +227,7 @@
           'Tranh Hạng 3 FIFA World Cup (Knock-out)',
           'CHUNG KẾT VÔ ĐỊCH THẾ GIỚI — FIFA WORLD CUP'
         ],
-        desc: 'Đấu trường Vô Địch Bóng Đá Thế Giới: Tranh tài qua Vòng loại các khu vực (Châu Á, Châu Âu, Nam Mỹ, Châu Phi, Bắc Trung Mỹ, Châu Đại Dương). Các đội vượt qua vòng loại tiến vào Vòng bảng VCK 48 Đội (Bảng A đến L) và các vòng Knock-out tranh Cúp Vàng!'
+        desc: 'Đấu trường Vô Địch Bóng Đá Thế Giới: Bắt đầu từ Vòng loại các khu vực (Châu Á, Châu Âu, Nam Mỹ, Châu Phi, Bắc Trung Mỹ, Châu Đại Dương). Các đội vượt qua vòng loại tiến vào Vòng bảng VCK 48 Đội (Bảng A đến L) và các vòng Knock-out tranh Cúp Vàng!'
       }
     ];
 
@@ -3106,6 +3099,9 @@
 
     function isTournamentCompleted(tourneyParam) {
       const tourney = tourneyParam || getActiveTournament();
+      if (tourney.id === 'world_cup') {
+        return state.stageIndex >= 7 && state.phase === 'complete';
+      }
       const allGroups = state.groupFixturesByTourney[tourney.id] || {};
       let totalFixtures = 0;
       let playedFixtures = 0;
@@ -3157,6 +3153,11 @@
             <span class="text-slate-400">Giải đấu hiện tại:</span>
             <span class="font-bold text-white">${tourney.icon} ${tourney.name}</span>
           </div>
+          ${tourney.id === 'world_cup' ? `
+          <div class="flex items-center justify-between py-1 border-b border-white/5">
+            <span class="text-slate-400">Giai đoạn hiện tại:</span>
+            <span class="font-bold text-amber-300">${tourney.stages[state.stageIndex] || 'Vòng loại'}</span>
+          </div>` : ''}
           <div class="flex items-center justify-between py-1 border-b border-white/5">
             <span class="text-slate-400">Tiến độ mùa giải:</span>
             <span class="font-mono font-bold text-emerald-400">${playedFixtures} / ${totalFixtures} trận đã đá</span>
@@ -3343,42 +3344,58 @@
       const tourney = tourneyParam || getActiveTournament();
       initStandingsForTournament(tourney.id);
 
-      const allGroups = state.groupFixturesByTourney[tourney.id] || {};
-      const stTable = state.standingsByTourney[tourney.id];
-
-      function record(teamH, teamA, gH, gA) {
-        const rH = stTable[teamH.id];
-        const rA = stTable[teamA.id];
-        if (!rH || !rA) return;
-        rH.played++; rA.played++;
-        rH.gf += gH; rH.ga += gA;
-        rA.gf += gA; rA.ga += gH;
-        if (gH > gA) {
-          rH.won++; rH.pts += 3; rA.lost++;
-        } else if (gH < gA) {
-          rA.won++; rA.pts += 3; rH.lost++;
-        } else {
-          rH.drawn++; rA.drawn++; rH.pts += 1; rA.pts += 1;
+      function simulateCurrentFixtures() {
+        const allGroups = state.groupFixturesByTourney[tourney.id] || {};
+        const stTable = state.standingsByTourney[tourney.id] || {};
+        function record(teamH, teamA, gH, gA) {
+          const rH = stTable[teamH.id];
+          const rA = stTable[teamA.id];
+          if (!rH || !rA) return;
+          rH.played++; rA.played++;
+          rH.gf += gH; rH.ga += gA;
+          rA.gf += gA; rA.ga += gH;
+          if (gH > gA) {
+            rH.won++; rH.pts += 3; rA.lost++;
+          } else if (gH < gA) {
+            rA.won++; rA.pts += 3; rH.lost++;
+          } else {
+            rH.drawn++; rA.drawn++; rH.pts += 1; rA.pts += 1;
+          }
+        }
+        for (const [grpName, grpFixtures] of Object.entries(allGroups)) {
+          for (const f of grpFixtures) {
+            if (!f.played) {
+              const { homeGoals, awayGoals } = generateMatchScore(f.home, f.away);
+              f.played = true;
+              f.score = `${homeGoals}-${awayGoals}`;
+              record(f.home, f.away, homeGoals, awayGoals);
+              updateFifaWorldPointsAfterMatch(f.home, f.away, homeGoals, awayGoals);
+            }
+          }
         }
       }
 
-      let simulatedCount = 0;
-      for (const [grpName, grpFixtures] of Object.entries(allGroups)) {
-        for (const f of grpFixtures) {
-          if (!f.played) {
-            const { homeGoals, awayGoals } = generateMatchScore(f.home, f.away);
-            f.played = true;
-            f.score = `${homeGoals}-${awayGoals}`;
-            record(f.home, f.away, homeGoals, awayGoals);
-            updateFifaWorldPointsAfterMatch(f.home, f.away, homeGoals, awayGoals);
-            simulatedCount++;
-          }
+      if (tourney.id === 'world_cup') {
+        if (state.stageIndex === 0) {
+          // 1. Simulate remaining Qualifiers
+          simulateCurrentFixtures();
+          // 2. Advance to Finals Group Stage (48 teams) & simulate
+          state.stageIndex = 1;
+          initStandingsForTournament('world_cup', true);
+          simulateCurrentFixtures();
+        } else if (state.stageIndex === 1) {
+          simulateCurrentFixtures();
         }
+        // Conclude at Final
+        state.stageIndex = 7;
+      } else {
+        simulateCurrentFixtures();
       }
 
       state.phase = 'complete';
       renderLeagueStandings();
       renderFifaWorldRankings();
+      updateStageFormatUI();
       handleSeasonEndAndOvrProgression(tourney);
     }
 
@@ -3670,10 +3687,11 @@
       const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
       // SPECIAL SYSTEM FOR FIFA WORLD CUP:
-      // StageIndex < 6: Regional Qualifiers (AFC, UEFA, CONMEBOL, CAF, CONCACAF, OFC)
-      // StageIndex >= 6: World Cup Finals Group Stage (Groups A..L) or Knockouts
+      // StageIndex === 0: Regional Qualifiers (AFC, UEFA, CONMEBOL, CAF, CONCACAF, OFC)
+      // StageIndex === 1: World Cup Finals Group Stage (Groups A..L • 48 Teams)
+      // StageIndex >= 2: Knockout Rounds (1/16, 1/8, QF, SF, 3rd, Final)
       if (tourneyId === 'world_cup') {
-        const isQualifiers = state.stageIndex < 6;
+        const isQualifiers = state.stageIndex === 0;
         const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || teams[0];
         const focusConf = getTeamConfederation(focusTeam);
 
@@ -3954,19 +3972,20 @@
 
       let regularStage = '';
       if (tourney.id === 'world_cup') {
-        if (state.stageIndex < 6) {
-          const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || state.homeTeam;
-          const confName = {
-            'afc': 'Châu Á (AFC)',
-            'uefa': 'Châu Âu (UEFA)',
-            'conmebol': 'Nam Mỹ (CONMEBOL)',
-            'caf': 'Châu Phi (CAF)',
-            'concacaf': 'Bắc Trung Mỹ (CONCACAF)',
-            'ofc': 'Châu Đại Dương (OFC)'
-          }[getTeamConfederation(focusTeam)] || 'Khu vực';
-          regularStage = `Vòng loại ${confName} • Lượt ${state.roundNumber}/${total}`;
-        } else if (state.stageIndex <= 8) {
-          regularStage = `VCK World Cup • Bảng ${state.focusedGroup} • Lượt ${state.roundNumber}/${total}`;
+        const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || state.homeTeam;
+        const confName = {
+          'afc': 'Châu Á (AFC)',
+          'uefa': 'Châu Âu (UEFA)',
+          'conmebol': 'Nam Mỹ (CONMEBOL)',
+          'caf': 'Châu Phi (CAF)',
+          'concacaf': 'Bắc Trung Mỹ (CONCACAF)',
+          'ofc': 'Châu Đại Dương (OFC)'
+        }[getTeamConfederation(focusTeam)] || 'Khu vực';
+
+        if (state.stageIndex === 0) {
+          regularStage = `Vòng loại ${confName} • Bảng ${state.focusedGroup} • Lượt ${state.roundNumber}/${total}`;
+        } else if (state.stageIndex === 1) {
+          regularStage = `VCK World Cup • Bảng ${state.focusedGroup} (48 Đội) • Lượt ${state.roundNumber}/${total}`;
         } else {
           regularStage = tourney.stages[state.stageIndex] || 'Knock-out';
         }
@@ -3979,7 +3998,16 @@
       // Stages list
       let stages = [];
       if (tourney.id === 'world_cup') {
-        stages = tourney.stages;
+        const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || state.homeTeam;
+        const confName = {
+          'afc': 'Châu Á (AFC)',
+          'uefa': 'Châu Âu (UEFA)',
+          'conmebol': 'Nam Mỹ (CONMEBOL)',
+          'caf': 'Châu Phi (CAF)',
+          'concacaf': 'Bắc Trung Mỹ (CONCACAF)',
+          'ofc': 'Châu Đại Dương (OFC)'
+        }[getTeamConfederation(focusTeam)] || 'Khu vực';
+        stages = tourney.stages.map((st, i) => i === 0 ? `Vòng loại World Cup (${confName})` : st);
       } else {
         stages = [regularStage, ...tourney.stages.filter(st => tourney.knockoutPossible && /knock-out|bán kết|chung kết|tứ kết/i.test(st) && !/play-off/i.test(st))];
       }
@@ -3990,16 +4018,16 @@
       const currentStageName = stages[state.stageIndex] || regularStage;
 
       const isKnockout = tourney.id === 'world_cup' 
-        ? state.stageIndex >= 9 
+        ? state.stageIndex >= 2 
         : (tourney.knockoutPossible && tourney.stages && state.stageIndex >= (tourney.stages.length - 4));
       state.isKnockoutMatch = isKnockout;
 
       let formatDesc = '';
       if (tourney.id === 'world_cup') {
-        if (state.stageIndex < 6) {
-          formatDesc = 'Vòng loại khu vực • Đá vòng tròn sân nhà & khách • Thắng 3đ, Hòa 1đ';
-        } else if (state.stageIndex <= 8) {
-          formatDesc = 'VCK FIFA World Cup (12 Bảng A->L) • Top 2 mỗi bảng + 8 đội hạng 3 tốt nhất vào Vòng 1/16';
+        if (state.stageIndex === 0) {
+          formatDesc = 'Vòng loại khu vực • Đá vòng tròn sân nhà & khách • Top 2 giành vé vào VCK World Cup';
+        } else if (state.stageIndex === 1) {
+          formatDesc = 'VCK FIFA World Cup (12 Bảng A->L • 48 Đội) • Top 2 mỗi bảng + 8 đội hạng 3 tốt nhất vào Vòng 1/16';
         } else {
           formatDesc = 'Đấu loại trực tiếp Knock-out (Hiệp phụ 30s + Luân lưu 11m)';
         }
@@ -4052,6 +4080,11 @@
     function chooseTeam(id, fixture) {
       if (state.phase === 'simulating') return;
       state.focusedTeamId = id;
+      if (state.activeTournamentId === 'world_cup' && state.stageIndex === 0) {
+        initStandingsForTournament('world_cup', true);
+        renderLeagueStandings();
+        updateStageFormatUI();
+      }
       pickNextMatch(fixture);
     }
 
@@ -4089,8 +4122,8 @@
         document.getElementById('btnLockPrediction').disabled = false;
 
         const isWorldCup = state.activeTournamentId === 'world_cup';
-        const isWorldCupQualifiers = isWorldCup && state.stageIndex < 6;
-        const isWorldCupFinalsGroup = isWorldCup && state.stageIndex >= 6 && state.stageIndex <= 8;
+        const isWorldCupQualifiers = isWorldCup && state.stageIndex === 0;
+        const isWorldCupFinalsGroup = isWorldCup && state.stageIndex === 1;
 
         const qualified = getActiveTournament().groupCount && Object.values(table)
           .filter(r => r.group === state.focusedGroup).sort(rankStandingRows)
@@ -4098,10 +4131,10 @@
 
         if (isWorldCupQualifiers) {
           state.phase = 'wc_qualified_finals';
-          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG BẢNG VCK WORLD CUP</span>`;
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG BẢNG VCK WORLD CUP (48 ĐỘI)</span>`;
         } else if (isWorldCupFinalsGroup) {
           state.phase = 'wc_qualified_knockout';
-          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="zap" class="w-5 h-5 text-amber-400"></i><span>VÀO VÒNG 1/16 VCK WORLD CUP (KNOCK-OUT)</span>`;
+          document.getElementById('btnLockPrediction').innerHTML = `<i data-lucide="zap" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG 1/16 VCK WORLD CUP (KNOCK-OUT)</span>`;
         } else if (qualified) {
           state.phase = 'qualified';
           document.getElementById('btnLockPrediction').textContent = 'Vào vòng loại trực tiếp';
@@ -4806,11 +4839,60 @@
       const remainingMatches = fixturesOfFocus.filter(f => !f.played);
       const isSeasonConcluded = !state.isKnockoutMatch && remainingMatches.length === 0;
 
+      const isWorldCup = tourney.id === 'world_cup';
+      const isWorldCupQualifiers = isWorldCup && state.stageIndex === 0;
+      const isWorldCupFinalsGroup = isWorldCup && state.stageIndex === 1;
+      const isWorldCupKnockout = isWorldCup && state.stageIndex >= 2;
+
       const lockBtn = document.getElementById('btnLockPrediction');
       lockBtn.disabled = false;
       lockBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 
-      if (isSeasonConcluded) {
+      if (isWorldCupQualifiers && remainingMatches.length === 0) {
+        state.phase = 'wc_qualified_finals';
+        const stTable = state.standingsByTourney[tourney.id] || {};
+        const groupRows = Object.values(stTable).filter(r => r.group === state.focusedGroup).sort(rankStandingRows);
+        const focusPos = groupRows.findIndex(r => r.team.id === focusId) + 1;
+        const msg = (focusPos <= 2)
+          ? `🎉 XUẤT SẮC! ${state.homeTeam.name} xếp hạng #${focusPos} bảng đấu và CHÍNH THỨC GIÀNH VÉ VÀO VCK WORLD CUP!`
+          : `⚡ ${state.homeTeam.name} đã hoàn thành Vòng loại khu vực. Tiến vào Vòng bảng VCK World Cup!`;
+        showPhaseNotice(msg);
+        lockBtn.innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG BẢNG VCK WORLD CUP (48 ĐỘI)</span>`;
+        const nextOverlayBtn = document.getElementById('btnNextMatchOverlay');
+        if (nextOverlayBtn) {
+          nextOverlayBtn.innerHTML = `<i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i><span>Vào Vòng Bảng VCK World Cup</span>`;
+        }
+      } else if (isWorldCupFinalsGroup && remainingMatches.length === 0) {
+        state.phase = 'wc_qualified_knockout';
+        showPhaseNotice(`🔥 VƯỢT QUA VÒNG BẢNG! Tiến vào Vòng 1/16 Knock-out FIFA World Cup!`);
+        lockBtn.innerHTML = `<i data-lucide="zap" class="w-5 h-5 text-amber-400"></i><span>TIẾN VÀO VÒNG 1/16 KNOCK-OUT</span>`;
+        const nextOverlayBtn = document.getElementById('btnNextMatchOverlay');
+        if (nextOverlayBtn) {
+          nextOverlayBtn.innerHTML = `<i data-lucide="zap" class="w-4 h-4 text-amber-400"></i><span>Vào Vòng 1/16 Knock-out</span>`;
+        }
+      } else if (isWorldCupKnockout) {
+        if (state.stageIndex >= 7) {
+          // World Cup Final concluded
+          state.phase = 'complete';
+          const winner = (actualH > actualA) ? state.homeTeam : ((actualA > actualH) ? state.awayTeam : (state.penHome > state.penAway ? state.homeTeam : state.awayTeam));
+          showPhaseNotice(`🏆 CHÚC MỪNG ${winner.name} VÔ ĐỊCH THẾ GIỚI — FIFA WORLD CUP!`);
+          handleSeasonEndAndOvrProgression(tourney);
+          lockBtn.innerHTML = `<i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i><span>XEM TỔNG KẾT WORLD CUP & OVR</span>`;
+          const nextOverlayBtn = document.getElementById('btnNextMatchOverlay');
+          if (nextOverlayBtn) {
+            nextOverlayBtn.innerHTML = `<i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i><span>Tổng Kết World Cup & OVR</span>`;
+          }
+        } else {
+          state.phase = 'wc_next_knockout';
+          const nextStageIdx = state.stageIndex + 1;
+          const nextStageName = tourney.stages[nextStageIdx] || 'Vòng tiếp theo';
+          lockBtn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>TIẾP TỤC: ${nextStageName}</span>`;
+          const nextOverlayBtn = document.getElementById('btnNextMatchOverlay');
+          if (nextOverlayBtn) {
+            nextOverlayBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-current"></i><span>Vào ${nextStageName}</span>`;
+          }
+        }
+      } else if (isSeasonConcluded) {
         state.phase = 'complete';
         if (!isTournamentCompleted(tourney)) {
           simulateRemainingSeasonMatches(tourney);
@@ -5668,13 +5750,19 @@
       document.getElementById('btnLockPrediction').addEventListener('click', () => {
         if (state.phase === 'wc_qualified_finals') {
           SoundFX.winExact();
-          state.stageIndex = 6; // Move to World Cup Finals Group Stage (Bảng A -> L)
+          state.stageIndex = 1; // Move to World Cup Finals Group Stage (Bảng A -> L)
           initStandingsForTournament('world_cup', true);
           updateStageFormatUI();
+          renderLeagueStandings();
           pickNextMatch();
         } else if (state.phase === 'wc_qualified_knockout') {
           SoundFX.winExact();
-          state.stageIndex = 9; // Move to World Cup 1/16 Knockout
+          state.stageIndex = 2; // Move to World Cup 1/16 Knockout
+          updateStageFormatUI();
+          pickNextMatch();
+        } else if (state.phase === 'wc_next_knockout') {
+          SoundFX.click();
+          state.stageIndex = Math.min(7, state.stageIndex + 1);
           updateStageFormatUI();
           pickNextMatch();
         } else if (state.phase === 'complete') {
@@ -5708,7 +5796,23 @@
 
       document.getElementById('btnNextMatchOverlay').addEventListener('click', () => {
         SoundFX.click();
-        if (state.phase === 'complete') {
+        if (state.phase === 'wc_qualified_finals') {
+          SoundFX.winExact();
+          state.stageIndex = 1;
+          initStandingsForTournament('world_cup', true);
+          updateStageFormatUI();
+          renderLeagueStandings();
+          pickNextMatch();
+        } else if (state.phase === 'wc_qualified_knockout') {
+          SoundFX.winExact();
+          state.stageIndex = 2;
+          updateStageFormatUI();
+          pickNextMatch();
+        } else if (state.phase === 'wc_next_knockout') {
+          state.stageIndex = Math.min(7, state.stageIndex + 1);
+          updateStageFormatUI();
+          pickNextMatch();
+        } else if (state.phase === 'complete') {
           showSeasonEndModal();
         } else {
           pickNextMatch();
