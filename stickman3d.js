@@ -59,28 +59,38 @@
     // Clear previous canvas
     container.innerHTML = '';
 
+    // Detect mobile for performance optimization
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
+
     const width = container.clientWidth || 800;
-    const height = container.clientHeight || 380;
+    const height = container.clientHeight || (isMobile ? 280 : 380);
 
     // Scene & Camera
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x060f17);
-    scene.fog = new THREE.FogExp2(0x060f17, 0.007);
+    if (!isMobile) {
+      scene.fog = new THREE.FogExp2(0x060f17, 0.007);
+    }
 
-    camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 320);
+    camera = new THREE.PerspectiveCamera(isMobile ? 50 : 45, width / height, 0.5, isMobile ? 160 : 320);
     camera.position.set(0, 32, 54);
     camera.lookAt(0, 0, 0);
 
-    // High performance WebGL renderer
+    // High performance WebGL renderer (optimized for mobile)
     renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance',
-      alpha: false
+      antialias: !isMobile, // Disable AA on mobile for performance
+      powerPreference: isMobile ? 'default' : 'high-performance',
+      alpha: false,
+      precision: isMobile ? 'mediump' : 'highp'
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 1.5));
+    if (!isMobile) {
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    } else {
+      renderer.shadowMap.enabled = false; // Disable shadows on mobile
+    }
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
 
@@ -121,45 +131,54 @@
   }
 
   function setupLighting() {
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
+
     // Atmospheric Sky Lighting
-    const hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x14532d, 0.7);
+    const hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x14532d, isMobile ? 0.9 : 0.7);
     hemiLight.position.set(0, 50, 0);
     scene.add(hemiLight);
 
-    // Main Stadium Floodlight with Shadows
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    // Main Stadium Floodlight with Shadows (shadows only on desktop)
+    const dirLight = new THREE.DirectionalLight(0xffffff, isMobile ? 1.2 : 1.0);
     dirLight.position.set(28, 48, 32);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
-    dirLight.shadow.camera.near = 10;
-    dirLight.shadow.camera.far = 130;
-    dirLight.shadow.camera.left = -HALF_L - 8;
-    dirLight.shadow.camera.right = HALF_L + 8;
-    dirLight.shadow.camera.top = HALF_W + 8;
-    dirLight.shadow.camera.bottom = -HALF_W - 8;
-    dirLight.shadow.bias = -0.0006;
+    if (!isMobile) {
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      dirLight.shadow.camera.near = 10;
+      dirLight.shadow.camera.far = 130;
+      dirLight.shadow.camera.left = -HALF_L - 8;
+      dirLight.shadow.camera.right = HALF_L + 8;
+      dirLight.shadow.camera.top = HALF_W + 8;
+      dirLight.shadow.camera.bottom = -HALF_W - 8;
+      dirLight.shadow.bias = -0.0006;
+    }
     scene.add(dirLight);
 
     // Opposite Fill Floodlight
-    const fillLight = new THREE.DirectionalLight(0x6ee7b7, 0.45);
+    const fillLight = new THREE.DirectionalLight(0x6ee7b7, isMobile ? 0.55 : 0.45);
     fillLight.position.set(-28, 36, -32);
     scene.add(fillLight);
   }
 
   function createSharedAssets() {
-    // Shared Geometries for All 22 Stickmen
-    geomStickLimb = new THREE.CylinderGeometry(0.085, 0.075, 1, 8);
-    geomJoint = new THREE.SphereGeometry(0.11, 8, 8);
-    geomHead = new THREE.SphereGeometry(0.36, 12, 12);
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
+    // Shared Geometries for All 22 Stickmen (lower poly on mobile)
+    const limbSeg = isMobile ? 4 : 8;
+    const jointSeg = isMobile ? 4 : 8;
+    const headSeg = isMobile ? 6 : 12;
+    geomStickLimb = new THREE.CylinderGeometry(0.085, 0.075, 1, limbSeg);
+    geomJoint = new THREE.SphereGeometry(0.11, jointSeg, jointSeg);
+    geomHead = new THREE.SphereGeometry(0.36, headSeg, headSeg);
     geomBoot = new THREE.BoxGeometry(0.18, 0.12, 0.34);
   }
 
   // Generates authentic alternating Premier League green mowing stripes
   function generateTurfTexture() {
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
     const cv = document.createElement('canvas');
-    cv.width = 1024;
-    cv.height = 512;
+    cv.width = isMobile ? 256 : 1024;
+    cv.height = isMobile ? 128 : 512;
     const cx = cv.getContext('2d');
 
     const stripes = 12;
@@ -974,43 +993,51 @@
     // 2. Realistic 3D Soccer Ball & Aerodynamics
     if (ballMesh) {
       if (state.shotAnim && state.shotAnim.active) {
-        // High-velocity curving shot into goal net
+        // Fast low-driven shot into goal net (realistic, not floating)
         const shot = state.shotAnim;
         const startPos = map2DTo3D(shot.startX, shot.startY);
         const targetPos = map2DTo3D(shot.targetX, shot.targetY);
 
-        shot.progress = Math.min(1.0, shot.progress + dt * 2.0 * (state.speedMultiplier || 1));
+        // Fast shot speed — ball travels quickly like a real strike
+        shot.progress = Math.min(1.0, shot.progress + dt * 3.5 * (state.speedMultiplier || 1));
         const p = shot.progress;
 
-        // Trigger shooter kick animation at start of shot
+        // Trigger shooter kick animation at start of shot (only once)
+        if (!shot._kickTriggered) {
+          shot._kickTriggered = true;
+          const shooterSide = shot.side;
+          stickmen.forEach(sm => {
+            if (sm.side === shooterSide && sm.role === 'FW' && sm.kickTimer <= 0) {
+              sm.kickTimer = 0.45;
+            }
+          });
+        }
+
         const shooterSide = shot.side;
-        stickmen.forEach(sm => {
-          if (sm.side === shooterSide && sm.role === 'FW' && sm.kickTimer <= 0) {
-            sm.kickTimer = 0.45;
-          }
-        });
 
         // Trigger Defending Goalkeeper Dive!
         const defendingSide = shooterSide === 'home' ? 'away' : 'home';
         const defendingGK = stickmen.find(sm => sm.side === defendingSide && sm.role === 'GK');
-        if (defendingGK && defendingGK.diveTimer <= 0 && p > 0.15) {
+        if (defendingGK && defendingGK.diveTimer <= 0 && p > 0.1) {
           defendingGK.diveTimer = 1.3;
           defendingGK.diveSide = targetPos.z > defendingGK.root.position.z ? 1 : -1;
         }
 
-        // Parabolic trajectory + lateral curve
+        // Realistic low-driven trajectory — ball stays low (max ~0.9m off ground)
+        // Uses a flatter arc that simulates a powerful ground-level or half-volley shot
+        const shotHeight = Math.sin(p * Math.PI) * 0.9;
         ballMesh.position.x = startPos.x + (targetPos.x - startPos.x) * p;
         ballMesh.position.z = startPos.z + (targetPos.z - startPos.z) * p;
-        ballMesh.position.y = 0.44 + Math.sin(p * Math.PI) * 3.6;
+        ballMesh.position.y = 0.44 + shotHeight;
 
-        // Rapid 3D Magnus ball spin
-        ballMesh.rotation.x += dt * 24;
-        ballMesh.rotation.y += dt * 16;
+        // Rapid backspin on the ball
+        ballMesh.rotation.x += dt * 32;
+        ballMesh.rotation.z += dt * 8;
 
-        // Shadow shrinks and lightens as ball arcs high into the air
+        // Shadow stays close because ball is low
         ballShadow.position.x = ballMesh.position.x;
         ballShadow.position.z = ballMesh.position.z;
-        const shadowScale = Math.max(0.25, 1.0 - (ballMesh.position.y - 0.44) * 0.22);
+        const shadowScale = Math.max(0.55, 1.0 - shotHeight * 0.35);
         ballShadow.scale.setScalar(shadowScale);
 
         // Net bulge ripple when ball hits goal!
