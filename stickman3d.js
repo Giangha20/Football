@@ -2,12 +2,21 @@
  * ============================================================================
  * STICKMAN 3D FOOTBALL SIMULATION ENGINE (Giả Lập 3D Người Que Siêu Chân Thật)
  * ============================================================================
- * - Authentic 3D Pitch with Premier League mowing stripes, white lines & 3D nets
- * - 22 Articulated 3D Stickman Players with head, spine, shoulders, elbows, hips, knees & boots
- * - Dynamic 3D Billboard Name Tags showing authentic player names & roles above heads
- * - Real-time 3D physics: parabolic shots, goal-net ripples, keeper dives, celebration jumps
- * - Multiple Camera Angles: TV Broadcast (tracking ball), Tactical Top-Down, Behind-the-Goal & Free Drag
- * - Zero-Lag Architecture: 60 FPS WebGL, automatically sleeps when 2D tab is active (0% CPU/GPU overhead)
+ * - 15-Joint Articulated Humanoid Biomechanics: Pelvis, Spine, Neck, Head, 
+ *   Shoulders, Elbows, Wrists, Hips, Knees, Ankles and Cleats
+ * - Authentic Football Animations:
+ *     * High-speed Sprinting with natural knee-flexion and pumping bent arms
+ *     * Close-control Dribbling with foot-taps & low agility center-of-gravity
+ *     * Powerful Striking with athletic backswing, hip snap & follow-through
+ *     * Goalkeeper Lateral Airborne Diving & Parrying saves
+ *     * Slide Tackling & Interceptions flat on the turf
+ *     * Iconic Knee-Slide Celebrations & Teammate Group Hugs
+ *     * Defending Disappointment (Hands on Head) upon conceding
+ * - Realistic 3D Ball Physics: Magnus curve, true rolling rotation, turf bounces
+ * - 3D Net Bulge & Ripple upon goal impact
+ * - Dynamic 3D Billboard Name Tags with authentic player names & roles
+ * - Multiple Camera Angles: Broadcast tracking, Tactical Top-Down, Behind-the-Goal
+ * - Zero-Lag Architecture: 60 FPS WebGL, automatically sleeps when 2D tab is shown
  */
 
 (function (window) {
@@ -15,6 +24,7 @@
 
   let scene, camera, renderer, container;
   let pitchGroup, ballMesh, ballShadow;
+  let netMeshLeft, netMeshRight;
   let stickmen = []; // Array of 22 3D stickman objects
   let is3DActive = false;
   let animationFrameId = null;
@@ -24,9 +34,9 @@
   // Drag to rotate / zoom camera
   let isDragging = false;
   let previousMousePosition = { x: 0, y: 0 };
-  let orbitPhi = 0.55; // elevation angle
+  let orbitPhi = 0.58; // elevation angle
   let orbitTheta = 0.0; // azimuth angle
-  let orbitDistance = 58;
+  let orbitDistance = 56;
 
   // Pitch dimensions (proportional to 105m x 68m)
   const PITCH_L = 96; // Length
@@ -34,9 +44,8 @@
   const HALF_L = PITCH_L / 2;
   const HALF_W = PITCH_W / 2;
 
-  // Shared reusable materials & geometries for top performance (tránh lag web)
-  let matTurf, matLines, matNet, matBall, matShadow;
-  let matStickBlack, matBoot;
+  // Shared reusable assets for optimal performance (chống lag web)
+  let matTurf, matLines;
   let geomStickLimb, geomJoint, geomHead, geomBoot;
 
   function init3D(containerEl) {
@@ -47,22 +56,22 @@
     container = containerEl || document.getElementById('canvas3DContainer');
     if (!container) return false;
 
-    // Clear previous canvas if any
+    // Clear previous canvas
     container.innerHTML = '';
 
     const width = container.clientWidth || 800;
-    const height = container.clientHeight || 360;
+    const height = container.clientHeight || 380;
 
     // Scene & Camera
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x07111a);
-    scene.fog = new THREE.FogExp2(0x07111a, 0.0075);
+    scene.background = new THREE.Color(0x060f17);
+    scene.fog = new THREE.FogExp2(0x060f17, 0.007);
 
-    camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 300);
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 320);
     camera.position.set(0, 32, 54);
     camera.lookAt(0, 0, 0);
 
-    // Renderer with high performance & capped pixel ratio
+    // High performance WebGL renderer
     renderer = new THREE.WebGLRenderer({
       antialias: true,
       powerPreference: 'high-performance',
@@ -73,14 +82,14 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.15;
 
     container.appendChild(renderer.domElement);
 
     // Setup Lighting
     setupLighting();
 
-    // Create Shared Assets
+    // Setup Shared Assets
     createSharedAssets();
 
     // Build 3D Pitch, Lines, Stadium & Goals
@@ -95,7 +104,7 @@
     // Attach Orbit & Touch Controls
     setupInteractionControls();
 
-    // Resize Observer
+    // Responsive Resize Observer
     const ro = new ResizeObserver(() => {
       if (!container || !renderer || !camera) return;
       const w = container.clientWidth;
@@ -112,49 +121,38 @@
   }
 
   function setupLighting() {
-    // Sky / Atmosphere Ambient
-    const hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x14532d, 0.65);
+    // Atmospheric Sky Lighting
+    const hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x14532d, 0.7);
     hemiLight.position.set(0, 50, 0);
     scene.add(hemiLight);
 
-    // Main Stadium Floodlight (Casts shadows onto turf)
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.95);
-    dirLight.position.set(25, 45, 30);
+    // Main Stadium Floodlight with Shadows
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    dirLight.position.set(28, 48, 32);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
     dirLight.shadow.camera.near = 10;
-    dirLight.shadow.camera.far = 120;
-    dirLight.shadow.camera.left = -HALF_L - 6;
-    dirLight.shadow.camera.right = HALF_L + 6;
-    dirLight.shadow.camera.top = HALF_W + 6;
-    dirLight.shadow.camera.bottom = -HALF_W - 6;
-    dirLight.shadow.bias = -0.0005;
+    dirLight.shadow.camera.far = 130;
+    dirLight.shadow.camera.left = -HALF_L - 8;
+    dirLight.shadow.camera.right = HALF_L + 8;
+    dirLight.shadow.camera.top = HALF_W + 8;
+    dirLight.shadow.camera.bottom = -HALF_W - 8;
+    dirLight.shadow.bias = -0.0006;
     scene.add(dirLight);
 
-    // Secondary fill light from opposite side
-    const fillLight = new THREE.DirectionalLight(0x6ee7b7, 0.4);
-    fillLight.position.set(-25, 35, -30);
+    // Opposite Fill Floodlight
+    const fillLight = new THREE.DirectionalLight(0x6ee7b7, 0.45);
+    fillLight.position.set(-28, 36, -32);
     scene.add(fillLight);
   }
 
   function createSharedAssets() {
-    // Shared Materials
-    matStickBlack = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.4,
-      metalness: 0.3
-    });
-    matBoot = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      roughness: 0.6
-    });
-
-    // Shared Geometries (One geometry reused for all 22 stickmen limbs)
-    geomStickLimb = new THREE.CylinderGeometry(0.09, 0.08, 1, 8);
-    geomJoint = new THREE.SphereGeometry(0.12, 8, 8);
-    geomHead = new THREE.SphereGeometry(0.38, 12, 12);
-    geomBoot = new THREE.BoxGeometry(0.18, 0.12, 0.32);
+    // Shared Geometries for All 22 Stickmen
+    geomStickLimb = new THREE.CylinderGeometry(0.085, 0.075, 1, 8);
+    geomJoint = new THREE.SphereGeometry(0.11, 8, 8);
+    geomHead = new THREE.SphereGeometry(0.36, 12, 12);
+    geomBoot = new THREE.BoxGeometry(0.18, 0.12, 0.34);
   }
 
   // Generates authentic alternating Premier League green mowing stripes
@@ -170,10 +168,10 @@
       cx.fillStyle = (i % 2 === 0) ? '#15803d' : '#166534';
       cx.fillRect(i * stripeW, 0, stripeW, cv.height);
 
-      // Subtle grass texture pattern
-      cx.fillStyle = 'rgba(255,255,255,0.02)';
-      for (let j = 0; j < 300; j++) {
-        cx.fillRect(i * stripeW + Math.random() * stripeW, Math.random() * cv.height, 2, 2);
+      // Subtle grass fiber texture
+      cx.fillStyle = 'rgba(255,255,255,0.025)';
+      for (let j = 0; j < 400; j++) {
+        cx.fillRect(i * stripeW + Math.random() * stripeW, Math.random() * cv.height, 2, 3);
       }
     }
 
@@ -193,25 +191,25 @@
     matTurf = new THREE.MeshStandardMaterial({
       map: turfTex,
       roughness: 0.85,
-      metalness: 0.05
+      metalness: 0.04
     });
     const turfMesh = new THREE.Mesh(turfGeo, matTurf);
     turfMesh.rotation.x = -Math.PI / 2;
     turfMesh.receiveShadow = true;
     pitchGroup.add(turfMesh);
 
-    // Stadium Surrounding Border (Apron)
-    const apronGeo = new THREE.PlaneGeometry(PITCH_L + 16, PITCH_W + 14);
-    const matApron = new THREE.MeshStandardMaterial({ color: 0x091b17, roughness: 0.95 });
+    // Outer Stadium Apron
+    const apronGeo = new THREE.PlaneGeometry(PITCH_L + 18, PITCH_W + 16);
+    const matApron = new THREE.MeshStandardMaterial({ color: 0x071e18, roughness: 0.95 });
     const apronMesh = new THREE.Mesh(apronGeo, matApron);
     apronMesh.rotation.x = -Math.PI / 2;
     apronMesh.position.y = -0.04;
     apronMesh.receiveShadow = true;
     pitchGroup.add(apronMesh);
 
-    // White Pitch Lines
+    // Pitch Lines
     matLines = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const lineThickness = 0.22;
+    const lineThickness = 0.24;
 
     function addLine(x1, z1, x2, z2) {
       const dx = x2 - x1;
@@ -226,47 +224,45 @@
       pitchGroup.add(mesh);
     }
 
-    // Touchlines and Goal lines
-    addLine(-HALF_L, -HALF_W,  HALF_L, -HALF_W); // Top touchline
-    addLine(-HALF_L,  HALF_W,  HALF_L,  HALF_W); // Bottom touchline
-    addLine(-HALF_L, -HALF_W, -HALF_L,  HALF_W); // Left goal line
-    addLine( HALF_L, -HALF_W,  HALF_L,  HALF_W); // Right goal line
+    // Touchlines & Goal lines
+    addLine(-HALF_L, -HALF_W,  HALF_L, -HALF_W);
+    addLine(-HALF_L,  HALF_W,  HALF_L,  HALF_W);
+    addLine(-HALF_L, -HALF_W, -HALF_L,  HALF_W);
+    addLine( HALF_L, -HALF_W,  HALF_L,  HALF_W);
 
     // Halfway Line
     addLine(0, -HALF_W, 0, HALF_W);
 
     // Center Circle (Radius 9.15m -> ~8.4 units)
-    const circleGeo = new THREE.RingGeometry(8.2, 8.42, 48);
+    const circleGeo = new THREE.RingGeometry(8.2, 8.44, 48);
     const circleMesh = new THREE.Mesh(circleGeo, matLines);
     circleMesh.rotation.x = -Math.PI / 2;
     circleMesh.position.set(0, 0.02, 0);
     pitchGroup.add(circleMesh);
 
     // Center Spot
-    const spotGeo = new THREE.CircleGeometry(0.4, 16);
+    const spotGeo = new THREE.CircleGeometry(0.42, 16);
     const spotMesh = new THREE.Mesh(spotGeo, matLines);
     spotMesh.rotation.x = -Math.PI / 2;
     spotMesh.position.set(0, 0.025, 0);
     pitchGroup.add(spotMesh);
 
-    // Penalty Areas (40.3m x 16.5m -> 36 x 15 units)
+    // Penalty Boxes (36 x 15 units)
     const penW = 36;
     const penD = 15;
-    // Left Penalty Box
     addLine(-HALF_L, -penW / 2, -HALF_L + penD, -penW / 2);
     addLine(-HALF_L + penD, -penW / 2, -HALF_L + penD, penW / 2);
     addLine(-HALF_L, penW / 2, -HALF_L + penD, penW / 2);
-    // Left Penalty Spot
+
     const leftSpot = new THREE.Mesh(spotGeo, matLines);
     leftSpot.rotation.x = -Math.PI / 2;
     leftSpot.position.set(-HALF_L + 10, 0.025, 0);
     pitchGroup.add(leftSpot);
 
-    // Right Penalty Box
     addLine(HALF_L, -penW / 2, HALF_L - penD, -penW / 2);
     addLine(HALF_L - penD, -penW / 2, HALF_L - penD, penW / 2);
     addLine(HALF_L, penW / 2, HALF_L - penD, penW / 2);
-    // Right Penalty Spot
+
     const rightSpot = new THREE.Mesh(spotGeo, matLines);
     rightSpot.rotation.x = -Math.PI / 2;
     rightSpot.position.set(HALF_L - 10, 0.025, 0);
@@ -284,17 +280,17 @@
     addLine(HALF_L, gBoxW / 2, HALF_L - gBoxD, gBoxW / 2);
 
     // 3D Goals with Posts, Crossbars & 3D Protruding Nets
-    build3DGoal(-HALF_L, -1); // Left Goal
-    build3DGoal( HALF_L,  1); // Right Goal
+    netMeshLeft = build3DGoal(-HALF_L, -1);
+    netMeshRight = build3DGoal(HALF_L, 1);
 
-    // Stadium Perimeter LED Advertising Boards
+    // Stadium Perimeter LED Boards
     buildStadiumBoards();
   }
 
   function build3DGoal(xPos, direction) {
-    const goalW = 12; // width
-    const goalH = 4.4; // height
-    const goalD = 3.8; // depth behind line
+    const goalW = 12;
+    const goalH = 4.4;
+    const goalD = 3.8;
     const postR = 0.14;
 
     const postMat = new THREE.MeshStandardMaterial({
@@ -303,7 +299,7 @@
       metalness: 0.6
     });
 
-    // 2 Vertical Goalposts
+    // 2 Goalposts
     const postGeo = new THREE.CylinderGeometry(postR, postR, goalH, 12);
     const postLeft = new THREE.Mesh(postGeo, postMat);
     postLeft.position.set(xPos, goalH / 2, -goalW / 2);
@@ -323,44 +319,39 @@
     crossbar.castShadow = true;
     pitchGroup.add(crossbar);
 
-    // 3D Goal Net (Slanted translucent wireframe mesh)
+    // 3D Goal Net
     const netMat = new THREE.MeshBasicMaterial({
-      color: 0xe2e8f0,
+      color: 0xf1f5f9,
       wireframe: true,
       transparent: true,
       opacity: 0.45
     });
 
-    // Back net
-    const backGeo = new THREE.PlaneGeometry(goalW, goalH);
-    const backNet = new THREE.Mesh(backGeo, netMat);
+    const backNet = new THREE.Mesh(new THREE.PlaneGeometry(goalW, goalH, 8, 6), netMat);
     backNet.position.set(xPos + direction * goalD, goalH / 2, 0);
     backNet.rotation.y = direction < 0 ? Math.PI / 2 : -Math.PI / 2;
     pitchGroup.add(backNet);
 
-    // Roof net (slanted from crossbar to back net)
-    const roofGeo = new THREE.PlaneGeometry(goalW, goalD);
-    const roofNet = new THREE.Mesh(roofGeo, netMat);
+    const roofNet = new THREE.Mesh(new THREE.PlaneGeometry(goalW, goalD, 8, 4), netMat);
     roofNet.position.set(xPos + direction * (goalD / 2), goalH, 0);
     roofNet.rotation.x = Math.PI / 2;
     pitchGroup.add(roofNet);
 
-    // Side nets
-    const sideGeo = new THREE.PlaneGeometry(goalD, goalH);
-    const sideNet1 = new THREE.Mesh(sideGeo, netMat);
+    const sideNet1 = new THREE.Mesh(new THREE.PlaneGeometry(goalD, goalH, 4, 6), netMat);
     sideNet1.position.set(xPos + direction * (goalD / 2), goalH / 2, -goalW / 2);
     pitchGroup.add(sideNet1);
 
-    const sideNet2 = new THREE.Mesh(sideGeo, netMat);
+    const sideNet2 = new THREE.Mesh(new THREE.PlaneGeometry(goalD, goalH, 4, 6), netMat);
     sideNet2.position.set(xPos + direction * (goalD / 2), goalH / 2, goalW / 2);
     pitchGroup.add(sideNet2);
+
+    return backNet;
   }
 
   function buildStadiumBoards() {
-    // Top and Bottom Glowing LED Ad Boards
     const boardMat = new THREE.MeshStandardMaterial({
       color: 0x064e3b,
-      emissive: 0x047857,
+      emissive: 0x059669,
       emissiveIntensity: 0.35,
       roughness: 0.3
     });
@@ -376,21 +367,20 @@
   }
 
   function buildBall() {
-    const ballGeo = new THREE.SphereGeometry(0.42, 16, 16);
-    // Soccer ball texture with high contrast
-    matBall = new THREE.MeshStandardMaterial({
+    const ballGeo = new THREE.SphereGeometry(0.44, 18, 18);
+    const ballMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.3,
       metalness: 0.1
     });
-    ballMesh = new THREE.Mesh(ballGeo, matBall);
-    ballMesh.position.set(0, 0.42, 0);
+    ballMesh = new THREE.Mesh(ballGeo, ballMat);
+    ballMesh.position.set(0, 0.44, 0);
     ballMesh.castShadow = true;
     scene.add(ballMesh);
 
     // Dynamic Ball Shadow on Pitch
-    const shadowGeo = new THREE.CircleGeometry(0.45, 16);
-    matShadow = new THREE.MeshBasicMaterial({
+    const shadowGeo = new THREE.CircleGeometry(0.48, 16);
+    const matShadow = new THREE.MeshBasicMaterial({
       color: 0x000000,
       transparent: true,
       opacity: 0.55
@@ -418,7 +408,7 @@
     ctx.fill();
     ctx.stroke();
 
-    // Left Role Pill Badge (GK, DF, MF, FW)
+    // Role Badge (GK, DF, MF, FW)
     const badgeColor = role === 'GK' ? '#f59e0b' : (isHome ? '#10b981' : '#0284c7');
     ctx.fillStyle = badgeColor;
     ctx.beginPath();
@@ -436,10 +426,9 @@
     ctx.font = '800 36px "Be Vietnam Pro", system-ui, sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowColor = 'rgba(0,0,0,0.85)';
     ctx.shadowBlur = 6;
 
-    // Truncate cleanly if name is extra long
     let displayName = playerName || 'Cầu thủ';
     if (displayName.length > 14) displayName = displayName.substring(0, 13) + '…';
     ctx.fillText(displayName, 96, cv.height / 2 + 2);
@@ -449,94 +438,207 @@
     return tex;
   }
 
-  // Creates an articulated 3D Stickman rig (Hierarchical joints for natural running/kicking)
+  // ============================================================================
+  // FULL 15-JOINT ARTICULATED HUMANOID STICKMAN RIG (HOẠT ĐỘNG SIÊU CHÂN THẬT)
+  // ============================================================================
   function createStickmanRig(id, side, role, fullName, shortName, teamColorHex) {
     const isHome = side === 'home';
+    const isGK = role === 'GK';
     const root = new THREE.Group();
 
-    // Team Jersey Material for Torso
-    const jerseyMat = new THREE.MeshStandardMaterial({
-      color: teamColorHex || (isHome ? 0x10b981 : 0x0284c7),
-      roughness: 0.35,
-      metalness: 0.15
-    });
+    // Palette
+    const jerseyColor = isGK ? 0xfacc15 : (teamColorHex || (isHome ? 0x10b981 : 0x0284c7));
+    const shortsColor = isGK ? 0x1e293b : 0xffffff;
+    const skinStickColor = 0x1e293b;
+    const bootColor = isGK ? 0xf97316 : (isHome ? 0x34d399 : 0x38bdf8);
 
-    // 1. Torso (Spine)
-    const torsoMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.16, 0.14, 1.1, 10),
-      role === 'GK' ? new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3 }) : jerseyMat
-    );
-    torsoMesh.position.y = 1.35;
+    const matJersey = new THREE.MeshStandardMaterial({ color: jerseyColor, roughness: 0.35, metalness: 0.1 });
+    const matShorts = new THREE.MeshStandardMaterial({ color: shortsColor, roughness: 0.4 });
+    const matStick = new THREE.MeshStandardMaterial({ color: skinStickColor, roughness: 0.35 });
+    const matPlayerBoot = new THREE.MeshStandardMaterial({ color: bootColor, roughness: 0.25 });
+    const matJointShared = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 });
+
+    // 1. Pelvis / Hip base
+    const pelvis = new THREE.Group();
+    pelvis.position.y = 1.05;
+    root.add(pelvis);
+
+    const pelvisMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.16, 0.25, 10), matShorts);
+    pelvis.add(pelvisMesh);
+
+    // 2. Spine / Torso (can lean forward during sprints, bend during kicks)
+    const spine = new THREE.Group();
+    spine.position.y = 0.12;
+    pelvis.add(spine);
+
+    const torsoMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.85, 10), matJersey);
+    torsoMesh.position.y = 0.42;
     torsoMesh.castShadow = true;
-    root.add(torsoMesh);
+    spine.add(torsoMesh);
 
-    // 2. Neck & Head
-    const headMesh = new THREE.Mesh(geomHead, matStickBlack);
-    headMesh.position.y = 2.15;
+    // Team chest stripe / crest accent
+    const chestStripe = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.225, 0.21, 0.22, 10),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
+    );
+    chestStripe.position.y = 0.52;
+    spine.add(chestStripe);
+
+    // 3. Neck & Head
+    const neck = new THREE.Group();
+    neck.position.y = 0.88;
+    spine.add(neck);
+
+    const headMesh = new THREE.Mesh(geomHead, matStick);
+    headMesh.position.y = 0.32;
     headMesh.castShadow = true;
-    root.add(headMesh);
+    neck.add(headMesh);
 
-    // Headband / Visor matching team color
-    const bandGeo = new THREE.TorusGeometry(0.38, 0.05, 8, 24);
-    const bandMesh = new THREE.Mesh(bandGeo, jerseyMat);
+    // Eyes / Visor in team accent color so you can see where player is looking!
+    const visorGeo = new THREE.BoxGeometry(0.32, 0.08, 0.22);
+    const visorMat = new THREE.MeshBasicMaterial({ color: isGK ? 0xffffff : jerseyColor });
+    const visor = new THREE.Mesh(visorGeo, visorMat);
+    visor.position.set(0, 0.34, 0.26);
+    neck.add(visor);
+
+    // Headband
+    const bandMesh = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.04, 8, 20), matJersey);
     bandMesh.rotation.x = Math.PI / 2;
-    bandMesh.position.y = 2.18;
-    root.add(bandMesh);
+    bandMesh.position.y = 0.36;
+    neck.add(bandMesh);
 
-    // 3. Dynamic Name Tag Billboard Sprite (Always faces camera)
+    // 4. Dynamic Name Tag Billboard Sprite (Always faces camera)
     const nameTex = generateNameTagTexture(shortName || fullName, role, isHome, teamColorHex);
-    const spriteMat = new THREE.SpriteMaterial({
-      map: nameTex,
-      transparent: true,
-      depthTest: false
-    });
+    const spriteMat = new THREE.SpriteMaterial({ map: nameTex, transparent: true, depthTest: false });
     const nameSprite = new THREE.Sprite(spriteMat);
-    nameSprite.position.set(0, 2.85, 0);
+    nameSprite.position.set(0, 1.05, 0);
     nameSprite.scale.set(4.0, 1.0, 1.0);
-    root.add(nameSprite);
+    neck.add(nameSprite);
 
-    // 4. Articulated Limbs with Pivot Joints
-    // Left Shoulder -> Arm
+    // 5. Left Arm (Shoulder -> Upper Arm -> Elbow Joint -> Forearm -> Hand)
     const shoulderL = new THREE.Group();
-    shoulderL.position.set(0, 1.75, -0.28);
-    const armL = new THREE.Mesh(geomStickLimb, matStickBlack);
-    armL.position.y = -0.45;
-    armL.scale.set(1, 0.9, 1);
-    shoulderL.add(armL);
-    root.add(shoulderL);
+    shoulderL.position.set(-0.30, 0.75, 0);
+    spine.add(shoulderL);
+    shoulderL.add(new THREE.Mesh(geomJoint, matJointShared));
 
-    // Right Shoulder -> Arm
+    const upperArmL = new THREE.Group();
+    shoulderL.add(upperArmL);
+    const upperArmMeshL = new THREE.Mesh(geomStickLimb, matJersey);
+    upperArmMeshL.position.y = -0.25;
+    upperArmMeshL.scale.set(0.95, 0.52, 0.95);
+    upperArmL.add(upperArmMeshL);
+
+    const elbowL = new THREE.Group();
+    elbowL.position.y = -0.50;
+    upperArmL.add(elbowL);
+    elbowL.add(new THREE.Mesh(geomJoint, matJointShared));
+
+    const forearmMeshL = new THREE.Mesh(geomStickLimb, matStick);
+    forearmMeshL.position.y = -0.22;
+    forearmMeshL.scale.set(0.85, 0.46, 0.85);
+    elbowL.add(forearmMeshL);
+
+    const handL = new THREE.Mesh(
+      new THREE.SphereGeometry(isGK ? 0.16 : 0.11, 8, 8),
+      isGK ? new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 }) : matStick
+    );
+    handL.position.y = -0.46;
+    elbowL.add(handL);
+
+    // 6. Right Arm (Shoulder -> Upper Arm -> Elbow Joint -> Forearm -> Hand)
     const shoulderR = new THREE.Group();
-    shoulderR.position.set(0, 1.75, 0.28);
-    const armR = new THREE.Mesh(geomStickLimb, matStickBlack);
-    armR.position.y = -0.45;
-    armR.scale.set(1, 0.9, 1);
-    shoulderR.add(armR);
-    root.add(shoulderR);
+    shoulderR.position.set(0.30, 0.75, 0);
+    spine.add(shoulderR);
+    shoulderR.add(new THREE.Mesh(geomJoint, matJointShared));
 
-    // Left Hip -> Leg & Boot
+    const upperArmR = new THREE.Group();
+    shoulderR.add(upperArmR);
+    const upperArmMeshR = new THREE.Mesh(geomStickLimb, matJersey);
+    upperArmMeshR.position.y = -0.25;
+    upperArmMeshR.scale.set(0.95, 0.52, 0.95);
+    upperArmR.add(upperArmMeshR);
+
+    const elbowR = new THREE.Group();
+    elbowR.position.y = -0.50;
+    upperArmR.add(elbowR);
+    elbowR.add(new THREE.Mesh(geomJoint, matJointShared));
+
+    const forearmMeshR = new THREE.Mesh(geomStickLimb, matStick);
+    forearmMeshR.position.y = -0.22;
+    forearmMeshR.scale.set(0.85, 0.46, 0.85);
+    elbowR.add(forearmMeshR);
+
+    const handR = new THREE.Mesh(
+      new THREE.SphereGeometry(isGK ? 0.16 : 0.11, 8, 8),
+      isGK ? new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 }) : matStick
+    );
+    handR.position.y = -0.46;
+    elbowR.add(handR);
+
+    // 7. Left Leg (Hip -> Thigh -> Knee Joint -> Shin -> Ankle -> Boot)
     const hipL = new THREE.Group();
-    hipL.position.set(0, 0.85, -0.18);
-    const legL = new THREE.Mesh(geomStickLimb, matStickBlack);
-    legL.position.y = -0.42;
-    legL.scale.set(1.1, 0.85, 1.1);
-    hipL.add(legL);
-    const bootL = new THREE.Mesh(geomBoot, matBoot);
-    bootL.position.set(0.08, -0.82, 0);
-    hipL.add(bootL);
-    root.add(hipL);
+    hipL.position.set(-0.16, -0.08, 0);
+    pelvis.add(hipL);
+    hipL.add(new THREE.Mesh(geomJoint, matJointShared));
 
-    // Right Hip -> Leg & Boot
+    const thighL = new THREE.Group();
+    hipL.add(thighL);
+    const thighMeshL = new THREE.Mesh(geomStickLimb, matShorts);
+    thighMeshL.position.y = -0.25;
+    thighMeshL.scale.set(1.15, 0.52, 1.15);
+    thighL.add(thighMeshL);
+
+    const kneeL = new THREE.Group();
+    kneeL.position.y = -0.52;
+    thighL.add(kneeL);
+    kneeL.add(new THREE.Mesh(geomJoint, matJointShared));
+
+    const shinMeshL = new THREE.Mesh(geomStickLimb, matStick);
+    shinMeshL.position.y = -0.24;
+    shinMeshL.scale.set(1.0, 0.50, 1.0);
+    kneeL.add(shinMeshL);
+
+    const bootL = new THREE.Mesh(geomBoot, matPlayerBoot);
+    bootL.position.set(0, -0.50, 0.09);
+    bootL.castShadow = true;
+    kneeL.add(bootL);
+
+    // 8. Right Leg (Hip -> Thigh -> Knee Joint -> Shin -> Ankle -> Boot)
     const hipR = new THREE.Group();
-    hipR.position.set(0, 0.85, 0.18);
-    const legR = new THREE.Mesh(geomStickLimb, matStickBlack);
-    legR.position.y = -0.42;
-    legR.scale.set(1.1, 0.85, 1.1);
-    hipR.add(legR);
-    const bootR = new THREE.Mesh(geomBoot, matBoot);
-    bootR.position.set(0.08, -0.82, 0);
-    hipR.add(bootR);
-    root.add(hipR);
+    hipR.position.set(0.16, -0.08, 0);
+    pelvis.add(hipR);
+    hipR.add(new THREE.Mesh(geomJoint, matJointShared));
+
+    const thighR = new THREE.Group();
+    hipR.add(thighR);
+    const thighMeshR = new THREE.Mesh(geomStickLimb, matShorts);
+    thighMeshR.position.y = -0.25;
+    thighMeshR.scale.set(1.15, 0.52, 1.15);
+    thighR.add(thighMeshR);
+
+    const kneeR = new THREE.Group();
+    kneeR.position.y = -0.52;
+    thighR.add(kneeR);
+    kneeR.add(new THREE.Mesh(geomJoint, matJointShared));
+
+    const shinMeshR = new THREE.Mesh(geomStickLimb, matStick);
+    shinMeshR.position.y = -0.24;
+    shinMeshR.scale.set(1.0, 0.50, 1.0);
+    kneeR.add(shinMeshR);
+
+    const bootR = new THREE.Mesh(geomBoot, matPlayerBoot);
+    bootR.position.set(0, -0.50, 0.09);
+    bootR.castShadow = true;
+    kneeR.add(bootR);
+
+    // Soft Player Shadow on Grass
+    const pShadow = new THREE.Mesh(
+      new THREE.CircleGeometry(0.55, 12),
+      new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.45 })
+    );
+    pShadow.rotation.x = -Math.PI / 2;
+    pShadow.position.y = 0.025;
+    root.add(pShadow);
 
     scene.add(root);
 
@@ -547,21 +649,32 @@
       fullName,
       shortName,
       root,
-      torsoMesh,
+      pelvis,
+      spine,
+      neck,
       nameSprite,
-      shoulderL,
-      shoulderR,
-      hipL,
-      hipR,
-      runCadence: Math.random() * 6.28,
-      kickAnim: 0,
-      diveAnim: 0,
-      celebrateAnim: 0
+      pShadow,
+      // Arm joints
+      shoulderL, upperArmL, elbowL,
+      shoulderR, upperArmR, elbowR,
+      // Leg joints
+      hipL, thighL, kneeL, bootL,
+      hipR, thighR, kneeR, bootR,
+      // Animation state variables
+      animState: 'idle', // 'idle' | 'running' | 'dribbling' | 'kicking' | 'slide_tackle' | 'gk_dive' | 'celebrate' | 'frustrated'
+      runCycle: Math.random() * 6.28,
+      kickTimer: 0,
+      diveTimer: 0,
+      diveSide: 1, // 1 for right, -1 for left
+      celebrateTimer: 0,
+      tackleTimer: 0,
+      frustratedTimer: 0,
+      currentHeading: 0
     };
   }
 
   function buildStickmenRoster() {
-    // Clear existing stickmen from scene
+    // Clear existing stickmen
     stickmen.forEach(s => scene.remove(s.root));
     stickmen = [];
 
@@ -569,7 +682,6 @@
     const homeTeam = state?.homeTeam || { name: 'Chủ nhà', color: '#10b981', stars: ['Cầu thủ 1'] };
     const awayTeam = state?.awayTeam || { name: 'Khách', color: '#0284c7', stars: ['Cầu thủ 1'] };
 
-    // Standard 11v11 Tactical 4-3-3 Roles
     const roles = ['GK', 'DF', 'DF', 'DF', 'DF', 'MF', 'MF', 'MF', 'FW', 'FW', 'FW'];
 
     // Home 11
@@ -589,7 +701,6 @@
     }
   }
 
-  // Updates name badges when teams are changed
   function updateTeamNames(homeTeam, awayTeam) {
     if (!stickmen.length) return;
     const roles = ['GK', 'DF', 'DF', 'DF', 'DF', 'MF', 'MF', 'MF', 'FW', 'FW', 'FW'];
@@ -624,15 +735,20 @@
     return { x: x3D, z: z3D };
   }
 
-  // Main 3D Simulation Frame Update (Syncs with match engine state)
+  // ============================================================================
+  // MAIN ANIMATION LOOP & BIOMECHANICAL MOTION ENGINE
+  // ============================================================================
   function update(state) {
     if (!state || !is3DActive) return;
 
     const now = performance.now();
-    const dt = Math.min((now - lastTime) / 1000, 0.1);
+    const dt = Math.min((now - lastTime) / 1000, 0.08);
     lastTime = now;
 
-    // 1. Update 22 Stickman Player Rigs
+    const rawBall = state.ballPos || state.ball || { x: 0.5, y: 0.5 };
+    const ballPos3D = map2DTo3D(rawBall.x, rawBall.y);
+
+    // 1. Update each of the 22 Stickmen with high realism
     if (state.players && state.players.length >= 22) {
       for (let i = 0; i < 22; i++) {
         const p2d = state.players[i];
@@ -641,98 +757,288 @@
 
         const targetPos = map2DTo3D(p2d.x, p2d.y);
 
-        // Smooth Lerp towards target position
+        // Smooth position tracking with realistic inertia
         const prevX = sm.root.position.x;
         const prevZ = sm.root.position.z;
-        sm.root.position.x += (targetPos.x - prevX) * 0.25;
-        sm.root.position.z += (targetPos.z - prevZ) * 0.25;
+        const lerpFactor = sm.animState === 'slide_tackle' ? 0.15 : 0.28;
+        sm.root.position.x += (targetPos.x - prevX) * lerpFactor;
+        sm.root.position.z += (targetPos.z - prevZ) * lerpFactor;
 
-        // Calculate velocity & movement vector
-        const dx = targetPos.x - prevX;
-        const dz = targetPos.z - prevZ;
-        const speed = Math.sqrt(dx * dx + dz * dz);
+        // Calculate velocity & movement heading
+        const vx = targetPos.x - prevX;
+        const vz = targetPos.z - prevZ;
+        const speed = Math.sqrt(vx * vx + vz * vz);
 
-        // Heading & Rotation
-        if (speed > 0.05) {
-          const targetAngle = Math.atan2(dx, dz);
-          sm.root.rotation.y = targetAngle;
+        // Distance to Ball
+        const distToBall = Math.hypot(sm.root.position.x - ballPos3D.x, sm.root.position.z - ballPos3D.z);
+        const hasBallPossession = distToBall < 1.4;
+
+        // Direction & Smooth Facing Angle
+        if (speed > 0.04) {
+          const targetAngle = Math.atan2(vx, vz);
+          // Shortest angle rotation lerp
+          let diff = targetAngle - sm.currentHeading;
+          while (diff < -Math.PI) diff += Math.PI * 2;
+          while (diff > Math.PI) diff -= Math.PI * 2;
+          sm.currentHeading += diff * 0.22;
+          sm.root.rotation.y = sm.currentHeading;
         }
 
-        // Running / Walking Limb Animation (Sinusoidal Inverse Kinematics)
-        const isRunning = speed > 0.04;
-        const isKicking = sm.kickAnim > 0;
-        const isCelebrating = sm.celebrateAnim > 0;
+        // Check if player should look at the ball with their head
+        const headTargetX = ballPos3D.x - sm.root.position.x;
+        const headTargetZ = ballPos3D.z - sm.root.position.z;
+        const ballAngleRel = Math.atan2(headTargetX, headTargetZ) - sm.currentHeading;
+        let clampedHeadYaw = Math.max(-0.65, Math.min(0.65, ballAngleRel));
+        sm.neck.rotation.y += (clampedHeadYaw - sm.neck.rotation.y) * 0.15;
 
-        if (isCelebrating) {
-          sm.celebrateAnim -= dt;
-          sm.root.position.y = Math.max(0, Math.sin(now * 0.008) * 0.5);
-          sm.shoulderL.rotation.x = -2.6; // Arms high in Victory V-pose
+        // -------------------------------------------------------------
+        // ANIMATION STATE MACHINE (SIÊU CHÂN THẬT)
+        // -------------------------------------------------------------
+        if (sm.celebrateTimer > 0) {
+          // CELEBRATION MODE: Knee-slide or Jumping Fist Pump!
+          sm.celebrateTimer -= dt;
+          sm.animState = 'celebrate';
+
+          // Knee-Slide along grass: drop down, arch spine back, arms spread wide!
+          sm.pelvis.position.y = 0.52;
+          sm.spine.rotation.x = -0.55; // Arched back in ecstasy
+          sm.spine.rotation.z = 0;
+          sm.thighL.rotation.x = 0.55;
+          sm.thighR.rotation.x = 0.55;
+          sm.kneeL.rotation.x = 1.95; // Knees folded backward touching turf
+          sm.kneeR.rotation.x = 1.95;
+
+          // Arms raised high in Victory 'V'
+          sm.shoulderL.rotation.x = -2.6;
+          sm.shoulderL.rotation.z = -0.6;
+          sm.elbowL.rotation.x = -0.4;
           sm.shoulderR.rotation.x = -2.6;
-          sm.hipL.rotation.x = 0;
-          sm.hipR.rotation.x = 0;
-        } else if (isKicking) {
-          sm.kickAnim -= dt;
-          // Kicking backswing & powerful follow-through
-          sm.hipR.rotation.x = -1.1 * Math.sin(sm.kickAnim * Math.PI);
-          sm.shoulderL.rotation.x = 0.6;
-          sm.shoulderR.rotation.x = -0.6;
-        } else if (isRunning) {
-          sm.runCadence += speed * 3.5;
-          const swing = Math.sin(sm.runCadence) * 0.65;
+          sm.shoulderR.rotation.z = 0.6;
+          sm.elbowR.rotation.x = -0.4;
 
-          // Alternating Thighs & Opposite Arms
-          sm.hipL.rotation.x = swing;
-          sm.hipR.rotation.x = -swing;
-          sm.shoulderL.rotation.x = -swing * 0.7;
-          sm.shoulderR.rotation.x = swing * 0.7;
+        } else if (sm.frustratedTimer > 0) {
+          // CONCEDING GOAL DISAPPOINTMENT: Hands on head / slump
+          sm.frustratedTimer -= dt;
+          sm.animState = 'frustrated';
+          sm.pelvis.position.y = 1.0;
+          sm.spine.rotation.x = 0.35; // Slumped
+          sm.neck.rotation.x = 0.3; // Looking down
 
-          // Vertical bobbing with stride
-          sm.root.position.y = Math.abs(Math.sin(sm.runCadence * 2)) * 0.08;
+          // Hands clutched behind head
+          sm.shoulderL.rotation.x = -2.2;
+          sm.shoulderL.rotation.z = -0.7;
+          sm.elbowL.rotation.x = -1.9;
+          sm.shoulderR.rotation.x = -2.2;
+          sm.shoulderR.rotation.z = 0.7;
+          sm.elbowR.rotation.x = -1.9;
+
+        } else if (sm.diveTimer > 0) {
+          // GOALKEEPER AIRBORNE DIVE SAVE
+          sm.diveTimer -= dt;
+          sm.animState = 'gk_dive';
+
+          const diveProgress = 1.0 - (sm.diveTimer / 1.4);
+          const diveHeight = Math.sin(diveProgress * Math.PI) * 1.85;
+          sm.pelvis.position.y = 0.8 + diveHeight;
+
+          // Roll body horizontally into the direction of the dive
+          sm.root.rotation.z = sm.diveSide * Math.sin(diveProgress * Math.PI) * 1.35;
+
+          // Arms fully extended to parry ball
+          sm.shoulderL.rotation.x = -1.2;
+          sm.shoulderR.rotation.x = -1.2;
+          sm.elbowL.rotation.x = 0; // Fully straight arms!
+          sm.elbowR.rotation.x = 0;
+
+          // Trailing legs
+          sm.thighL.rotation.x = -0.4;
+          sm.kneeL.rotation.x = 0.6;
+          sm.thighR.rotation.x = 0.3;
+          sm.kneeR.rotation.x = 0.3;
+
+        } else if (sm.kickTimer > 0) {
+          // POWER KICK / PASS ANIMATION
+          sm.kickTimer -= dt;
+          sm.animState = 'kicking';
+          const p = 1.0 - (sm.kickTimer / 0.45);
+
+          if (p < 0.4) {
+            // Phase 1: Massive Backswing & Wind-up
+            const t = p / 0.4;
+            sm.spine.rotation.x = -0.35 * t; // Leans back
+            sm.thighR.rotation.x = -1.2 * t; // Kicking leg pulls way back (-68 deg)
+            sm.kneeR.rotation.x = 1.55 * t;  // Knee deeply flexed
+            sm.thighL.rotation.x = 0.25;    // Plant foot stable
+            sm.kneeL.rotation.x = 0.2;
+            // Balance arms
+            sm.shoulderL.rotation.x = 0.8 * t;
+            sm.shoulderR.rotation.x = -0.7 * t;
+          } else {
+            // Phase 2: Explosive Forward Snap & Follow-through
+            const t = (p - 0.4) / 0.6;
+            sm.spine.rotation.x = 0.35 * (1 - t); // Snaps forward over ball
+            sm.thighR.rotation.x = 1.25 * (1 - t * 0.3); // Kicking foot whips high
+            sm.kneeR.rotation.x = 0.1; // Leg straightens at ball contact
+            sm.thighL.rotation.x = -0.15;
+            sm.kneeL.rotation.x = 0.15;
+          }
+
+        } else if (sm.tackleTimer > 0) {
+          // SLIDE TACKLE ANIMATION
+          sm.tackleTimer -= dt;
+          sm.animState = 'slide_tackle';
+          sm.pelvis.position.y = 0.35;
+          sm.spine.rotation.x = -0.7; // Leans back on turf
+
+          // Lead tackling leg stretched flat out along grass
+          sm.thighR.rotation.x = 1.45;
+          sm.kneeR.rotation.x = 0.05;
+          // Trail leg tucked under
+          sm.thighL.rotation.x = -0.6;
+          sm.kneeL.rotation.x = 1.85;
+
+        } else if (hasBallPossession && speed > 0.03) {
+          // DRIBBLING MODE: Agile close control with rapid foot touches
+          sm.animState = 'dribbling';
+          sm.runCycle += speed * 4.6;
+          const cycle = sm.runCycle;
+
+          sm.pelvis.position.y = 0.98 + Math.abs(Math.sin(cycle * 2)) * 0.06;
+          sm.spine.rotation.x = 0.28; // Forward athletic lean
+          sm.neck.rotation.x = 0.22;  // Eyes on the ball
+
+          // Quick alternating foot touches
+          sm.thighL.rotation.x = Math.sin(cycle) * 0.55;
+          sm.thighR.rotation.x = -Math.sin(cycle) * 0.55;
+          sm.kneeL.rotation.x = Math.max(0, -Math.sin(cycle)) * 1.1;
+          sm.kneeR.rotation.x = Math.max(0, Math.sin(cycle)) * 1.1;
+
+          // Athletic bent-arm balance
+          sm.shoulderL.rotation.x = -Math.sin(cycle) * 0.5;
+          sm.elbowL.rotation.x = -1.1;
+          sm.shoulderR.rotation.x = Math.sin(cycle) * 0.5;
+          sm.elbowR.rotation.x = -1.1;
+
+        } else if (speed > 0.04) {
+          // SPRINTING / RUNNING MODE: Biomechanical high-knee stride & arm pump
+          sm.animState = 'running';
+          sm.runCycle += speed * 3.8;
+          const cycle = sm.runCycle;
+
+          // Vertical pelvis bounce with each stride
+          sm.pelvis.position.y = 1.05 + Math.abs(Math.sin(cycle * 2)) * 0.09;
+          sm.spine.rotation.x = 0.22; // Aerodynamic forward lean
+
+          // Thigh & Knee coordination (Knee flexes up to 75 deg on backswing!)
+          const swingL = Math.sin(cycle);
+          sm.thighL.rotation.x = swingL * 0.78;
+          sm.kneeL.rotation.x = Math.max(0, -swingL) * 1.35;
+
+          const swingR = -swingL;
+          sm.thighR.rotation.x = swingR * 0.78;
+          sm.kneeR.rotation.x = Math.max(0, -swingR) * 1.35;
+
+          // Upper body opposite arm pumping with permanently bent elbows
+          sm.shoulderL.rotation.x = -swingL * 0.65;
+          sm.elbowL.rotation.x = -0.95 - swingL * 0.25;
+
+          sm.shoulderR.rotation.x = swingL * 0.65;
+          sm.elbowR.rotation.x = -0.95 + swingL * 0.25;
+
         } else {
-          // Idle athletic ready stance
-          sm.hipL.rotation.x *= 0.85;
-          sm.hipR.rotation.x *= 0.85;
-          sm.shoulderL.rotation.x *= 0.85;
-          sm.shoulderR.rotation.x *= 0.85;
-          sm.root.position.y = 0;
+          // IDLE ATHLETIC STANCE: Breathing, gentle weight shift, ready bounce
+          sm.animState = 'idle';
+          const idleCadence = now * 0.003;
+          sm.pelvis.position.y = 1.05 + Math.sin(idleCadence) * 0.02;
+          sm.spine.rotation.x = 0.06;
+          sm.neck.rotation.x = 0.0;
+
+          sm.thighL.rotation.x = Math.sin(idleCadence * 0.5) * 0.06;
+          sm.thighR.rotation.x = -Math.sin(idleCadence * 0.5) * 0.06;
+          sm.kneeL.rotation.x = 0.12;
+          sm.kneeR.rotation.x = 0.12;
+
+          sm.shoulderL.rotation.x = 0.1;
+          sm.elbowL.rotation.x = -0.75;
+          sm.shoulderR.rotation.x = 0.1;
+          sm.elbowR.rotation.x = -0.75;
+        }
+
+        // Trigger occasional slide tackles for nearest defenders
+        if (sm.role === 'DF' && distToBall < 1.6 && !hasBallPossession && Math.random() < 0.004 && sm.tackleTimer <= 0) {
+          sm.tackleTimer = 0.75;
         }
       }
     }
 
-    // 2. Update 3D Soccer Ball & Physics
+    // 2. Realistic 3D Soccer Ball & Aerodynamics
     if (ballMesh) {
       if (state.shotAnim && state.shotAnim.active) {
-        // High-velocity parabolic shot into the goal net
+        // High-velocity curving shot into goal net
         const shot = state.shotAnim;
         const startPos = map2DTo3D(shot.startX, shot.startY);
         const targetPos = map2DTo3D(shot.targetX, shot.targetY);
 
-        shot.progress = Math.min(1.0, shot.progress + dt * 1.8 * (state.speedMultiplier || 1));
+        shot.progress = Math.min(1.0, shot.progress + dt * 2.0 * (state.speedMultiplier || 1));
         const p = shot.progress;
 
+        // Trigger shooter kick animation at start of shot
+        const shooterSide = shot.side;
+        stickmen.forEach(sm => {
+          if (sm.side === shooterSide && sm.role === 'FW' && sm.kickTimer <= 0) {
+            sm.kickTimer = 0.45;
+          }
+        });
+
+        // Trigger Defending Goalkeeper Dive!
+        const defendingSide = shooterSide === 'home' ? 'away' : 'home';
+        const defendingGK = stickmen.find(sm => sm.side === defendingSide && sm.role === 'GK');
+        if (defendingGK && defendingGK.diveTimer <= 0 && p > 0.15) {
+          defendingGK.diveTimer = 1.3;
+          defendingGK.diveSide = targetPos.z > defendingGK.root.position.z ? 1 : -1;
+        }
+
+        // Parabolic trajectory + lateral curve
         ballMesh.position.x = startPos.x + (targetPos.x - startPos.x) * p;
         ballMesh.position.z = startPos.z + (targetPos.z - startPos.z) * p;
+        ballMesh.position.y = 0.44 + Math.sin(p * Math.PI) * 3.6;
 
-        // Parabolic arc (curves up off the turf and into top/bottom corner)
-        ballMesh.position.y = 0.42 + Math.sin(p * Math.PI) * 3.4;
+        // Rapid 3D Magnus ball spin
+        ballMesh.rotation.x += dt * 24;
+        ballMesh.rotation.y += dt * 16;
 
-        // Rapid spin
-        ballMesh.rotation.x += dt * 18;
-        ballMesh.rotation.y += dt * 12;
-
-        // Shadow follows ground position
+        // Shadow shrinks and lightens as ball arcs high into the air
         ballShadow.position.x = ballMesh.position.x;
         ballShadow.position.z = ballMesh.position.z;
-        ballShadow.scale.setScalar(Math.max(0.3, 1.0 - (ballMesh.position.y - 0.42) * 0.18));
-      } else if (state.ballPos || state.ball) {
-        // Ground passing & dribbling
-        const rawBall = state.ballPos || state.ball;
-        const ballPos = map2DTo3D(rawBall.x, rawBall.y);
-        ballMesh.position.x += (ballPos.x - ballMesh.position.x) * 0.35;
-        ballMesh.position.z += (ballPos.z - ballMesh.position.z) * 0.35;
-        ballMesh.position.y = 0.42;
+        const shadowScale = Math.max(0.25, 1.0 - (ballMesh.position.y - 0.44) * 0.22);
+        ballShadow.scale.setScalar(shadowScale);
 
-        ballMesh.rotation.x += 0.15;
+        // Net bulge ripple when ball hits goal!
+        if (p > 0.88) {
+          const targetNet = shooterSide === 'home' ? netMeshRight : netMeshLeft;
+          if (targetNet) {
+            targetNet.position.x += (shooterSide === 'home' ? 0.08 : -0.08);
+          }
+        }
+      } else {
+        // Ground passing & dribbling with true rolling physics
+        const prevBallX = ballMesh.position.x;
+        const prevBallZ = ballMesh.position.z;
+
+        ballMesh.position.x += (ballPos3D.x - prevBallX) * 0.38;
+        ballMesh.position.z += (ballPos3D.z - prevBallZ) * 0.38;
+        ballMesh.position.y = 0.44;
+
+        // True rolling rotation based on distance traveled (omega = v / r)
+        const dX = ballMesh.position.x - prevBallX;
+        const dZ = ballMesh.position.z - prevBallZ;
+        const distRolled = Math.sqrt(dX * dX + dZ * dZ);
+        if (distRolled > 0.001) {
+          const rollAngle = distRolled / 0.44;
+          ballMesh.rotation.x += (dZ / distRolled) * rollAngle;
+          ballMesh.rotation.z -= (dX / distRolled) * rollAngle;
+        }
+
         ballShadow.position.x = ballMesh.position.x;
         ballShadow.position.z = ballMesh.position.z;
         ballShadow.scale.setScalar(1.0);
@@ -750,31 +1056,31 @@
     if (!camera || !ballMesh) return;
 
     if (currentCamMode === 'broadcast') {
-      // Broadcast Camera: Dynamic side-view tracking ball with smooth dampening
-      const targetCamX = ballMesh.position.x * 0.55;
-      const targetCamZ = 46;
+      // Dynamic TV Broadcast camera smoothly tracking match action
+      const targetCamX = ballMesh.position.x * 0.58;
+      const targetCamZ = 48;
       const targetCamY = 28;
 
       camera.position.x += (targetCamX - camera.position.x) * 0.08;
       camera.position.y += (targetCamY - camera.position.y) * 0.08;
       camera.position.z += (targetCamZ - camera.position.z) * 0.08;
 
-      const lookTargetX = ballMesh.position.x * 0.7;
+      const lookTargetX = ballMesh.position.x * 0.72;
       camera.lookAt(lookTargetX, 1.2, 0);
     } else if (currentCamMode === 'tactical') {
-      // Top-Down Tactical Camera
-      camera.position.set(0, 56, 36);
+      // High-angle Tactical Top-Down
+      camera.position.set(0, 58, 38);
       camera.lookAt(0, 0, 0);
     } else if (currentCamMode === 'behind_goal') {
-      // Dramatic Behind-the-Goal Camera
-      camera.position.set(-HALF_L - 8, 11, 0);
+      // Behind the Goal View
+      camera.position.set(-HALF_L - 8, 12, 0);
       camera.lookAt(0, 1.5, 0);
     } else if (currentCamMode === 'custom') {
-      // Orbit spherical coordinates from user touch/mouse drag
+      // Free 3D Drag / Orbit
       const x = orbitDistance * Math.sin(orbitPhi) * Math.sin(orbitTheta);
       const y = orbitDistance * Math.cos(orbitPhi);
       const z = orbitDistance * Math.sin(orbitPhi) * Math.cos(orbitTheta);
-      camera.position.set(x, Math.max(4, y), z);
+      camera.position.set(x, Math.max(3, y), z);
       camera.lookAt(0, 0, 0);
     }
   }
@@ -785,12 +1091,12 @@
     const btnT = document.getElementById('btnCamTactical');
     const btnG = document.getElementById('btnCamBehindGoal');
 
-    const activeClasses = 'bg-amber-400 text-slate-950';
+    const activeClasses = 'bg-amber-400 text-slate-950 font-black';
     const inactiveClasses = 'text-slate-300 hover:bg-white/10';
 
-    if (btnB) btnB.className = `cam-btn px-2 py-0.5 rounded text-[11px] font-bold ${mode === 'broadcast' ? activeClasses : inactiveClasses}`;
-    if (btnT) btnT.className = `cam-btn px-2 py-0.5 rounded text-[11px] font-bold ${mode === 'tactical' ? activeClasses : inactiveClasses}`;
-    if (btnG) btnG.className = `cam-btn px-2 py-0.5 rounded text-[11px] font-bold ${mode === 'behind_goal' ? activeClasses : inactiveClasses}`;
+    if (btnB) btnB.className = `cam-btn px-2 py-0.5 rounded text-[11px] ${mode === 'broadcast' ? activeClasses : inactiveClasses}`;
+    if (btnT) btnT.className = `cam-btn px-2 py-0.5 rounded text-[11px] ${mode === 'tactical' ? activeClasses : inactiveClasses}`;
+    if (btnG) btnG.className = `cam-btn px-2 py-0.5 rounded text-[11px] ${mode === 'behind_goal' ? activeClasses : inactiveClasses}`;
   }
 
   function setupInteractionControls() {
@@ -806,9 +1112,9 @@
       const deltaX = e.clientX - previousMousePosition.x;
       const deltaY = e.clientY - previousMousePosition.y;
 
-      currentCamMode = 'custom'; // Switch to manual touch-drag camera
+      currentCamMode = 'custom';
       orbitTheta -= deltaX * 0.007;
-      orbitPhi = Math.max(0.15, Math.min(Math.PI / 2.1, orbitPhi - deltaY * 0.007));
+      orbitPhi = Math.max(0.15, Math.min(Math.PI / 2.05, orbitPhi - deltaY * 0.007));
 
       previousMousePosition = { x: e.clientX, y: e.clientY };
     });
@@ -820,15 +1126,21 @@
     container.addEventListener('wheel', (e) => {
       e.preventDefault();
       currentCamMode = 'custom';
-      orbitDistance = Math.max(20, Math.min(100, orbitDistance + e.deltaY * 0.05));
+      orbitDistance = Math.max(18, Math.min(110, orbitDistance + e.deltaY * 0.05));
     }, { passive: false });
   }
 
   // Trigger Goal Celebration for 3D Stickmen
   function onGoalScored(scorerSide) {
+    const concedingSide = scorerSide === 'home' ? 'away' : 'home';
+
     stickmen.forEach(sm => {
       if (sm.side === scorerSide) {
-        sm.celebrateAnim = 2.4; // 2.4 seconds celebration jump
+        // Scorer & Teammates perform knee-slide / high-jump celebration!
+        sm.celebrateTimer = 2.8;
+      } else if (sm.side === concedingSide) {
+        // Conceding players slump in frustration
+        sm.frustratedTimer = 2.5;
       }
     });
   }
