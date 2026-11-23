@@ -2901,6 +2901,7 @@
       standingsByTourney: {},
       inExtraTime: false,
       halfTimeAnnounced: false,
+      sidesSwapped: false,
       simMinute: 0,
       simElapsedSec: 0,
       scheduledEvents: [],
@@ -3308,14 +3309,17 @@
 
       updateSeasonHeaderBadge();
 
-      // Reset Active Tournament for fresh new season with upgraded/downgraded OVRs
+      // Reset All Tournaments for fresh new season with upgraded/downgraded OVRs & randomly shuffled groups/fixtures
+      state.standingsByTourney = {};
+      state.groupFixturesByTourney = {};
       const tourney = getActiveTournament();
-      initStandingsForTournament(tourney.id, true);
+      initStandingsForTournament(tourney.id, true, true);
 
       state.roundNumber = 1;
       state.stageIndex = 0;
       state.phase = 'predicting';
       state.seasonSummary = null;
+      state.sidesSwapped = false;
 
       // Close modals
       document.getElementById('modalSeasonEnd')?.classList.add('hidden');
@@ -3650,7 +3654,16 @@
       return 'caf';
     }
 
-    function initStandingsForTournament(tourneyId, forceReinit = false) {
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function initStandingsForTournament(tourneyId, forceReinit = false, shuffleTeams = false) {
       if (state.standingsByTourney[tourneyId] && !forceReinit) return;
       const tourney = TOURNAMENTS.find(t => t.id === tourneyId) || TOURNAMENTS[0];
       let teams = TEAMS_DB.filter(t => t.tournaments.includes(tourneyId));
@@ -3666,21 +3679,27 @@
 
         if (isQualifiers) {
           // Filter nations belonging to the SAME confederation as the focused team!
-          // (e.g., Vietnam plays AFC Asian qualifiers; England plays UEFA European qualifiers)
           const regionalTeams = teams.filter(t => getTeamConfederation(t) === focusConf);
           if (regionalTeams.length >= 4) {
             teams = regionalTeams;
           }
           // Divide regional teams into groups of 4-6 teams
           const numRegionalGroups = Math.max(1, Math.min(8, Math.floor(teams.length / 4)));
-          const sortedTeams = [...teams].sort((a, b) => {
-            if (a.id === focusTeam.id) return -1;
-            if (b.id === focusTeam.id) return 1;
-            return b.rating - a.rating;
-          });
+          let poolTeams;
+          if (shuffleTeams) {
+            poolTeams = shuffleArray(teams);
+            // Ensure focusTeam is in the tournament pool
+            if (!poolTeams.some(t => t.id === focusTeam.id)) poolTeams[0] = focusTeam;
+          } else {
+            poolTeams = [...teams].sort((a, b) => {
+              if (a.id === focusTeam.id) return -1;
+              if (b.id === focusTeam.id) return 1;
+              return b.rating - a.rating;
+            });
+          }
 
           const table = {};
-          sortedTeams.forEach((t, idx) => {
+          poolTeams.forEach((t, idx) => {
             table[t.id] = {
               team: t,
               group: groupLetters[idx % numRegionalGroups],
@@ -3702,11 +3721,13 @@
             if (b.id === focusTeam.id) return 1;
             return b.rating - a.rating;
           });
-          // Pick 48 best teams
-          teams = sortedGlobal.slice(0, 48);
+          let top48 = sortedGlobal.slice(0, 48);
+          if (shuffleTeams) {
+            top48 = shuffleArray(top48);
+          }
           const numFinalsGroups = 12; // Groups A to L
           const table = {};
-          teams.forEach((t, idx) => {
+          top48.forEach((t, idx) => {
             table[t.id] = {
               team: t,
               group: groupLetters[idx % numFinalsGroups],
@@ -3726,10 +3747,10 @@
 
       // Default logic for other tournaments (V.League, Champions League, etc.)
       const numGroups = Math.min(tourney.groupCount, Math.floor(teams.length / 2));
-      const sortedTeams = [...teams].sort((a, b) => b.rating - a.rating);
+      const poolTeams = shuffleTeams ? shuffleArray(teams) : [...teams].sort((a, b) => b.rating - a.rating);
 
       const table = {};
-      sortedTeams.forEach((t, idx) => {
+      poolTeams.forEach((t, idx) => {
         table[t.id] = {
           team: t,
           group: numGroups ? groupLetters[idx % numGroups] : 'BXH',
@@ -4128,6 +4149,7 @@
       state.simElapsedSec = 0;
       state.inExtraTime = false;
       state.halfTimeAnnounced = false;
+      state.sidesSwapped = false;
       state.shotAnim.active = false;
       state.kickoffUntil = 0;
       state.ballTrail = [];
@@ -4306,8 +4328,12 @@
         shooter = teamPlayers[teamPlayers.length - 1] || state.players[0];
       }
 
+      // Determine attack direction based on side and whether teams have swapped sides
+      const isHome = side === 'home';
+      const attackDir = isHome ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
+
       // Position shooter in attacking striking zone and place ball right at shooter's feet!
-      const shootSpotX = side === 'home' ? (0.74 + Math.random() * 0.08) : (0.26 - Math.random() * 0.08);
+      const shootSpotX = attackDir > 0 ? (0.74 + Math.random() * 0.08) : (0.26 - Math.random() * 0.08);
       const shootSpotY = 0.30 + Math.random() * 0.40;
       shooter.x = shootSpotX;
       shooter.y = shootSpotY;
@@ -4324,14 +4350,14 @@
       SoundFX.kick();
 
       // Deep inside the left or right goal net pocket
-      const targetX = side === 'home' ? 0.968 : 0.032;
+      const targetX = attackDir > 0 ? 0.968 : 0.032;
       const targetY = 0.42 + Math.random() * 0.16;
 
       state.shotAnim.active = true;
       state.shotAnim.restartAt = performance.now() + 1100;
       state.shotAnim.phase = 'flying';
       state.shotAnim.side = side;
-      state.shotAnim.startX = shooter.x + (side === 'home' ? 0.016 : -0.016);
+      state.shotAnim.startX = shooter.x + (attackDir > 0 ? 0.016 : -0.016);
       state.shotAnim.startY = shooter.y;
       state.shotAnim.targetX = targetX;
       state.shotAnim.targetY = targetY;
@@ -4390,6 +4416,7 @@
       state.simElapsedSec = 0;
       state.inExtraTime = false;
       state.halfTimeAnnounced = false;
+      state.sidesSwapped = false;
       state.scheduledEvents = [];
 
       function pickScorer(stars) {
@@ -4485,13 +4512,14 @@
         }
           if (state.simMinute >= 45 && !state.halfTimeAnnounced) {
             state.halfTimeAnnounced = true;
+            state.sidesSwapped = true;
             SoundFX.whistle();
             document.getElementById('simBadge').textContent = "HIỆP 2 • ĐANG ĐÁ";
-            document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 2`;
-            showPhaseNotice("⏱️ HIỆP 2 BẮT ĐẦU (45' - 90')");
+            document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 2 (ĐỔI SÂN)`;
+            showPhaseNotice("⏱️ HIỆP 2 BẮT ĐẦU (45' - 90') • HAI ĐỘI ĐỔI SÂN!");
             const htItem = document.createElement('div');
             htItem.className = 'text-sky-300 font-semibold';
-            htItem.textContent = `⏸️ 45' Hết hiệp 1. Hai đội bước vào Hiệp 2 với tỷ số ${state.liveHomeGoals} - ${state.liveAwayGoals}.`;
+            htItem.textContent = `⏸️ 45' Hết hiệp 1. Hai đội đổi sân và bước vào Hiệp 2 với tỷ số ${state.liveHomeGoals} - ${state.liveAwayGoals}.`;
             feed.prepend(htItem);
             restartPlay('away');
             return;
@@ -4867,18 +4895,20 @@
 
       // Note: team.stars has attackers at index 0..3, midfielders 4..6, defenders 7..9, GK at 10
       const starOrder = [10, 7, 8, 9, 6, 4, 5, 3, 1, 0, 2];
+      const swap = !!state.sidesSwapped;
 
       home433.forEach((p, idx) => {
         const starIdx = starOrder[idx] !== undefined ? starOrder[idx] : idx;
         const fullName = state.homeTeam.stars[starIdx] || state.homeTeam.stars[0] || `Cầu thủ ${idx + 1}`;
         const shortName = fullName.split(' (')[0].split(' ').slice(-1)[0];
+        const posX = swap ? (1 - p.x) : p.x;
         state.players.push({
           id: `home_${idx}`,
           side: 'home',
           role: p.role,
-          baseX: p.x,
+          baseX: posX,
           baseY: p.y,
-          x: p.x,
+          x: posX,
           y: p.y,
           vx: 0,
           vy: 0,
@@ -4893,13 +4923,14 @@
         const starIdx = starOrder[idx] !== undefined ? starOrder[idx] : idx;
         const fullName = state.awayTeam.stars[starIdx] || state.awayTeam.stars[0] || `Cầu thủ ${idx + 1}`;
         const shortName = fullName.split(' (')[0].split(' ').slice(-1)[0];
+        const posX = swap ? (1 - p.x) : p.x;
         state.players.push({
           id: `away_${idx}`,
           side: 'away',
           role: p.role,
-          baseX: p.x,
+          baseX: posX,
           baseY: p.y,
-          x: p.x,
+          x: posX,
           y: p.y,
           vx: 0,
           vy: 0,
@@ -4910,7 +4941,7 @@
         });
       });
 
-      // Give initial kick-off possession to Home Center Forward (index 9)
+      // Give initial kick-off possession
       const kickoffPlayer = state.players[9] || state.players[0];
       state.ballSim.holder = kickoffPlayer;
       state.ballSim.targetReceiver = null;
@@ -4918,7 +4949,8 @@
       state.ballSim.holdTimer = 28;
       state.ballSim.touchRipples = [];
       state.ballSim.passLine = null;
-      state.ballPos.x = kickoffPlayer.x + 0.014;
+      const attackDir = (kickoffPlayer.side === 'home') ? (swap ? -1 : 1) : (swap ? 1 : -1);
+      state.ballPos.x = kickoffPlayer.x + (attackDir * 0.014);
       state.ballPos.y = kickoffPlayer.y;
     }
 
@@ -4927,18 +4959,22 @@
       const team = side === 'home' ? state.homeTeam : state.awayTeam;
       const forward = state.players.find(p => p.id === side + '_9');
       const receiver = state.players.find(p => p.id === side + '_6');
-      forward.x = side === 'home' ? 0.488 : 0.512;
+      const isHome = side === 'home';
+      const attackDir = isHome ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
+      if (forward) {
+        forward.x = 0.5 - (attackDir * 0.012);
+      }
       state.ballPos.x = state.ballPos.y = 0.5;
       state.ballTrail = [];
       state.shotAnim.active = false;
       state.ballSim.holder = forward;
       Object.assign(state.ballSim, {
         mode: 'passing', targetReceiver: receiver, passStartX: 0.5, passStartY: 0.5,
-        passEndX: receiver.x, passEndY: receiver.y, passProgress: 0, passSpeed: 0.06
+        passEndX: receiver ? receiver.x : 0.5, passEndY: receiver ? receiver.y : 0.5, passProgress: 0, passSpeed: 0.06
       });
       state.kickoffUntil = performance.now() + 450;
       document.getElementById('goalCelebrationBanner').classList.add('hidden');
-      const message = team.name + ' giao bóng từ giữa sân';
+      const message = team.name + ' giao bóng từ giữa sân' + (state.sidesSwapped ? ' (Đã đổi sân)' : '');
       document.getElementById('liveTouchBadge').textContent = message;
       const line = document.createElement('div');
       line.textContent = `${Math.floor(state.simMinute)}′ · ${message}`;
@@ -4982,9 +5018,9 @@
 
         if (bs.mode === 'held' && bs.holder === p) {
           // Ball carrier dribbles forward toward opponent's goal!
-          const dirX = p.side === 'home' ? 1 : -1;
+          const attackDir = p.side === 'home' ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
           const targetGoalY = 0.5 + Math.sin(p.phase * 1.5) * 0.18;
-          p.x += dirX * 0.0018;
+          p.x += attackDir * 0.0018;
           p.y += (targetGoalY - p.y) * 0.025;
         } else if (bs.mode === 'passing' && bs.targetReceiver === p) {
           // Receiver moves slightly toward the incoming pass to meet the ball
@@ -5010,7 +5046,8 @@
 
       if (!isSim) {
         if (bs.holder) {
-          const dirX = bs.holder.side === 'home' ? 0.015 : -0.015;
+          const attackDir = bs.holder.side === 'home' ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
+          const dirX = attackDir * 0.015;
           state.ballPos.x = bs.holder.x + dirX;
           state.ballPos.y = bs.holder.y + 0.004;
         }
@@ -5020,7 +5057,8 @@
       // 2. Handle Ball state: either at a player's feet ('held') or being passed between players ('passing')
       if (bs.mode === 'held' && bs.holder) {
         const h = bs.holder;
-        const dirX = h.side === 'home' ? 0.016 : -0.016;
+        const attackDir = h.side === 'home' ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
+        const dirX = attackDir * 0.016;
         // Ball stays physically glued to the dribbling player's feet with a subtle dribble touch oscillation
         const dribbleTouch = Math.sin(performance.now() * 0.018) * 0.004;
         state.ballPos.x = h.x + dirX + dribbleTouch;
@@ -5053,7 +5091,8 @@
           bs.targetReceiver = nextReceiver;
           bs.passStartX = state.ballPos.x;
           bs.passStartY = state.ballPos.y;
-          bs.passEndX = nextReceiver.x + (nextReceiver.side === 'home' ? 0.014 : -0.014);
+          const receiverAttackDir = nextReceiver.side === 'home' ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
+          bs.passEndX = nextReceiver.x + (receiverAttackDir * 0.014);
           bs.passEndY = nextReceiver.y;
           bs.passProgress = 0;
           const dist = Math.hypot(bs.passEndX - bs.passStartX, bs.passEndY - bs.passStartY);
@@ -5409,15 +5448,15 @@
       if (lblH) lblH.textContent = state.homeTeam.name;
       if (lblA) lblA.textContent = state.awayTeam.name;
 
-      const baseClass = 'outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition';
+      const baseClass = 'outcome-btn btn-tap py-2.5 px-3 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition';
       if (btnH) btnH.className = state.predOutcome === 'home'
-        ? 'outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg'
+        ? 'outcome-btn btn-tap py-2.5 px-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg'
         : baseClass;
       if (btnD) btnD.className = state.predOutcome === 'draw'
-        ? 'outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border-2 border-amber-400 bg-amber-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg'
+        ? 'outcome-btn btn-tap py-2.5 px-3 rounded-xl border-2 border-amber-400 bg-amber-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg'
         : baseClass;
       if (btnA) btnA.className = state.predOutcome === 'away'
-        ? 'outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border-2 border-sky-400 bg-sky-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg'
+        ? 'outcome-btn btn-tap py-2.5 px-3 rounded-xl border-2 border-sky-400 bg-sky-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg'
         : baseClass;
 
       if (statusTxt) {

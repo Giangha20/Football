@@ -552,12 +552,21 @@ button:disabled {cursor:default;}
 
   .picker-row { grid-template-columns: 1fr; gap: 10px; }
   .picker-row select { font-size: 14px; padding: 8px 10px; }
-  .stadium-hero .grid-cols-11 { grid-template-columns: minmax(0,1fr) 98px minmax(0,1fr); gap: 4px; }
-  .stadium-hero .grid-cols-11 > div { grid-column: auto; }
-  .stadium-hero .grid-cols-11 .col-span-4 > .flex { flex-wrap: wrap; justify-content: center; }
+  .stadium-hero .grid-cols-11,
+  .stadium-hero .grid-cols-12 { grid-template-columns: minmax(0,1fr) 118px minmax(0,1fr); gap: 6px; }
+  .stadium-hero .grid-cols-11 > div,
+  .stadium-hero .grid-cols-12 > div { grid-column: auto; }
+  .stadium-hero .grid-cols-11 .col-span-4 > .flex,
+  .stadium-hero .grid-cols-12 .col-span-4 > .flex { flex-wrap: wrap; justify-content: center; }
 
-  .score-ctrl { width: 38px; height: 38px; }
-  #predHomeScore, #predAwayScore { width: 42px; height: 48px; font-size: 24px; }
+  .score-btn {
+    width: 44px !important;
+    height: 40px !important;
+    min-width: 44px !important;
+    min-height: 40px !important;
+  }
+  #predHomeScore, #predAwayScore { width: 48px !important; height: 52px !important; font-size: 26px !important; }
+  .preset-btn { min-height: 34px !important; padding: 6px 9px !important; font-size: 12px !important; }
 
   #btnLockPrediction {
     min-width: 100% !important;

@@ -185,7 +185,7 @@
           </div>
 
           <!-- Teams & Score Prediction Controls -->
-          <div class="grid grid-cols-11 gap-2 sm:gap-4 items-center">
+          <div class="grid grid-cols-12 gap-2 sm:gap-4 items-center">
 
             <!-- HOME TEAM -->
             <div class="col-span-4 flex flex-col items-center text-center">
@@ -204,19 +204,19 @@
             </div>
 
             <!-- CENTER SCORE CONTROLS -->
-            <div class="col-span-3 flex flex-col items-center justify-center">
+            <div class="col-span-4 flex flex-col items-center justify-center">
               <div class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 mb-1.5">DỰ ĐOÁN TỶ SỐ</div>
               <div class="flex items-center gap-1.5 sm:gap-3">
                 <!-- Home Score Column -->
                 <div class="flex flex-col items-center gap-1">
-                  <button id="btnHomePlus" aria-label="Tăng tỷ số chủ nhà" type="button" class="score-ctrl btn-tap w-9 h-8 sm:w-12 sm:h-9 rounded-lg bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition">
-                    <i data-lucide="chevron-up" class="w-5 h-5"></i>
+                  <button id="btnHomePlus" aria-label="Tăng tỷ số chủ nhà" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                    <i data-lucide="chevron-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                   </button>
                   <div id="predHomeScore" class="w-12 h-14 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 border-emerald-400/50 flex items-center justify-center text-3xl sm:text-4xl font-black score-num text-white shadow-inner">
                     2
                   </div>
-                  <button id="btnHomeMinus" aria-label="Giảm tỷ số chủ nhà" type="button" class="score-ctrl btn-tap w-9 h-8 sm:w-12 sm:h-9 rounded-lg bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition">
-                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                  <button id="btnHomeMinus" aria-label="Giảm tỷ số chủ nhà" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                    <i data-lucide="chevron-down" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                   </button>
                 </div>
 
@@ -224,14 +224,14 @@
 
                 <!-- Away Score Column -->
                 <div class="flex flex-col items-center gap-1">
-                  <button id="btnAwayPlus" aria-label="Tăng tỷ số đội khách" type="button" class="score-ctrl btn-tap w-9 h-8 sm:w-12 sm:h-9 rounded-lg bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition">
-                    <i data-lucide="chevron-up" class="w-5 h-5"></i>
+                  <button id="btnAwayPlus" aria-label="Tăng tỷ số đội khách" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                    <i data-lucide="chevron-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                   </button>
                   <div id="predAwayScore" class="w-12 h-14 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 border-emerald-400/50 flex items-center justify-center text-3xl sm:text-4xl font-black score-num text-white shadow-inner">
                     1
                   </div>
-                  <button id="btnAwayMinus" aria-label="Giảm tỷ số đội khách" type="button" class="score-ctrl btn-tap w-9 h-8 sm:w-12 sm:h-9 rounded-lg bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition">
-                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                  <button id="btnAwayMinus" aria-label="Giảm tỷ số đội khách" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                    <i data-lucide="chevron-down" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                   </button>
                 </div>
               </div>
@@ -297,15 +297,15 @@
                 <span id="selectedOutcomeText" class="text-[11px] font-bold text-amber-300">Đang chọn: Chủ Thắng (+60đ nếu đúng)</span>
               </div>
               <div class="grid grid-cols-3 gap-2">
-                <button id="btnOutcomeHome" type="button" data-outcome="home" class="outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg">
+                <button id="btnOutcomeHome" type="button" data-outcome="home" class="outcome-btn btn-tap py-2.5 px-2 sm:px-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/25 text-white font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition shadow-lg">
                   <span class="text-[10px] uppercase tracking-wider text-emerald-300">CHỦ NHÀ THẮNG (1)</span>
                   <span id="lblOutcomeHomeTeam" class="truncate max-w-full font-black">Thép Xanh Nam Định</span>
                 </button>
-                <button id="btnOutcomeDraw" type="button" data-outcome="draw" class="outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition">
+                <button id="btnOutcomeDraw" type="button" data-outcome="draw" class="outcome-btn btn-tap py-2.5 px-2 sm:px-3 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition">
                   <span class="text-[10px] uppercase tracking-wider text-amber-300">HAI ĐỘI HÒA (X)</span>
                   <span class="font-black">Chia Điểm (90')</span>
                 </button>
-                <button id="btnOutcomeAway" type="button" data-outcome="away" class="outcome-btn score-ctrl btn-tap py-2.5 px-3 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition">
+                <button id="btnOutcomeAway" type="button" data-outcome="away" class="outcome-btn btn-tap py-2.5 px-2 sm:px-3 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition">
                   <span class="text-[10px] uppercase tracking-wider text-sky-300">ĐỘI KHÁCH THẮNG (2)</span>
                   <span id="lblOutcomeAwayTeam" class="truncate max-w-full font-black">Công An Hà Nội FC</span>
                 </button>

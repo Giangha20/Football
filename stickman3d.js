@@ -306,20 +306,74 @@
     buildStadiumBoards();
   }
 
-  function build3DGoal(xPos, direction) {
-    const goalW = 12;
-    const goalH = 4.4;
-    const goalD = 3.8;
-    const postR = 0.14;
+  let sharedGoalNetTex = null;
 
+  // Generates high-detail authentic woven nylon diamond netting texture for 3D Goals
+  function generateGoalNetTexture() {
+    if (sharedGoalNetTex) return sharedGoalNetTex;
+    const cv = document.createElement('canvas');
+    cv.width = 128;
+    cv.height = 128;
+    const ctx = cv.getContext('2d');
+    ctx.clearRect(0, 0, 128, 128);
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.lineWidth = 1.8;
+    const step = 16;
+
+    for (let x = -128; x < 256; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + 128, 128);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(x, 128);
+      ctx.lineTo(x + 128, 0);
+      ctx.stroke();
+    }
+
+    // Small knot dots at net intersections for realistic weave
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    for (let x = 0; x < 128; x += step) {
+      for (let y = 0; y < 128; y += step) {
+        ctx.beginPath();
+        ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    sharedGoalNetTex = new THREE.CanvasTexture(cv);
+    sharedGoalNetTex.wrapS = THREE.RepeatWrapping;
+    sharedGoalNetTex.wrapT = THREE.RepeatWrapping;
+    sharedGoalNetTex.repeat.set(5, 3);
+    return sharedGoalNetTex;
+  }
+
+  function build3DGoal(xPos, direction) {
+    // Proportional FIFA standard goal dimensions for 96x64 pitch:
+    // Width ~7.4 units (inside the 18-unit 6-yard box), Height ~2.45 units (fits 1.8m players), Depth ~2.4 units
+    const goalW = 7.4;
+    const goalH = 2.45;
+    const goalD = 2.4;
+    const postR = 0.095;
+
+    // Crisp semi-gloss white enamel post material (không bị bóng nhựa rẻ tiền)
     const postMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.2,
-      metalness: 0.6
+      roughness: 0.22,
+      metalness: 0.12
     });
 
-    // 2 Goalposts
-    const postGeo = new THREE.CylinderGeometry(postR, postR, goalH, 12);
+    // Rear metal support stanchion material (khung kim loại đỡ lưới phía sau)
+    const supportMat = new THREE.MeshStandardMaterial({
+      color: 0x94a3b8,
+      roughness: 0.35,
+      metalness: 0.65
+    });
+
+    // 1. Two Main Vertical Goalposts
+    const postGeo = new THREE.CylinderGeometry(postR, postR, goalH, 16);
     const postLeft = new THREE.Mesh(postGeo, postMat);
     postLeft.position.set(xPos, goalH / 2, -goalW / 2);
     postLeft.castShadow = true;
@@ -330,37 +384,81 @@
     postRight.castShadow = true;
     pitchGroup.add(postRight);
 
-    // Crossbar
-    const barGeo = new THREE.CylinderGeometry(postR, postR, goalW, 12);
+    // 2. Horizontal Crossbar
+    const barGeo = new THREE.CylinderGeometry(postR, postR, goalW, 16);
     const crossbar = new THREE.Mesh(barGeo, postMat);
     crossbar.rotation.x = Math.PI / 2;
     crossbar.position.set(xPos, goalH, 0);
     crossbar.castShadow = true;
     pitchGroup.add(crossbar);
 
-    // 3D Goal Net
-    const netMat = new THREE.MeshBasicMaterial({
-      color: 0xf1f5f9,
-      wireframe: true,
+    // 3. Rounded Corner Joint Elbows (nối góc xà ngang và cột dọc)
+    const elbowGeo = new THREE.SphereGeometry(postR * 1.05, 12, 12);
+    const elbowL = new THREE.Mesh(elbowGeo, postMat);
+    elbowL.position.set(xPos, goalH, -goalW / 2);
+    pitchGroup.add(elbowL);
+
+    const elbowR = new THREE.Mesh(elbowGeo, postMat);
+    elbowR.position.set(xPos, goalH, goalW / 2);
+    pitchGroup.add(elbowR);
+
+    // 4. Rear Top Tension Support Bars (hai thanh giằng ngang trên cao giữ căng nóc lưới)
+    const tensionGeo = new THREE.CylinderGeometry(0.045, 0.045, goalD, 8);
+    const tensionL = new THREE.Mesh(tensionGeo, supportMat);
+    tensionL.rotation.z = Math.PI / 2;
+    tensionL.position.set(xPos + direction * (goalD / 2), goalH * 0.98, -goalW / 2);
+    pitchGroup.add(tensionL);
+
+    const tensionR = new THREE.Mesh(tensionGeo, supportMat);
+    tensionR.rotation.z = Math.PI / 2;
+    tensionR.position.set(xPos + direction * (goalD / 2), goalH * 0.98, goalW / 2);
+    pitchGroup.add(tensionR);
+
+    // 5. Ground Base Frame (thanh dầm sắt đáy giữ chân lưới trên mặt cỏ)
+    const groundSideGeo = new THREE.CylinderGeometry(0.045, 0.045, goalD, 8);
+    const groundL = new THREE.Mesh(groundSideGeo, supportMat);
+    groundL.rotation.z = Math.PI / 2;
+    groundL.position.set(xPos + direction * (goalD / 2), 0.04, -goalW / 2);
+    pitchGroup.add(groundL);
+
+    const groundR = new THREE.Mesh(groundSideGeo, supportMat);
+    groundR.rotation.z = Math.PI / 2;
+    groundR.position.set(xPos + direction * (goalD / 2), 0.04, goalW / 2);
+    pitchGroup.add(groundR);
+
+    const groundBackGeo = new THREE.CylinderGeometry(0.045, 0.045, goalW, 8);
+    const groundBack = new THREE.Mesh(groundBackGeo, supportMat);
+    groundBack.rotation.x = Math.PI / 2;
+    groundBack.position.set(xPos + direction * goalD, 0.04, 0);
+    pitchGroup.add(groundBack);
+
+    // 6. Realistic Woven Nylon Goal Net (Lưới sợi đan chéo thực tế)
+    const netTex = generateGoalNetTexture();
+    const netMat = new THREE.MeshStandardMaterial({
+      map: netTex,
       transparent: true,
-      opacity: 0.45
+      opacity: 0.88,
+      roughness: 0.85,
+      metalness: 0.02,
+      side: THREE.DoubleSide,
+      depthWrite: false
     });
 
-    const backNet = new THREE.Mesh(new THREE.PlaneGeometry(goalW, goalH, 8, 6), netMat);
+    const backNet = new THREE.Mesh(new THREE.PlaneGeometry(goalW, goalH, 4, 3), netMat);
     backNet.position.set(xPos + direction * goalD, goalH / 2, 0);
     backNet.rotation.y = direction < 0 ? Math.PI / 2 : -Math.PI / 2;
     pitchGroup.add(backNet);
 
-    const roofNet = new THREE.Mesh(new THREE.PlaneGeometry(goalW, goalD, 8, 4), netMat);
+    const roofNet = new THREE.Mesh(new THREE.PlaneGeometry(goalW, goalD, 4, 2), netMat);
     roofNet.position.set(xPos + direction * (goalD / 2), goalH, 0);
     roofNet.rotation.x = Math.PI / 2;
     pitchGroup.add(roofNet);
 
-    const sideNet1 = new THREE.Mesh(new THREE.PlaneGeometry(goalD, goalH, 4, 6), netMat);
+    const sideNet1 = new THREE.Mesh(new THREE.PlaneGeometry(goalD, goalH, 2, 3), netMat);
     sideNet1.position.set(xPos + direction * (goalD / 2), goalH / 2, -goalW / 2);
     pitchGroup.add(sideNet1);
 
-    const sideNet2 = new THREE.Mesh(new THREE.PlaneGeometry(goalD, goalH, 4, 6), netMat);
+    const sideNet2 = new THREE.Mesh(new THREE.PlaneGeometry(goalD, goalH, 2, 3), netMat);
     sideNet2.position.set(xPos + direction * (goalD / 2), goalH / 2, goalW / 2);
     pitchGroup.add(sideNet2);
 
@@ -385,12 +483,69 @@
     pitchGroup.add(boardBottom);
   }
 
+  // Generates classic authentic soccer ball texture (black pentagons on white leather)
+  function generateBallTexture() {
+    const cv = document.createElement('canvas');
+    cv.width = 512;
+    cv.height = 256;
+    const ctx = cv.getContext('2d');
+
+    // Crisp white leather base
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+
+    // Draw classic black pentagon patches
+    ctx.fillStyle = '#0f172a';
+    const patches = [
+      { x: 128, y: 70, r: 28 },
+      { x: 256, y: 130, r: 30 },
+      { x: 384, y: 70, r: 28 },
+      { x: 64, y: 190, r: 26 },
+      { x: 448, y: 190, r: 26 },
+      { x: 192, y: 215, r: 25 },
+      { x: 320, y: 215, r: 25 },
+      { x: 256, y: 25, r: 24 }
+    ];
+
+    patches.forEach(p => {
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+        const px = p.x + Math.cos(angle) * p.r;
+        const py = p.y + Math.sin(angle) * p.r;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Golden seam accent around patches
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    });
+
+    // Hexagonal panel seam lines connecting the pentagons
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+    ctx.lineWidth = 2.0;
+    ctx.beginPath();
+    ctx.moveTo(128, 70); ctx.lineTo(256, 130);
+    ctx.moveTo(384, 70); ctx.lineTo(256, 130);
+    ctx.moveTo(64, 190); ctx.lineTo(192, 215);
+    ctx.moveTo(448, 190); ctx.lineTo(320, 215);
+    ctx.stroke();
+
+    const tex = new THREE.CanvasTexture(cv);
+    return tex;
+  }
+
   function buildBall() {
-    const ballGeo = new THREE.SphereGeometry(0.44, 18, 18);
+    const ballGeo = new THREE.SphereGeometry(0.44, 20, 20);
+    const ballTex = generateBallTexture();
     const ballMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.3,
-      metalness: 0.1
+      map: ballTex,
+      roughness: 0.42,
+      metalness: 0.05
     });
     ballMesh = new THREE.Mesh(ballGeo, ballMat);
     ballMesh.position.set(0, 0.44, 0);
@@ -471,11 +626,12 @@
     const skinStickColor = 0x1e293b;
     const bootColor = isGK ? 0xf97316 : (isHome ? 0x34d399 : 0x38bdf8);
 
-    const matJersey = new THREE.MeshStandardMaterial({ color: jerseyColor, roughness: 0.35, metalness: 0.1 });
-    const matShorts = new THREE.MeshStandardMaterial({ color: shortsColor, roughness: 0.4 });
-    const matStick = new THREE.MeshStandardMaterial({ color: skinStickColor, roughness: 0.35 });
-    const matPlayerBoot = new THREE.MeshStandardMaterial({ color: bootColor, roughness: 0.25 });
-    const matJointShared = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 });
+    // Professional athletic kit materials (matte fabric & athletic leather, không bóng nhựa)
+    const matJersey = new THREE.MeshStandardMaterial({ color: jerseyColor, roughness: 0.72, metalness: 0.04 });
+    const matShorts = new THREE.MeshStandardMaterial({ color: shortsColor, roughness: 0.78, metalness: 0.02 });
+    const matStick = new THREE.MeshStandardMaterial({ color: skinStickColor, roughness: 0.65, metalness: 0.03 });
+    const matPlayerBoot = new THREE.MeshStandardMaterial({ color: bootColor, roughness: 0.45, metalness: 0.12 });
+    const matJointShared = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.60, metalness: 0.05 });
 
     // 1. Pelvis / Hip base
     const pelvis = new THREE.Group();
