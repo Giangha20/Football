@@ -4321,6 +4321,19 @@
     // =========================================================================
     // HLV TƯƠNG LAI: SOCCER MANAGER CAREER ENGINE
     // =========================================================================
+    function updateManagerMatchTacticsSummary() {
+      const tacticsSummary = document.getElementById('managerMatchTacticsSummary');
+      if (tacticsSummary) {
+        const styleNames = {
+          attack: 'Tấn công rực lửa',
+          counter: 'Phòng ngự phản công',
+          tikitaka: 'Tiki-Taka kiểm soát',
+          gegenpress: 'Gegenpressing áp sát'
+        };
+        tacticsSummary.textContent = `Sơ đồ: ${state.manager.formation || '4-3-3'} • ${styleNames[state.manager.playstyle] || 'Tấn công'}`;
+      }
+    }
+
     function setGameMode(mode) {
       state.gameMode = mode;
       const btnPred = document.getElementById('btnModePredict');
@@ -4328,6 +4341,15 @@
       const panelMgr = document.getElementById('panelManagerHub');
       const hubHeading = document.getElementById('hubMainHeading');
       const badge = document.getElementById('modeStatusBadge');
+
+      const predScoreControls = document.getElementById('predScoreControls');
+      const managerScoreControls = document.getElementById('managerScoreControls');
+      const predOptionsSection = document.getElementById('predictionOptionsSection');
+      const tacticalOddsBar = document.getElementById('tacticalOddsBar');
+      const btnSkipMatch = document.getElementById('btnSkipMatch');
+      const predStatsCard = document.getElementById('predictionStatsCard');
+      const headerPredStats = document.getElementById('headerPredictionStats');
+      const historyCardTitle = document.getElementById('historyCardTitle');
 
       if (mode === 'manager') {
         if (btnPred) {
@@ -4339,6 +4361,43 @@
         if (panelMgr) panelMgr.classList.remove('hidden');
         if (hubHeading) hubHeading.textContent = 'Trận đấu Huấn Luyện Viên dẫn dắt';
 
+        // Ẩn toàn bộ phần dự đoán tỷ số, thắng/hòa/thua, tỷ lệ kèo & nút chọn trận khác
+        if (predScoreControls) {
+          predScoreControls.classList.add('hidden');
+          predScoreControls.classList.remove('flex');
+          predScoreControls.style.display = 'none';
+        }
+        if (predOptionsSection) {
+          predOptionsSection.classList.add('hidden');
+          predOptionsSection.style.display = 'none';
+        }
+        if (tacticalOddsBar) {
+          tacticalOddsBar.classList.add('hidden');
+          tacticalOddsBar.classList.remove('flex');
+          tacticalOddsBar.style.display = 'none';
+        }
+        if (btnSkipMatch) {
+          btnSkipMatch.classList.add('hidden');
+          btnSkipMatch.classList.remove('flex');
+          btnSkipMatch.style.display = 'none';
+        }
+        if (predStatsCard) {
+          predStatsCard.classList.add('hidden');
+          predStatsCard.style.display = 'none';
+        }
+        if (headerPredStats) {
+          headerPredStats.classList.add('hidden');
+          headerPredStats.classList.remove('flex');
+          headerPredStats.style.display = 'none';
+        }
+        if (managerScoreControls) {
+          managerScoreControls.classList.remove('hidden');
+          managerScoreControls.classList.add('flex');
+          managerScoreControls.style.display = 'flex';
+        }
+        if (historyCardTitle) historyCardTitle.textContent = 'Lịch Sử Trận Đấu HLV';
+
+        updateManagerMatchTacticsSummary();
         renderManagerUI();
 
         // If manager has an active contract, enforce team selection
@@ -4346,11 +4405,13 @@
           if (state.focusedTeamId !== state.manager.teamId) {
             state.focusedTeamId = state.manager.teamId;
           }
-          if (state.activeTournamentId !== state.manager.tourneyId) {
-            state.activeTournamentId = state.manager.tourneyId;
-            selectTournament(state.manager.tourneyId);
+          const myTeam = TEAMS_DB.find(t => t.id === state.manager.teamId);
+          if (myTeam && !myTeam.tournaments.includes(state.activeTournamentId)) {
+            state.activeTournamentId = state.manager.tourneyId || myTeam.tournaments[0];
+            selectTournament(state.activeTournamentId);
+          } else if (state.standingsByTourney[state.activeTournamentId]) {
+            pickNextMatch();
           }
-          pickNextMatch();
         }
       } else {
         if (btnPred) {
@@ -4361,6 +4422,43 @@
         }
         if (panelMgr) panelMgr.classList.add('hidden');
         if (hubHeading) hubHeading.textContent = 'Dự đoán trận đấu';
+
+        // Hiện lại toàn bộ giao diện dự đoán ở chế độ Dự đoán tỷ số
+        if (predScoreControls) {
+          predScoreControls.classList.remove('hidden');
+          predScoreControls.classList.add('flex');
+          predScoreControls.style.display = '';
+        }
+        if (predOptionsSection) {
+          predOptionsSection.classList.remove('hidden');
+          predOptionsSection.style.display = '';
+        }
+        if (tacticalOddsBar) {
+          tacticalOddsBar.classList.remove('hidden');
+          tacticalOddsBar.classList.add('flex');
+          tacticalOddsBar.style.display = '';
+        }
+        if (btnSkipMatch) {
+          btnSkipMatch.classList.remove('hidden');
+          btnSkipMatch.classList.add('flex');
+          btnSkipMatch.style.display = '';
+        }
+        if (predStatsCard) {
+          predStatsCard.classList.remove('hidden');
+          predStatsCard.style.display = '';
+        }
+        if (headerPredStats) {
+          headerPredStats.classList.remove('hidden');
+          headerPredStats.classList.add('flex');
+          headerPredStats.style.display = '';
+        }
+        if (managerScoreControls) {
+          managerScoreControls.classList.add('hidden');
+          managerScoreControls.classList.remove('flex');
+          managerScoreControls.style.display = 'none';
+        }
+        if (historyCardTitle) historyCardTitle.textContent = 'Lịch Sử Dự Đoán Gần Đây';
+
         if (badge) {
           badge.innerHTML = `
             <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold flex items-center gap-1.5">
@@ -4370,7 +4468,16 @@
           `;
         }
       }
+
+      if (state.phase === 'predicting') {
+        const simBadge = document.getElementById('simBadge');
+        if (simBadge) {
+          simBadge.textContent = mode === 'manager' ? 'CHỜ KHAI CUỘC' : 'CHỜ KHÓA TỶ SỐ';
+        }
+      }
+      syncSettings();
       setScoreControlsEnabled(state.phase === 'predicting');
+      renderHistory();
     }
 
     function renderManagerUI() {
@@ -4496,9 +4603,10 @@
         }
       }
 
-      // Cập nhật ngân sách CLB và Thị trường chuyển nhượng
+      // Cập nhật ngân sách CLB, chiến thuật tóm tắt và Thị trường chuyển nhượng
       const budgetDisplay = document.getElementById('managerBudgetDisplay');
       if (budgetDisplay) budgetDisplay.textContent = `${state.manager.budget || 150}M €`;
+      updateManagerMatchTacticsSummary();
       renderTransferMarket();
 
       if (window.lucide) window.lucide.createIcons();
@@ -5137,7 +5245,7 @@
       document.getElementById('liveAwayDot').style.backgroundColor = away.colors[0];
       document.getElementById('liveScoreBoard').textContent = '0 - 0';
       document.getElementById('simMinute').textContent = "Chờ khai cuộc (00')";
-      document.getElementById('simBadge').textContent = "CHỜ KHÓA TỶ SỐ";
+      document.getElementById('simBadge').textContent = state.gameMode === 'manager' ? "CHỜ KHAI CUỘC" : "CHỜ KHÓA TỶ SỐ";
       document.getElementById('simBadge').className = "px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
 
       document.getElementById('matchEventsFeed').innerHTML = `
@@ -5161,7 +5269,17 @@
     function syncSettings() {
       document.querySelector(`[name=duration][value="${state.duration}"]`).checked = true;
       document.querySelector(`[name=speed][value="${state.speedMultiplier}"]`).checked = true;
-      document.getElementById('simSpeedText').textContent = `Tốc độ ${state.speedMultiplier}×`;
+      const isMgr = state.gameMode === 'manager';
+      const speedText = document.getElementById('simSpeedText');
+      if (speedText) {
+        speedText.textContent = isMgr ? `Tua nhanh ${state.speedMultiplier}×` : `Tốc độ ${state.speedMultiplier}×`;
+      }
+      const speedBtn = document.getElementById('btnSimSpeed');
+      if (speedBtn) {
+        speedBtn.className = state.speedMultiplier > 1
+          ? 'btn-tap px-4 py-3.5 rounded-xl font-black text-xs sm:text-sm bg-amber-400 text-slate-950 border border-amber-300 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition'
+          : 'btn-tap px-4 py-3.5 rounded-xl font-bold text-xs sm:text-sm bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition';
+      }
       if (state.phase === 'predicting') {
         document.getElementById('timerDisplay').textContent = '00:00 / ' + formatClockMMSS(state.duration);
         document.getElementById('timerStatusText').textContent = `Thời gian thi đấu · ${state.duration / 60} phút`;
@@ -5205,7 +5323,7 @@
         lockBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         const isMgr = state.gameMode === 'manager';
         lockBtn.innerHTML = isMgr
-          ? `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>HLV RA SÂN CHỈ ĐẠO TRẬN ĐẤU</span>`
+          ? `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>BẮT ĐẦU ĐÁ</span>`
           : `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>CHỐT DỰ ĐOÁN & BẮT ĐẦU ĐÁ</span>`;
       } else {
         lockBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -5364,11 +5482,16 @@
 
       const tourney = getActiveTournament();
       const feed = document.getElementById('matchEventsFeed');
-      feed.innerHTML = `<div class="text-emerald-300 font-semibold">⏱️ 01' [${tourney.shortName}] Hiệp 1 bắt đầu! Bạn dự đoán: ${state.homeTeam.code} ${state.predHome} - ${state.predAway} ${state.awayTeam.code}</div>`;
+      const isMgr = state.gameMode === 'manager';
+      feed.innerHTML = isMgr
+        ? `<div class="text-emerald-300 font-semibold">⏱️ 01' [${tourney.shortName}] Hiệp 1 bắt đầu! HLV <strong>${state.manager.name || 'Trưởng'}</strong> chỉ đạo trận đấu!</div>`
+        : `<div class="text-emerald-300 font-semibold">⏱️ 01' [${tourney.shortName}] Hiệp 1 bắt đầu! Bạn dự đoán: ${state.homeTeam.code} ${state.predHome} - ${state.predAway} ${state.awayTeam.code}</div>`;
 
       document.getElementById('simBadge').textContent = "HIỆP 1 • ĐANG ĐÁ";
       document.getElementById('simBadge').className = "px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse";
-      document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 1`;
+      document.getElementById('timerStatusText').textContent = isMgr
+        ? `👔 HLV CHỈ ĐẠO (${state.manager.formation || '4-3-3'}) • ĐANG ĐÁ HIỆP 1`
+        : `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 1`;
 
       restartPlay('home');
       const tickMs = 100;
@@ -5450,7 +5573,9 @@
             state.sidesSwapped = true;
             SoundFX.whistle();
             document.getElementById('simBadge').textContent = "HIỆP 2 • ĐANG ĐÁ";
-            document.getElementById('timerStatusText').textContent = `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 2 (ĐỔI SÂN)`;
+            document.getElementById('timerStatusText').textContent = state.gameMode === 'manager'
+              ? `👔 HLV CHỈ ĐẠO (${state.manager.formation || '4-3-3'}) • ĐANG ĐÁ HIỆP 2 (ĐỔI SÂN)`
+              : `🔒 DỰ ĐOÁN (${state.predHome} - ${state.predAway}) • ĐANG ĐÁ HIỆP 2 (ĐỔI SÂN)`;
             showPhaseNotice("⏱️ HIỆP 2 BẮT ĐẦU (45' - 90') • HAI ĐỘI ĐỔI SÂN!");
             const htItem = document.createElement('div');
             htItem.className = 'text-sky-300 font-semibold';
@@ -5778,7 +5903,9 @@
           actual: `${actualH} - ${actualA}${state.inExtraTime ? ' (HP)' : ''}${penNote}`,
           earned: 0,
           exactHit: false,
-          outcomeHit: true
+          outcomeHit: true,
+          isManagerMatch: true,
+          verdict: verdictTitle
         });
       }
       renderHistory();
@@ -6617,10 +6744,24 @@
       const container = document.getElementById('historyList');
       document.getElementById('historyCountBadge').textContent = `${state.history.length} trận`;
       if (state.history.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 text-center py-6">Chưa có trận đấu nào. Hãy dự đoán trận đầu tiên!</div>`;
+        const emptyMsg = state.gameMode === 'manager'
+          ? 'Chưa có trận đấu nào. Hãy bấm Bắt đầu đá!'
+          : 'Chưa có trận đấu nào. Hãy dự đoán trận đầu tiên!';
+        container.innerHTML = `<div class="text-xs text-slate-400 text-center py-6">${emptyMsg}</div>`;
         return;
       }
       container.innerHTML = state.history.slice(0, 12).map(item => {
+        if (item.isManagerMatch || (item.pred && String(item.pred).startsWith('HLV chỉ đạo'))) {
+          return `
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-white/5 flex items-center justify-between gap-2 text-xs">
+              <div class="truncate">
+                <div class="font-bold text-white truncate flex items-center gap-1.5">${getTeamLogoHtml(item.home, 'w-4 h-4')} <span>${item.home.code}</span> <span class="text-emerald-400">${item.actual}</span> <span>${item.away.code}</span> ${getTeamLogoHtml(item.away, 'w-4 h-4')}</div>
+                <div class="text-[10px] text-slate-400">${item.tournament || ''} • <span class="text-amber-300 font-semibold">${item.pred}</span></div>
+              </div>
+              <div class="shrink-0"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">${item.verdict ? item.verdict.slice(0, 18) : 'Chế độ HLV'}</span></div>
+            </div>
+          `;
+        }
         const badge = item.exactHit
           ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">Đúng tỷ số +${item.earned}</span>`
           : (item.outcomeHit
@@ -6823,7 +6964,14 @@
 
       const settings = document.getElementById('settings');
       document.getElementById('btnSettings').onclick = () => settings.showModal();
-      document.getElementById('btnSimSpeed').onclick = () => settings.showModal();
+      document.getElementById('btnSimSpeed').onclick = () => {
+        SoundFX.click();
+        const order = [1, 4, 12];
+        const nextIdx = (order.indexOf(state.speedMultiplier) + 1) % order.length;
+        state.speedMultiplier = order[nextIdx];
+        syncSettings();
+        try { localStorage.setItem('matchSettings', JSON.stringify([state.duration, state.speedMultiplier])); } catch {}
+      };
       settings.onchange = () => {
         state.speedMultiplier = Number(settings.querySelector('[name=speed]:checked').value);
         if (state.phase !== 'simulating') state.duration = Number(settings.querySelector('[name=duration]:checked').value);
@@ -7199,13 +7347,14 @@
       });
 
       loadManagerCareer();
+      snapshotFifaRanks();
       if (state.manager && state.manager.isContractLocked && state.manager.teamId) {
         state.focusedTeamId = state.manager.teamId;
         state.activeTournamentId = state.manager.tourneyId || state.activeTournamentId;
+        selectTournament(state.activeTournamentId);
         setGameMode('manager');
+      } else {
+        selectTournament(state.activeTournamentId);
       }
-
-      snapshotFifaRanks();
-      selectTournament(state.activeTournamentId);
       requestAnimationFrame(drawPitch);
     });
