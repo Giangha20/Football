@@ -2930,9 +2930,65 @@
 
       // Multi-Season Progression & OVR Evolution (Strictly Max 125 OVR)
       seasonYear: 2026,
-      seasonSummary: null
+      seasonSummary: null,
+
+      // Game Mode & HLV Tương Lai (Soccer Manager Career Mode)
+      gameMode: 'predict', // 'predict' | 'manager'
+      manager: {
+        name: 'HLV Trưởng',
+        teamId: null,
+        tourneyId: null,
+        seasonYear: 2026,
+        isContractLocked: false,
+        careerSeasonNumber: 1,
+        matches: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        gf: 0,
+        ga: 0,
+        boardConfidence: 90,
+        trophies: [],
+        formation: '4-3-3',
+        playstyle: 'attack',
+        activeShout: null,
+        shoutTimer: 0
+      }
     };
     window.footballState = state;
+
+    function loadManagerCareer() {
+      try {
+        const raw = localStorage.getItem('football_manager_career_v1');
+        if (raw) {
+          const data = JSON.parse(raw);
+          state.manager = Object.assign(state.manager, data);
+        }
+      } catch (e) {}
+    }
+
+    function saveManagerCareer() {
+      try {
+        localStorage.setItem('football_manager_career_v1', JSON.stringify({
+          name: state.manager.name,
+          teamId: state.manager.teamId,
+          tourneyId: state.manager.tourneyId,
+          seasonYear: state.manager.seasonYear,
+          isContractLocked: state.manager.isContractLocked,
+          careerSeasonNumber: state.manager.careerSeasonNumber,
+          matches: state.manager.matches,
+          wins: state.manager.wins,
+          draws: state.manager.draws,
+          losses: state.manager.losses,
+          gf: state.manager.gf,
+          ga: state.manager.ga,
+          boardConfidence: state.manager.boardConfidence,
+          trophies: state.manager.trophies,
+          formation: state.manager.formation,
+          playstyle: state.manager.playstyle
+        }));
+      } catch (e) {}
+    }
 
     function loadSavedStats() {
       try {
@@ -3264,6 +3320,64 @@
             </tr>
           `;
         }).join('');
+      }
+
+      // Populate HLV Tương Lai End of Season Card
+      const mgrCard = document.getElementById('seasonEndManagerCard');
+      if (mgrCard) {
+        if (state.manager && state.manager.teamId) {
+          mgrCard.classList.remove('hidden');
+          const team = TEAMS_DB.find(t => t.id === state.manager.teamId) || { name: 'Đội bóng của bạn' };
+          const myChange = ovrChanges ? ovrChanges.find(c => c.team.id === state.manager.teamId) : null;
+          const rank = myChange ? myChange.rank : (ovrChanges[0] ? ovrChanges.length : 1);
+          const isChampion = rank === 1;
+
+          // Unlock the contract now that the season has officially finished!
+          if (state.manager.isContractLocked) {
+            state.manager.isContractLocked = false;
+            if (isChampion) {
+              state.manager.trophies.push({
+                tourneyId: tourney.id,
+                tourneyName: tourney.name,
+                seasonYear: state.seasonYear,
+                icon: tourney.icon,
+                date: new Date().toLocaleDateString('vi-VN')
+              });
+              state.manager.boardConfidence = 100;
+            } else if (rank <= 4) {
+              state.manager.boardConfidence = Math.min(100, state.manager.boardConfidence + 8);
+            } else if (rank > Math.floor(ovrChanges.length / 2)) {
+              state.manager.boardConfidence = Math.max(15, state.manager.boardConfidence - 10);
+            }
+            saveManagerCareer();
+          }
+
+          const evalTextEl = document.getElementById('seasonEndManagerEvaluationText');
+          if (evalTextEl) {
+            let assessment = '';
+            if (isChampion) {
+              assessment = `🏆 <strong>XUẤT SẮC VÔ ĐỊCH!</strong> Ban Lãnh Đạo và toàn thể Cổ động viên <strong>${team.name}</strong> vô cùng tự hào và nhiệt liệt chúc mừng chiến tích vô địch của HLV ${state.manager.name}!`;
+            } else if (rank <= 4) {
+              assessment = `⭐ <strong>HOÀN THÀNH MỤC TIÊU TOP 4!</strong> ${team.name} cán đích ở vị trí <strong>#${rank}</strong>. Ban Lãnh Đạo đánh giá rất cao năng lực chỉ đạo của HLV ${state.manager.name}.`;
+            } else {
+              assessment = `⚡ ${team.name} cán đích ở vị trí <strong>#${rank}</strong>. Hợp đồng mùa giải này chính thức hoàn tất.`;
+            }
+
+            evalTextEl.innerHTML = `
+              <div class="space-y-1">
+                <p>${assessment}</p>
+                <p class="text-amber-300 font-semibold">🔓 Hợp đồng Mùa giải ${state.seasonYear}/${state.seasonYear + 1} đã kết thúc. Bạn có thể chọn <strong>Gia hạn tiếp tục</strong> hoặc <strong>Hết hạn hợp đồng & Chọn CLB khác trong giải</strong>!</p>
+              </div>
+            `;
+          }
+
+          const renewBtnText = document.getElementById('btnManagerRenewText');
+          if (renewBtnText) {
+            renewBtnText.textContent = `Gia hạn hợp đồng với ${team.name} (Mùa ${state.seasonYear + 1})`;
+          }
+        } else {
+          mgrCard.classList.add('hidden');
+        }
       }
 
       modal.classList.remove('hidden');
@@ -4057,7 +4171,290 @@
       document.getElementById('badgeMatchType').textContent = currentStageName;
     }
 
+    // =========================================================================
+    // HLV TƯƠNG LAI: SOCCER MANAGER CAREER ENGINE
+    // =========================================================================
+    function setGameMode(mode) {
+      state.gameMode = mode;
+      const btnPred = document.getElementById('btnModePredict');
+      const btnMgr = document.getElementById('btnModeManager');
+      const panelMgr = document.getElementById('panelManagerHub');
+      const hubHeading = document.getElementById('hubMainHeading');
+      const badge = document.getElementById('modeStatusBadge');
+
+      if (mode === 'manager') {
+        if (btnPred) {
+          btnPred.className = 'btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white';
+        }
+        if (btnMgr) {
+          btnMgr.className = 'btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-amber-400 text-slate-950 shadow-md';
+        }
+        if (panelMgr) panelMgr.classList.remove('hidden');
+        if (hubHeading) hubHeading.textContent = 'Trận đấu Huấn Luyện Viên dẫn dắt';
+
+        renderManagerUI();
+
+        // If manager has an active contract, enforce team selection
+        if (state.manager.isContractLocked && state.manager.teamId) {
+          if (state.focusedTeamId !== state.manager.teamId) {
+            state.focusedTeamId = state.manager.teamId;
+          }
+          if (state.activeTournamentId !== state.manager.tourneyId) {
+            state.activeTournamentId = state.manager.tourneyId;
+            selectTournament(state.manager.tourneyId);
+          }
+          pickNextMatch();
+        }
+      } else {
+        if (btnPred) {
+          btnPred.className = 'btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md';
+        }
+        if (btnMgr) {
+          btnMgr.className = 'btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white';
+        }
+        if (panelMgr) panelMgr.classList.add('hidden');
+        if (hubHeading) hubHeading.textContent = 'Dự đoán trận đấu';
+        if (badge) {
+          badge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Chế độ: Dự đoán tự do</span>
+            </span>
+          `;
+        }
+      }
+      setScoreControlsEnabled(state.phase === 'predicting');
+    }
+
+    function renderManagerUI() {
+      const unsignedCard = document.getElementById('managerUnsignedCard');
+      const signedCard = document.getElementById('managerSignedCard');
+      const badge = document.getElementById('modeStatusBadge');
+
+      const isLocked = !!(state.manager && state.manager.isContractLocked && state.manager.teamId);
+
+      if (!isLocked) {
+        if (unsignedCard) unsignedCard.classList.remove('hidden');
+        if (signedCard) signedCard.classList.add('hidden');
+
+        const signYearTag = document.getElementById('managerSignYearTag');
+        if (signYearTag) signYearTag.textContent = `MÙA ${state.seasonYear}/${state.seasonYear + 1}`;
+
+        const focusTeam = TEAMS_DB.find(t => t.id === state.focusedTeamId) || TEAMS_DB[0];
+        const prevEl = document.getElementById('managerPreviewTeamName');
+        if (prevEl && focusTeam) {
+          prevEl.innerHTML = `<span class="flex items-center gap-2">${getTeamLogoHtml(focusTeam, 'w-5 h-5')}<span class="text-white">${focusTeam.name}</span></span>`;
+        }
+
+        if (state.gameMode === 'manager' && badge) {
+          badge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-400/30 text-amber-300 font-bold flex items-center gap-1.5">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>HLV Tự do · Chọn đội ký hợp đồng</span>
+            </span>
+          `;
+        }
+      } else {
+        if (unsignedCard) unsignedCard.classList.add('hidden');
+        if (signedCard) signedCard.classList.remove('hidden');
+
+        const team = TEAMS_DB.find(t => t.id === state.manager.teamId) || { name: 'Đội bóng của bạn', icon: '🛡️' };
+        const tourney = TOURNAMENTS.find(t => t.id === state.manager.tourneyId) || getActiveTournament();
+
+        const nameEl = document.getElementById('managerDisplayName');
+        if (nameEl) nameEl.textContent = state.manager.name || 'HLV Trưởng';
+
+        const clubBadge = document.getElementById('managerClubBadge');
+        if (clubBadge) clubBadge.innerHTML = `<span class="flex items-center gap-1">${getTeamLogoHtml(team, 'w-4 h-4')}<span>${team.name}</span></span>`;
+
+        const leagueBadge = document.getElementById('managerLeagueBadge');
+        if (leagueBadge) leagueBadge.textContent = `${tourney.icon} ${tourney.name}`;
+
+        const seasonCountBadge = document.getElementById('managerSeasonCountBadge');
+        if (seasonCountBadge) seasonCountBadge.textContent = `MÙA THỨ ${state.manager.careerSeasonNumber || 1}`;
+
+        const lockTag = document.getElementById('managerContractLockTag');
+        if (lockTag) lockTag.textContent = `HỢP ĐỒNG KHÓA ĐẾN HẾT MÙA ${state.manager.seasonYear}/${state.manager.seasonYear + 1}`;
+
+        // Match record
+        const total = state.manager.matches || 0;
+        const wins = state.manager.wins || 0;
+        const draws = state.manager.draws || 0;
+        const losses = state.manager.losses || 0;
+        const winPct = total > 0 ? ((wins / total) * 100).toFixed(1) : '0';
+
+        const recordEl = document.getElementById('managerMatchRecord');
+        if (recordEl) recordEl.textContent = `${wins}T · ${draws}H · ${losses}B (${total} trận)`;
+
+        const winRateEl = document.getElementById('managerWinRate');
+        if (winRateEl) winRateEl.textContent = `Tỷ lệ thắng: ${winPct}%`;
+
+        // Board confidence
+        const conf = Math.max(0, Math.min(100, state.manager.boardConfidence || 90));
+        const confNumEl = document.getElementById('managerConfidenceNum');
+        if (confNumEl) confNumEl.textContent = `${conf}%`;
+
+        const confBar = document.getElementById('managerConfidenceBar');
+        if (confBar) {
+          confBar.style.width = `${conf}%`;
+          if (conf >= 70) confBar.className = 'bg-gradient-to-r from-yellow-400 to-emerald-400 h-full rounded-full transition-all duration-500';
+          else if (conf >= 40) confBar.className = 'bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all duration-500';
+          else confBar.className = 'bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all duration-500';
+        }
+
+        // Goals stats
+        const gf = state.manager.gf || 0;
+        const ga = state.manager.ga || 0;
+        const diff = gf - ga;
+        const diffStr = diff >= 0 ? `+${diff}` : `${diff}`;
+        const goalsEl = document.getElementById('managerGoalsStats');
+        if (goalsEl) goalsEl.textContent = `${gf} - ${ga}`;
+
+        const diffEl = document.getElementById('managerGoalDiff');
+        if (diffEl) diffEl.textContent = `Hiệu số: ${diffStr}`;
+
+        // Trophies
+        const trophies = state.manager.trophies || [];
+        const tropCountEl = document.getElementById('managerTrophiesCount');
+        if (tropCountEl) tropCountEl.textContent = `${trophies.length} Cúp`;
+
+        const latestTropEl = document.getElementById('managerLatestTrophy');
+        if (latestTropEl) {
+          latestTropEl.textContent = trophies.length > 0 ? `Vô địch ${trophies[trophies.length - 1].tourneyName}` : 'Chưa có danh hiệu';
+        }
+
+        // Highlight formation buttons
+        document.querySelectorAll('.tactical-form-btn').forEach(btn => {
+          const isAct = btn.dataset.formation === (state.manager.formation || '4-3-3');
+          btn.className = isAct
+            ? 'tactical-form-btn btn-tap p-2 rounded-xl border border-emerald-400 bg-emerald-500/25 text-white font-black text-xs flex flex-col items-center gap-0.5 shadow-md shadow-emerald-500/20'
+            : 'tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5';
+        });
+
+        // Highlight playstyle buttons
+        document.querySelectorAll('.tactical-style-btn').forEach(btn => {
+          const isAct = btn.dataset.playstyle === (state.manager.playstyle || 'attack');
+          btn.className = isAct
+            ? 'tactical-style-btn btn-tap p-2 rounded-xl border border-emerald-400 bg-emerald-500/25 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20'
+            : 'tactical-style-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex items-center justify-center gap-1.5';
+        });
+
+        if (state.gameMode === 'manager' && badge) {
+          badge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 font-bold flex items-center gap-1.5">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-rose-400"></i>
+              <span>🔒 Đang dẫn dắt ${team.name} (Hết mùa ${state.manager.seasonYear}/${state.manager.seasonYear + 1})</span>
+            </span>
+          `;
+        }
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function signManagerContract(teamId, tourneyId, mgrName) {
+      SoundFX.whistle();
+      const team = TEAMS_DB.find(t => t.id === teamId) || TEAMS_DB[0];
+      const tourney = TOURNAMENTS.find(t => t.id === tourneyId) || getActiveTournament();
+
+      state.manager.teamId = team.id;
+      state.manager.tourneyId = tourney.id;
+      state.manager.seasonYear = state.seasonYear;
+      state.manager.name = mgrName || state.manager.name || 'HLV Trưởng';
+      state.manager.isContractLocked = true;
+      saveManagerCareer();
+
+      state.focusedTeamId = team.id;
+      state.activeTournamentId = tourney.id;
+      selectTournament(tourney.id);
+      chooseTeam(team.id);
+
+      renderManagerUI();
+
+      if (window.confetti) {
+        window.confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+      }
+
+      showPhaseNotice(`🎉 CHÚC MỪNG BẠN ĐÃ KÝ HỢP ĐỒNG HLV TRƯỞNG DẪN DẮT ${team.name}! Chúc bạn có một mùa giải đại thành công!`);
+    }
+
+    function triggerManagerShout(type) {
+      if (state.phase !== 'simulating') {
+        return;
+      }
+      SoundFX.whistle();
+      state.manager.activeShout = type;
+      state.manager.shoutTimer = 22; // 22 seconds
+
+      const banner = document.getElementById('managerPitchShoutBanner');
+      const bannerText = document.getElementById('managerPitchShoutText');
+      const badge = document.getElementById('shoutActiveBadge');
+
+      let text = '';
+      if (type === 'push_up') {
+        text = `HLV CHỈ ĐẠO: "ĐẨY CAO ĐỘI HÌNH!" — Toàn đội dâng cao pressing nghẹt thở!`;
+      } else if (type === 'possession') {
+        text = `HLV CHỈ ĐẠO: "KIỂM SOÁT BÓNG!" — Ban bật chậm rãi, giữ vững nhịp độ trận đấu!`;
+      } else if (type === 'park_bus') {
+        text = `HLV CHỈ ĐẠO: "LÙI SÂU TỬ THỦ!" — Kéo toàn bộ đội hình về tử thủ bảo toàn mành lưới!`;
+      }
+
+      if (banner && bannerText) {
+        bannerText.textContent = text;
+        banner.classList.remove('hidden');
+      }
+      if (badge) {
+        badge.textContent = `Đang hiệu lực (20s)`;
+        badge.className = 'text-[10px] font-bold text-amber-300';
+      }
+    }
+
+    function showContractLockedModal(customMsg) {
+      SoundFX.whistle();
+      const modal = document.getElementById('modalContractLocked');
+      if (!modal) return;
+
+      const team = TEAMS_DB.find(t => t.id === state.manager.teamId);
+      const teamNameEl = document.getElementById('lockedModalTeamName');
+      if (teamNameEl) teamNameEl.textContent = team ? `${team.icon || '🛡️'} ${team.name}` : 'Đội bóng của bạn';
+
+      const seasonTagEl = document.getElementById('lockedModalSeasonTag');
+      if (seasonTagEl) seasonTagEl.textContent = `Đến hết Mùa giải ${state.manager.seasonYear}/${state.manager.seasonYear + 1}`;
+
+      const allGroups = state.groupFixturesByTourney[state.manager.tourneyId] || {};
+      let totalF = 0, playedF = 0;
+      for (const grp of Object.values(allGroups)) {
+        for (const f of grp) {
+          totalF++;
+          if (f.played) playedF++;
+        }
+      }
+      const progEl = document.getElementById('lockedModalProgress');
+      if (progEl) {
+        progEl.textContent = totalF > 0 ? `${playedF} / ${totalF} trận đã hoàn thành` : 'Mùa giải đang diễn ra';
+      }
+
+      const msgEl = document.getElementById('lockedModalMessage');
+      if (msgEl) {
+        if (customMsg) {
+          msgEl.innerHTML = customMsg;
+        } else {
+          msgEl.innerHTML = `Theo quy chế HLV (Soccer Manager), bạn <strong>không được phép chuyển sang đội bóng khác giữa mùa giải</strong> khi đang có hợp đồng với <strong>${team?.name || 'đội bóng'}</strong>. Hãy hoàn thành trọn vẹn tất cả các trận đấu của mùa giải này để thanh lý hợp đồng hoặc nhận lời mời từ CLB mới!`;
+        }
+      }
+
+      modal.classList.remove('hidden');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
     function selectTournament(tournamentId) {
+      if (state.manager && state.manager.isContractLocked && tournamentId !== state.manager.tourneyId) {
+        const tObj = TOURNAMENTS.find(t => t.id === state.manager.tourneyId);
+        showContractLockedModal(`Bạn đang có hợp đồng HLV chính thức tại giải <strong>${tObj ? tObj.name : ''}</strong>. Bạn phải hoàn thành trọn vẹn mùa giải mới được phép chuyển sang giải đấu khác!`);
+        const selLeague = document.getElementById('selectLeagueFilter');
+        if (selLeague) selLeague.value = state.manager.tourneyId;
+        return;
+      }
       state.activeTournamentId = tournamentId;
       const tourney = getActiveTournament();
       state.stageIndex = 0;
@@ -4079,6 +4476,12 @@
 
     function chooseTeam(id, fixture) {
       if (state.phase === 'simulating') return;
+      if (state.manager && state.manager.isContractLocked && id !== state.manager.teamId) {
+        showContractLockedModal();
+        const picker = document.getElementById('focusTeam');
+        if (picker && state.manager.teamId) picker.value = state.manager.teamId;
+        return;
+      }
       state.focusedTeamId = id;
       if (state.activeTournamentId === 'world_cup' && state.stageIndex === 0) {
         initStandingsForTournament('world_cup', true);
@@ -4098,6 +4501,15 @@
       const picker = document.getElementById('focusTeam');
       picker.replaceChildren(...pool.map(t => new Option(t.name, t.id)));
       picker.value = focus.id;
+      if (state.manager && state.manager.isContractLocked) {
+        picker.title = '🔒 Đang trong hợp đồng HLV với đội bóng này (Soccer Manager)';
+      } else {
+        picker.title = '';
+      }
+      const prevEl = document.getElementById('managerPreviewTeamName');
+      if (prevEl) {
+        prevEl.innerHTML = `<span class="flex items-center gap-2">${getTeamLogoHtml(focus, 'w-5 h-5')}<span>${focus.name}</span></span>`;
+      }
       if (state.isKnockoutMatch) {
         const opponents = pool.filter(t => t !== focus);
         setupMatch(focus, requested?.away || opponents[Math.floor(Math.random() * opponents.length)]);
@@ -4318,7 +4730,10 @@
       lockBtn.disabled = !enabled;
       if (enabled) {
         lockBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        lockBtn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>CHỐT DỰ ĐOÁN & BẮT ĐẦU ĐÁ</span>`;
+        const isMgr = state.gameMode === 'manager';
+        lockBtn.innerHTML = isMgr
+          ? `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>HLV RA SÂN CHỈ ĐẠO TRẬN ĐẤU</span>`
+          : `<i data-lucide="play" class="w-5 h-5 fill-current"></i><span>CHỐT DỰ ĐOÁN & BẮT ĐẦU ĐÁ</span>`;
       } else {
         lockBtn.classList.add('opacity-50', 'cursor-not-allowed');
         lockBtn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>ĐANG GIẢ LẬP TRÊN SÂN...</span>`;
@@ -4498,6 +4913,21 @@
         if (now < state.kickoffUntil) return;
         const boundary = state.inExtraTime ? duration + 30 : (state.halfTimeAnnounced ? duration : duration / 2);
         state.simElapsedSec = Math.min(boundary, state.simElapsedSec + delta);
+
+        // Manager In-match Tactical Shout countdown
+        if (state.manager && state.manager.shoutTimer > 0) {
+          state.manager.shoutTimer -= delta;
+          if (state.manager.shoutTimer <= 0) {
+            state.manager.activeShout = null;
+            const shoutBanner = document.getElementById('managerPitchShoutBanner');
+            if (shoutBanner) shoutBanner.classList.add('hidden');
+            const shoutBadge = document.getElementById('shoutActiveBadge');
+            if (shoutBadge) {
+              shoutBadge.textContent = 'Sẵn sàng ra chỉ đạo trong trận';
+              shoutBadge.className = 'text-[10px] text-slate-400';
+            }
+          }
+        }
 
         if (!state.inExtraTime) {
           state.simMinute = Math.min(90, (state.simElapsedSec / duration) * 90);
@@ -4745,6 +5175,37 @@
       renderLeagueStandings();
       renderFifaWorldRankings();
 
+      // Manager Career Stats update
+      if (state.manager) {
+        state.manager.activeShout = null;
+        state.manager.shoutTimer = 0;
+        const shoutBanner = document.getElementById('managerPitchShoutBanner');
+        if (shoutBanner) shoutBanner.classList.add('hidden');
+
+        if (state.manager.teamId) {
+          const isHome = state.homeTeam.id === state.manager.teamId;
+          const isAway = state.awayTeam.id === state.manager.teamId;
+          if (isHome || isAway) {
+            state.manager.matches++;
+            const myGoals = isHome ? actualH : actualA;
+            const oppGoals = isHome ? actualA : actualH;
+            state.manager.gf += myGoals;
+            state.manager.ga += oppGoals;
+            if (myGoals > oppGoals) {
+              state.manager.wins++;
+              state.manager.boardConfidence = Math.min(100, state.manager.boardConfidence + 3);
+            } else if (myGoals === oppGoals) {
+              state.manager.draws++;
+            } else {
+              state.manager.losses++;
+              state.manager.boardConfidence = Math.max(10, state.manager.boardConfidence - 4);
+            }
+            saveManagerCareer();
+            renderManagerUI();
+          }
+        }
+      }
+
       const predH = state.predHome;
       const predA = state.predAway;
 
@@ -4945,10 +5406,8 @@
       if (state.ballSim.touchRipples.length > 8) state.ballSim.touchRipples.shift();
     }
 
-    function initPitchPlayers() {
-      state.players = [];
-      // Full 11v11 tactical 4-3-3 formations for Home (Left->Right) and Away (Right->Left)
-      const home433 = [
+    const TACTICAL_FORMATIONS = {
+      '4-3-3': [
         { x: 0.075, y: 0.50, role: 'GK' },
         { x: 0.20,  y: 0.16, role: 'DF' },
         { x: 0.18,  y: 0.38, role: 'DF' },
@@ -4960,26 +5419,88 @@
         { x: 0.47,  y: 0.20, role: 'FW' },
         { x: 0.48,  y: 0.45, role: 'FW' },
         { x: 0.47,  y: 0.80, role: 'FW' }
-      ];
-      const away433 = [
-        { x: 0.925, y: 0.50, role: 'GK' },
-        { x: 0.80,  y: 0.16, role: 'DF' },
-        { x: 0.82,  y: 0.38, role: 'DF' },
-        { x: 0.82,  y: 0.62, role: 'DF' },
-        { x: 0.80,  y: 0.84, role: 'DF' },
-        { x: 0.65,  y: 0.25, role: 'MF' },
-        { x: 0.68,  y: 0.50, role: 'MF' },
-        { x: 0.65,  y: 0.75, role: 'MF' },
-        { x: 0.53,  y: 0.20, role: 'FW' },
-        { x: 0.52,  y: 0.55, role: 'FW' },
-        { x: 0.53,  y: 0.80, role: 'FW' }
-      ];
+      ],
+      '4-2-3-1': [
+        { x: 0.075, y: 0.50, role: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF' },
+        { x: 0.18,  y: 0.38, role: 'DF' },
+        { x: 0.18,  y: 0.62, role: 'DF' },
+        { x: 0.20,  y: 0.84, role: 'DF' },
+        { x: 0.30,  y: 0.38, role: 'MF' },
+        { x: 0.30,  y: 0.62, role: 'MF' },
+        { x: 0.40,  y: 0.20, role: 'MF' },
+        { x: 0.39,  y: 0.50, role: 'MF' },
+        { x: 0.40,  y: 0.80, role: 'MF' },
+        { x: 0.48,  y: 0.50, role: 'FW' }
+      ],
+      '4-4-2': [
+        { x: 0.075, y: 0.50, role: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF' },
+        { x: 0.18,  y: 0.38, role: 'DF' },
+        { x: 0.18,  y: 0.62, role: 'DF' },
+        { x: 0.20,  y: 0.84, role: 'DF' },
+        { x: 0.34,  y: 0.16, role: 'MF' },
+        { x: 0.33,  y: 0.38, role: 'MF' },
+        { x: 0.33,  y: 0.62, role: 'MF' },
+        { x: 0.34,  y: 0.84, role: 'MF' },
+        { x: 0.47,  y: 0.38, role: 'FW' },
+        { x: 0.47,  y: 0.62, role: 'FW' }
+      ],
+      '3-5-2': [
+        { x: 0.075, y: 0.50, role: 'GK' },
+        { x: 0.18,  y: 0.25, role: 'DF' },
+        { x: 0.17,  y: 0.50, role: 'DF' },
+        { x: 0.18,  y: 0.75, role: 'DF' },
+        { x: 0.32,  y: 0.14, role: 'MF' },
+        { x: 0.33,  y: 0.32, role: 'MF' },
+        { x: 0.31,  y: 0.50, role: 'MF' },
+        { x: 0.33,  y: 0.68, role: 'MF' },
+        { x: 0.32,  y: 0.86, role: 'MF' },
+        { x: 0.47,  y: 0.38, role: 'FW' },
+        { x: 0.47,  y: 0.62, role: 'FW' }
+      ],
+      '5-3-2': [
+        { x: 0.075, y: 0.50, role: 'GK' },
+        { x: 0.20,  y: 0.12, role: 'DF' },
+        { x: 0.18,  y: 0.30, role: 'DF' },
+        { x: 0.17,  y: 0.50, role: 'DF' },
+        { x: 0.18,  y: 0.70, role: 'DF' },
+        { x: 0.20,  y: 0.88, role: 'DF' },
+        { x: 0.34,  y: 0.28, role: 'MF' },
+        { x: 0.32,  y: 0.50, role: 'MF' },
+        { x: 0.34,  y: 0.72, role: 'MF' },
+        { x: 0.47,  y: 0.38, role: 'FW' },
+        { x: 0.47,  y: 0.62, role: 'FW' }
+      ]
+    };
+
+    function getTacticalFormation(formationKey, isAway) {
+      const form = TACTICAL_FORMATIONS[formationKey] || TACTICAL_FORMATIONS['4-3-3'];
+      if (!isAway) return form;
+      return form.map(p => ({
+        x: 1 - p.x,
+        y: p.y,
+        role: p.role
+      }));
+    }
+
+    function initPitchPlayers() {
+      state.players = [];
+
+      const isHomeManaged = (state.manager && state.manager.teamId === state.homeTeam?.id);
+      const isAwayManaged = (state.manager && state.manager.teamId === state.awayTeam?.id);
+
+      const homeFormKey = isHomeManaged ? (state.manager.formation || '4-3-3') : '4-3-3';
+      const awayFormKey = isAwayManaged ? (state.manager.formation || '4-3-3') : '4-3-3';
+
+      const homeCoords = getTacticalFormation(homeFormKey, false);
+      const awayCoords = getTacticalFormation(awayFormKey, true);
 
       // Note: team.stars has attackers at index 0..3, midfielders 4..6, defenders 7..9, GK at 10
       const starOrder = [10, 7, 8, 9, 6, 4, 5, 3, 1, 0, 2];
       const swap = !!state.sidesSwapped;
 
-      home433.forEach((p, idx) => {
+      homeCoords.forEach((p, idx) => {
         const starIdx = starOrder[idx] !== undefined ? starOrder[idx] : idx;
         const fullName = state.homeTeam.stars[starIdx] || state.homeTeam.stars[0] || `Cầu thủ ${idx + 1}`;
         const shortName = fullName.split(' (')[0].split(' ').slice(-1)[0];
@@ -5001,7 +5522,7 @@
         });
       });
 
-      away433.forEach((p, idx) => {
+      awayCoords.forEach((p, idx) => {
         const starIdx = starOrder[idx] !== undefined ? starOrder[idx] : idx;
         const fullName = state.awayTeam.stars[starIdx] || state.awayTeam.stars[0] || `Cầu thủ ${idx + 1}`;
         const shortName = fullName.split(' (')[0].split(' ').slice(-1)[0];
@@ -5110,12 +5631,24 @@
           p.y += (bs.passEndY - p.y) * 0.08;
         } else if (p === closestOpponentToBall) {
           // Nearest opponent presses the ball carrier to challenge/tackle!
-          p.x += (state.ballPos.x - p.x) * 0.042;
-          p.y += (state.ballPos.y - p.y) * 0.042;
+          const pressSpeed = (state.manager && state.manager.playstyle === 'gegenpress') ? 0.058 : 0.042;
+          p.x += (state.ballPos.x - p.x) * pressSpeed;
+          p.y += (state.ballPos.y - p.y) * pressSpeed;
         } else {
           // Teammates shift dynamically with ball position while keeping formation
+          const attackDir = p.side === 'home' ? (state.sidesSwapped ? -1 : 1) : (state.sidesSwapped ? 1 : -1);
+          let tacticalOffset = 0;
+          const isManaged = state.manager && ((p.side === 'home' && state.manager.teamId === state.homeTeam?.id) || (p.side === 'away' && state.manager.teamId === state.awayTeam?.id));
+          if (isManaged && p.role !== 'GK') {
+            if (state.manager.activeShout === 'push_up') tacticalOffset += attackDir * 0.045;
+            else if (state.manager.activeShout === 'park_bus') tacticalOffset -= attackDir * 0.045;
+
+            if (state.manager.playstyle === 'attack') tacticalOffset += attackDir * 0.025;
+            else if (state.manager.playstyle === 'counter') tacticalOffset -= attackDir * 0.02;
+          }
+
           const ballShiftX = (state.ballPos.x - 0.5) * (p.role === 'GK' ? 0.04 : 0.22);
-          const desiredX = p.baseX + ballShiftX + Math.sin(p.phase) * 0.018;
+          const desiredX = p.baseX + ballShiftX + tacticalOffset + Math.sin(p.phase) * 0.018;
           const desiredY = p.baseY + Math.cos(p.phase * 1.3) * 0.028;
           p.x += (desiredX - p.x) * 0.05;
           p.y += (desiredY - p.y) * 0.05;
@@ -6071,7 +6604,108 @@
         pickNextMatch();
       });
 
-      document.getElementById('focusTeam').onchange = e => chooseTeam(e.target.value);
+      document.getElementById('focusTeam').onchange = e => {
+        if (state.manager && state.manager.isContractLocked && e.target.value !== state.manager.teamId) {
+          e.target.value = state.manager.teamId;
+          showContractLockedModal();
+          return;
+        }
+        chooseTeam(e.target.value);
+      };
+
+      // Game Mode Switcher
+      document.getElementById('btnModePredict')?.addEventListener('click', () => {
+        SoundFX.click();
+        setGameMode('predict');
+      });
+
+      document.getElementById('btnModeManager')?.addEventListener('click', () => {
+        SoundFX.click();
+        setGameMode('manager');
+      });
+
+      // Contract Signing
+      document.getElementById('btnSignManagerContract')?.addEventListener('click', () => {
+        const mgrName = document.getElementById('inputManagerName')?.value.trim() || 'HLV Trưởng';
+        signManagerContract(state.focusedTeamId, state.activeTournamentId, mgrName);
+      });
+
+      document.getElementById('btnEditManagerName')?.addEventListener('click', () => {
+        const newName = prompt('Nhập tên Huấn luyện viên mới của bạn:', state.manager.name);
+        if (newName && newName.trim()) {
+          state.manager.name = newName.trim();
+          saveManagerCareer();
+          renderManagerUI();
+        }
+      });
+
+      // Tactical Formations
+      document.querySelectorAll('.tactical-form-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.click();
+          state.manager.formation = btn.dataset.formation;
+          saveManagerCareer();
+          initPitchPlayers();
+          renderManagerUI();
+          showPhaseNotice(`📋 Đã đổi sang sơ đồ chiến thuật ${state.manager.formation}!`);
+        });
+      });
+
+      // Tactical Playstyles
+      document.querySelectorAll('.tactical-style-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.click();
+          state.manager.playstyle = btn.dataset.playstyle;
+          saveManagerCareer();
+          renderManagerUI();
+          const names = { attack: 'Tấn công tổng lực', tikitaka: 'Tiki-Taka', counter: 'Phòng ngự phản công', gegenpress: 'Gegenpressing' };
+          showPhaseNotice(`⚡ Triết lý thi đấu: ${names[state.manager.playstyle] || state.manager.playstyle}`);
+        });
+      });
+
+      // In-Match Shouts
+      document.getElementById('btnShoutPushUp')?.addEventListener('click', () => triggerManagerShout('push_up'));
+      document.getElementById('btnShoutPossession')?.addEventListener('click', () => triggerManagerShout('possession'));
+      document.getElementById('btnShoutParkBus')?.addEventListener('click', () => triggerManagerShout('park_bus'));
+
+      // Contract Locked Modal Close
+      document.getElementById('btnCloseContractLockedModal')?.addEventListener('click', () => {
+        SoundFX.click();
+        document.getElementById('modalContractLocked')?.classList.add('hidden');
+      });
+
+      // Season End Decisions for Manager
+      document.getElementById('btnManagerRenewContract')?.addEventListener('click', () => {
+        SoundFX.winExact();
+        state.manager.isContractLocked = true;
+        state.manager.seasonYear = state.seasonYear + 1;
+        state.manager.careerSeasonNumber = (state.manager.careerSeasonNumber || 1) + 1;
+        saveManagerCareer();
+        advanceToNextSeason();
+        setGameMode('manager');
+        const team = TEAMS_DB.find(t => t.id === state.manager.teamId);
+        showPhaseNotice(`✍️ Chúc mừng bạn đã gia hạn hợp đồng và tiếp tục dẫn dắt ${team?.name || 'CLB'} ở mùa giải mới!`);
+      });
+
+      document.getElementById('btnManagerResignAndPickNew')?.addEventListener('click', () => {
+        SoundFX.click();
+        state.manager.isContractLocked = false;
+        state.manager.teamId = null;
+        state.manager.seasonYear = state.seasonYear + 1;
+        state.manager.careerSeasonNumber = (state.manager.careerSeasonNumber || 1) + 1;
+        saveManagerCareer();
+        advanceToNextSeason();
+        setGameMode('manager');
+        showPhaseNotice(`📋 Hợp đồng đã hoàn thành! Bạn được tự do chọn một đội bóng mới để ký hợp đồng dẫn dắt mùa giải tiếp theo!`);
+      });
+
+      loadManagerCareer();
+      if (state.manager && state.manager.isContractLocked && state.manager.teamId) {
+        state.focusedTeamId = state.manager.teamId;
+        state.activeTournamentId = state.manager.tourneyId || state.activeTournamentId;
+        setGameMode('manager');
+      }
+
       snapshotFifaRanks();
       selectTournament(state.activeTournamentId);
       requestAnimationFrame(drawPitch);
