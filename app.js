@@ -4697,9 +4697,9 @@
     // =========================================================================
     // SẮP XẾP ĐỘI HÌNH, VỊ TRÍ CẦU THỦ & SƠ ĐỒ ĐỘI HÌNH HLV
     // =========================================================================
-    function guessPlayerRoleFromName(name, fallbackIdx = 5) {
+    function guessPlayerRoleFromName(name, fallbackIdx = 5, hasExplicitGk = false) {
       if (!name) return 'MF';
-      if (/filip|lâm|chuẩn|nguyên mạnh|đình triệu|minh toàn|xuân hoàng|trung kiên|văn việt|văn lâm|courtois|alisson|ederson|martínez|ter stegen|donnarumma|neuer|sommer|oblak|raya|onana|vicario|maignan|kelleher|pickford|pope|leno|ramsdale|lallana|henderson|kepa|sánchez|areola|verbreggen|flekk|hermansen|muric|ward/i.test(name)) {
+      if (/filip|lâm|chuẩn|nguyên mạnh|đình triệu|minh toàn|xuân hoàng|trung kiên|văn việt|văn lâm|courtois|alisson|ederson|martínez|ter stegen|donnarumma|neuer|sommer|oblak|raya|onana|vicario|maignan|kelleher|pickford|pope|leno|ramsdale|henderson|kepa|sánchez|areola|verbreggen|flekk|hermansen|muric|ward/i.test(name)) {
         return 'GK';
       }
       if (/văn hậu|việt anh|ngọc hải|thành chung|duy mạnh|tiến dũng|thanh bình|tấn tài|tuấn tài|hồng duy|văn thanh|xuân mạnh|thanh hào|pendant|quang vinh|janclesio|gustavo|jairo|dias|dijk|saliba|rüdiger|hernández|alexander-arnold|walker|stones|gabriel|konaté|robertson|bastoni|militão|carvajal|hakimi|marquinhos|araujo|koundé|cubarsí|kim min|gvardiol|akanji|upamecano|tah|frimpong|grimaldo|schlotterbeck|romero|porro|udogie/i.test(name)) {
@@ -4708,18 +4708,22 @@
       if (/xuân son|rafaelson|tiến linh|tuấn hải|văn toàn|văn quyết|vĩ hào|mạnh dũng|lucão|rimario|olaha|geovane|alan grafite|haaland|mbappé|vinícius|salah|lewandowski|son heung|yamal|kane|lautaro|osimhen|messi|ronaldo|benzema|neymar|griezmann|saka|foden|palmer|watkins|isak|solanke|gyökeres|leão|thuram|vlahovic|alvarez|rodrygo|endrick|jackson|havertz|rashford|højlund|zirkzee|wirtz/i.test(name)) {
         return 'FW';
       }
-      if (fallbackIdx === 10) return 'GK';
+      if (/tuấn anh|hoàng anh|quang hải|hoàng đức|hùng dũng|hai long|ngọc tân|thái sơn|minh vương|ngọc quang|xuân trường|hendrio|lallana|de bruyne|bellingham|pedri|gavi|rodri|rice|ødegaard|modrić|kroos|valverde|camavinga|tchouaméni|bruno fernandes|bernardo silva|mac allister|caicedo|musiala|kimmich|barella|vitinha/i.test(name)) {
+        return 'MF';
+      }
+      if (fallbackIdx === 10) return hasExplicitGk ? 'DF' : 'GK';
       if (fallbackIdx >= 7 && fallbackIdx <= 9) return 'DF';
-      if (fallbackIdx <= 3) return 'FW';
+      if (fallbackIdx >= 0 && fallbackIdx <= 3) return 'FW';
       return 'MF';
     }
 
     function getDefaultOrderedLineup(team) {
       if (!team || !Array.isArray(team.stars)) return [];
       const uniqueStars = Array.from(new Set(team.stars));
+      const hasExplicitGk = uniqueStars.some(name => guessPlayerRoleFromName(name, -1, false) === 'GK');
       const gks = [], dfs = [], mfs = [], fws = [];
       uniqueStars.forEach((name, idx) => {
-        const role = guessPlayerRoleFromName(name, idx);
+        const role = guessPlayerRoleFromName(name, idx, hasExplicitGk);
         if (role === 'GK') gks.push(name);
         else if (role === 'DF') dfs.push(name);
         else if (role === 'FW') fws.push(name);
@@ -4731,7 +4735,7 @@
         : '4-3-3';
       const slots = TACTICAL_FORMATIONS[formationKey] || TACTICAL_FORMATIONS['4-3-3'];
 
-      const starters = new Array(11).fill(null);
+      const starters = new Array(slots.length).fill(null);
       const used = new Set();
 
       function pullFrom(buckets) {
@@ -4746,14 +4750,25 @@
         return null;
       }
 
-      // Assign GK first, then DF, MF, FW matching formation slots
-      slots.forEach((slot, idx) => {
-        let pick = null;
-        if (slot.role === 'GK') pick = pullFrom([gks, dfs, mfs, fws]);
-        else if (slot.role === 'DF') pick = pullFrom([dfs, mfs, gks, fws]);
-        else if (slot.role === 'MF') pick = pullFrom([mfs, fws, dfs, gks]);
-        else pick = pullFrom([fws, mfs, dfs, gks]);
-        starters[idx] = pick || uniqueStars[idx] || `Cầu thủ ${idx + 1}`;
+      // Assign GK first, then central ST strikers, remaining FW, DF, MF so top forwards land in ST
+      const slotPriority = [
+        slot => slot.role === 'GK',
+        slot => slot.role === 'FW' && (slot.pos === 'ST' || slot.pos === 'CF'),
+        slot => slot.role === 'FW',
+        slot => slot.role === 'DF',
+        slot => slot.role === 'MF'
+      ];
+
+      slotPriority.forEach(matcher => {
+        slots.forEach((slot, idx) => {
+          if (starters[idx] !== null || !matcher(slot)) return;
+          let pick = null;
+          if (slot.role === 'GK') pick = pullFrom([gks, dfs, mfs, fws]);
+          else if (slot.role === 'DF') pick = pullFrom([dfs, mfs, gks, fws]);
+          else if (slot.role === 'MF') pick = pullFrom([mfs, fws, dfs, gks]);
+          else pick = pullFrom([fws, mfs, dfs, gks]);
+          starters[idx] = pick || `Cầu thủ ${idx + 1}`;
+        });
       });
 
       const bench = uniqueStars.filter(n => !used.has(n));
