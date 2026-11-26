@@ -2949,6 +2949,7 @@
         ga: 0,
         boardConfidence: 90,
         trophies: [],
+        budget: 150, // Ngân sách chuyển nhượng (M €)
         formation: '4-3-3',
         playstyle: 'attack',
         activeShout: null,
@@ -2963,6 +2964,9 @@
         if (raw) {
           const data = JSON.parse(raw);
           state.manager = Object.assign(state.manager, data);
+          if (typeof state.manager.budget !== 'number') {
+            state.manager.budget = 150;
+          }
         }
       } catch (e) {}
     }
@@ -2984,6 +2988,7 @@
           ga: state.manager.ga,
           boardConfidence: state.manager.boardConfidence,
           trophies: state.manager.trophies,
+          budget: state.manager.budget || 150,
           formation: state.manager.formation,
           playstyle: state.manager.playstyle
         }));
@@ -3256,31 +3261,127 @@
         subtitle.textContent = `${tourney.icon} ${tourney.name} · Bảng tổng kết và biến động chỉ số OVR (Tối đa 125 OVR)`;
       }
 
-      // Champion spotlight
+      // Populate Honors Podium: Vô địch (Quán quân), Á quân, Hạng ba, Top 4
+      const honorsContainer = document.getElementById('seasonHonorsPodium');
       const champion = ovrChanges[0];
-      const champBanner = document.getElementById('seasonChampionBanner');
-      if (champBanner && champion) {
-        const deltaStr = champion.delta >= 0 ? `+${champion.delta}` : `${champion.delta}`;
-        champBanner.innerHTML = `
-          <div class="relative shrink-0">
-            ${getTeamLogoHtml(champion.team, 'w-14 h-14 sm:w-16 sm:h-16')}
-            <span class="absolute -top-2 -right-2 text-xl drop-shadow">👑</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950">
-                🏆 QUÁN QUÂN MÙA GIẢI ${state.seasonYear}
-              </span>
-              <span class="text-xs text-amber-200 font-semibold">${champion.pts} điểm (${champion.played} trận)</span>
+      const runnerUp = ovrChanges[1];
+      const thirdPlace = ovrChanges[2];
+      const fourthPlace = ovrChanges[3];
+
+      if (honorsContainer) {
+        let honorsHtml = '';
+
+        // 🥇 1. VÔ ĐỊCH (QUÁN QUÂN)
+        if (champion) {
+          const deltaStr = champion.delta >= 0 ? `+${champion.delta}` : `${champion.delta}`;
+          let ticketNote = 'Vé vào thẳng đấu trường Châu lục';
+          if (tourney.id === 'vleague1') {
+            ticketNote = '🎟️ Suất vào thẳng VCK AFC Champions League Elite (C1 Châu Á) Mùa tới!';
+            if (!champion.team.tournaments.includes('afc_cl')) champion.team.tournaments.push('afc_cl');
+          } else if (['epl', 'laliga', 'seriea', 'bundesliga', 'ligue1'].includes(tourney.id)) {
+            ticketNote = '🎟️ Suất vào thẳng VCK UEFA Champions League Mùa tới!';
+            if (!champion.team.tournaments.includes('ucl')) champion.team.tournaments.push('ucl');
+          } else if (tourney.id === 'saudi_pro' || tourney.id === 'jleague' || tourney.id === 'kleague' || tourney.id === 'thaileague') {
+            ticketNote = '🎟️ Suất vào thẳng AFC Champions League Elite!';
+            if (!champion.team.tournaments.includes('afc_cl')) champion.team.tournaments.push('afc_cl');
+          }
+
+          honorsHtml += `
+            <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/25 via-yellow-500/20 to-amber-600/25 border-2 border-amber-400/60 shadow-xl flex items-center gap-3 sm:gap-4">
+              <div class="relative shrink-0">
+                ${getTeamLogoHtml(champion.team, 'w-14 h-14 sm:w-16 sm:h-16')}
+                <span class="absolute -top-2 -right-2 text-xl drop-shadow animate-bounce">👑</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 flex items-center gap-1 shadow">
+                    <span>🥇 ĐỘI VÔ ĐỊCH (QUÁN QUÂN)</span>
+                  </span>
+                  <span class="text-xs text-amber-200 font-bold">${champion.pts} điểm (${champion.played} trận)</span>
+                </div>
+                <h4 class="text-base sm:text-xl font-black text-white truncate mt-1">${champion.team.name}</h4>
+                <div class="flex items-center gap-2 mt-1 text-xs flex-wrap">
+                  <span class="text-slate-300">OVR: <strong class="text-white">${champion.oldRating}</strong> ➔ <strong class="text-emerald-300 font-black text-sm">${champion.newRating}</strong></span>
+                  <span class="px-2 py-0.5 rounded-md text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">▲ ${deltaStr} OVR</span>
+                  <span class="text-[11px] font-bold text-amber-300">${ticketNote}</span>
+                </div>
+              </div>
             </div>
-            <h4 class="text-base sm:text-lg font-black text-white truncate mt-0.5">${champion.team.name}</h4>
-            <div class="flex items-center gap-2 mt-1 text-xs flex-wrap">
-              <span class="text-slate-300">Chỉ số OVR: <strong class="text-white">${champion.oldRating}</strong> ➔ <strong class="text-emerald-300 font-black text-sm">${champion.newRating}</strong></span>
-              <span class="px-2 py-0.5 rounded-md text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">▲ ${deltaStr} OVR</span>
-              ${champion.newRating >= 125 ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-400 text-slate-950">⭐ MAX 125</span>' : ''}
+          `;
+        }
+
+        // 🥈 2. Á QUÂN (HẠNG NHÌ)
+        if (runnerUp) {
+          const deltaStr = runnerUp.delta >= 0 ? `+${runnerUp.delta}` : `${runnerUp.delta}`;
+          let ticketNote = 'Á Quân mùa giải';
+          if (tourney.id === 'vleague1') {
+            ticketNote = '🎟️ Suất dự Cúp C1 ĐNÁ Shopee Cup & Play-off AFC CL!';
+            if (!runnerUp.team.tournaments.includes('asean_club')) runnerUp.team.tournaments.push('asean_club');
+          } else if (['epl', 'laliga', 'seriea', 'bundesliga', 'ligue1'].includes(tourney.id)) {
+            ticketNote = '🎟️ Suất vào thẳng UEFA Champions League!';
+            if (!runnerUp.team.tournaments.includes('ucl')) runnerUp.team.tournaments.push('ucl');
+          }
+
+          honorsHtml += `
+            <div class="p-3 rounded-xl bg-gradient-to-r from-slate-800/80 via-slate-700/60 to-slate-800/80 border border-slate-300/40 shadow flex items-center gap-3">
+              <div class="relative shrink-0">
+                ${getTeamLogoHtml(runnerUp.team, 'w-11 h-11 sm:w-12 sm:h-12')}
+                <span class="absolute -bottom-1 -right-1 text-lg">🥈</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-200 text-slate-950">
+                    🥈 ĐỘI Á QUÂN (HẠNG 2)
+                  </span>
+                  <span class="text-xs text-slate-300 font-semibold">${runnerUp.pts} điểm</span>
+                </div>
+                <h5 class="text-sm sm:text-base font-extrabold text-white truncate mt-0.5">${runnerUp.team.name}</h5>
+                <div class="flex items-center gap-2 text-xs flex-wrap mt-0.5">
+                  <span class="text-slate-300">OVR: <strong class="text-white">${runnerUp.oldRating}</strong> ➔ <strong class="text-emerald-300 font-bold">${runnerUp.newRating}</strong> (▲ +${runnerUp.delta})</span>
+                  <span class="text-[11px] font-semibold text-slate-300">${ticketNote}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        }
+
+        // 🥉 3. HẠNG BA & TOP 4
+        if (thirdPlace || fourthPlace) {
+          honorsHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+          if (thirdPlace) {
+            honorsHtml += `
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-amber-700/40 flex items-center gap-2.5">
+                <div class="relative shrink-0">
+                  ${getTeamLogoHtml(thirdPlace.team, 'w-9 h-9')}
+                  <span class="absolute -bottom-1 -right-1 text-sm">🥉</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-amber-700/30 text-amber-300 uppercase">🥉 HẠNG BA</span>
+                  <div class="font-bold text-xs text-white truncate mt-0.5">${thirdPlace.team.name}</div>
+                  <div class="text-[11px] text-slate-400 font-mono">${thirdPlace.pts}đ · OVR ${thirdPlace.newRating} (▲ +${thirdPlace.delta})</div>
+                </div>
+              </div>
+            `;
+          }
+          if (fourthPlace) {
+            honorsHtml += `
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 flex items-center gap-2.5">
+                <div class="relative shrink-0">
+                  ${getTeamLogoHtml(fourthPlace.team, 'w-9 h-9')}
+                  <span class="absolute -bottom-1 -right-1 text-xs">🎖️</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-emerald-500/20 text-emerald-300 uppercase">TOP 4 GIẢI ĐẤU</span>
+                  <div class="font-bold text-xs text-white truncate mt-0.5">${fourthPlace.team.name}</div>
+                  <div class="text-[11px] text-slate-400 font-mono">${fourthPlace.pts}đ · OVR ${fourthPlace.newRating} (▲ +${fourthPlace.delta})</div>
+                </div>
+              </div>
+            `;
+          }
+          honorsHtml += `</div>`;
+        }
+
+        honorsContainer.innerHTML = honorsHtml;
       }
 
       // Populate Table Body (Scrollable to view all remaining teams)
@@ -3335,7 +3436,9 @@
           // Unlock the contract now that the season has officially finished!
           if (state.manager.isContractLocked) {
             state.manager.isContractLocked = false;
+            let prizeBonus = 0;
             if (isChampion) {
+              prizeBonus = 30; // 30M € for Champion
               state.manager.trophies.push({
                 tourneyId: tourney.id,
                 tourneyName: tourney.name,
@@ -3344,10 +3447,34 @@
                 date: new Date().toLocaleDateString('vi-VN')
               });
               state.manager.boardConfidence = 100;
+              // Ensure continental qualification
+              if (tourney.id === 'vleague1' && !team.tournaments.includes('afc_cl')) {
+                team.tournaments.push('afc_cl');
+              }
+              if (['epl', 'laliga', 'seriea', 'bundesliga', 'ligue1'].includes(tourney.id) && !team.tournaments.includes('ucl')) {
+                team.tournaments.push('ucl');
+              }
+            } else if (rank === 2) {
+              prizeBonus = 20; // 20M € for Runner-up (Á quân)
+              state.manager.boardConfidence = Math.min(100, state.manager.boardConfidence + 12);
+              if (tourney.id === 'vleague1' && !team.tournaments.includes('asean_club')) {
+                team.tournaments.push('asean_club');
+              }
+              if (['epl', 'laliga', 'seriea', 'bundesliga', 'ligue1'].includes(tourney.id) && !team.tournaments.includes('ucl')) {
+                team.tournaments.push('ucl');
+              }
             } else if (rank <= 4) {
+              prizeBonus = 12; // 12M € for Top 4
               state.manager.boardConfidence = Math.min(100, state.manager.boardConfidence + 8);
+              if (['epl', 'laliga', 'seriea', 'bundesliga', 'ligue1'].includes(tourney.id) && !team.tournaments.includes('ucl')) {
+                team.tournaments.push('ucl');
+              }
             } else if (rank > Math.floor(ovrChanges.length / 2)) {
               state.manager.boardConfidence = Math.max(15, state.manager.boardConfidence - 10);
+            }
+
+            if (prizeBonus > 0) {
+              state.manager.budget = (state.manager.budget || 150) + prizeBonus;
             }
             saveManagerCareer();
           }
@@ -3355,10 +3482,16 @@
           const evalTextEl = document.getElementById('seasonEndManagerEvaluationText');
           if (evalTextEl) {
             let assessment = '';
+            let prizeText = '';
             if (isChampion) {
               assessment = `🏆 <strong>XUẤT SẮC VÔ ĐỊCH!</strong> Ban Lãnh Đạo và toàn thể Cổ động viên <strong>${team.name}</strong> vô cùng tự hào và nhiệt liệt chúc mừng chiến tích vô địch của HLV ${state.manager.name}!`;
+              prizeText = `Thưởng vô địch: <strong class="text-amber-300">+30M €</strong> vào ngân sách chuyển nhượng! Vé C1 Châu Lục đã sẵn sàng!`;
+            } else if (rank === 2) {
+              assessment = `🥈 <strong>Á QUÂN XUẤT SẮC!</strong> ${team.name} cán đích ở vị trí Á quân. Ban Lãnh Đạo đánh giá rất cao tinh thần thi đấu của HLV ${state.manager.name}!`;
+              prizeText = `Thưởng Á quân: <strong class="text-amber-300">+20M €</strong> vào ngân sách chuyển nhượng! Vé Cúp C1 ĐNÁ / Play-off C1!`;
             } else if (rank <= 4) {
               assessment = `⭐ <strong>HOÀN THÀNH MỤC TIÊU TOP 4!</strong> ${team.name} cán đích ở vị trí <strong>#${rank}</strong>. Ban Lãnh Đạo đánh giá rất cao năng lực chỉ đạo của HLV ${state.manager.name}.`;
+              prizeText = `Thưởng Top 4: <strong class="text-amber-300">+12M €</strong> vào ngân sách chuyển nhượng!`;
             } else {
               assessment = `⚡ ${team.name} cán đích ở vị trí <strong>#${rank}</strong>. Hợp đồng mùa giải này chính thức hoàn tất.`;
             }
@@ -3366,6 +3499,7 @@
             evalTextEl.innerHTML = `
               <div class="space-y-1">
                 <p>${assessment}</p>
+                ${prizeText ? `<p class="text-emerald-300 font-bold">💰 ${prizeText}</p>` : ''}
                 <p class="text-amber-300 font-semibold">🔓 Hợp đồng Mùa giải ${state.seasonYear}/${state.seasonYear + 1} đã kết thúc. Bạn có thể chọn <strong>Gia hạn tiếp tục</strong> hoặc <strong>Hết hạn hợp đồng & Chọn CLB khác trong giải</strong>!</p>
               </div>
             `;
@@ -3564,6 +3698,16 @@
 
     // Initialize FIFA World Ranking points for all 338 teams based on OVR + deterministic offset
     function initFifaWorldPoints() {
+      try {
+        const savedPts = localStorage.getItem('football_fifa_points');
+        if (savedPts) {
+          const map = JSON.parse(savedPts);
+          if (map && typeof map === 'object') {
+            Object.assign(state.fifaPointsMap, map);
+          }
+        }
+      } catch (e) {}
+
       TEAMS_DB.forEach((t, idx) => {
         if (state.fifaPointsMap[t.id] === undefined) {
           // Scale OVR (64..92) to realistic FIFA points (950.00 .. 1895.00)
@@ -3627,6 +3771,9 @@
       state.fifaPointsMap[away.id] = Number((pAway + deltaAway).toFixed(2));
       state.fifaLastDeltaMap[home.id] = deltaHome;
       state.fifaLastDeltaMap[away.id] = deltaAway;
+      try {
+        localStorage.setItem('football_fifa_points', JSON.stringify(state.fifaPointsMap));
+      } catch (e) {}
 
       return { deltaHome, deltaAway };
     }
@@ -4349,7 +4496,325 @@
         }
       }
 
+      // Cập nhật ngân sách CLB và Thị trường chuyển nhượng
+      const budgetDisplay = document.getElementById('managerBudgetDisplay');
+      if (budgetDisplay) budgetDisplay.textContent = `${state.manager.budget || 150}M €`;
+      renderTransferMarket();
+
       if (window.lucide) window.lucide.createIcons();
+    }
+
+    // =========================================================================
+    // THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ (TRANSFER MARKET)
+    // =========================================================================
+    const TRANSFER_MARKET_PLAYERS = [
+      // TIỀN ĐẠO (FW)
+      { id: 'haaland', name: 'Erling Haaland', pos: 'FW', club: 'Man City', ovr: 91, price: 110, ovrBoost: 3, icon: '⚡' },
+      { id: 'mbappe', name: 'Kylian Mbappé', pos: 'FW', club: 'Real Madrid', ovr: 91, price: 115, ovrBoost: 3, icon: '⚡' },
+      { id: 'vinicius', name: 'Vinícius Júnior', pos: 'FW', club: 'Real Madrid', ovr: 90, price: 100, ovrBoost: 3, icon: '🔥' },
+      { id: 'salah', name: 'Mohamed Salah', pos: 'FW', club: 'Liverpool', ovr: 89, price: 75, ovrBoost: 2, icon: '👑' },
+      { id: 'lewandowski', name: 'Robert Lewandowski', pos: 'FW', club: 'Barcelona', ovr: 88, price: 50, ovrBoost: 2, icon: '🎯' },
+      { id: 'son_hm', name: 'Son Heung-min', pos: 'FW', club: 'Tottenham', ovr: 87, price: 45, ovrBoost: 2, icon: '🇰🇷' },
+      { id: 'yamal', name: 'Lamine Yamal', pos: 'FW', club: 'Barcelona', ovr: 85, price: 65, ovrBoost: 2, icon: '🌟' },
+      { id: 'rafaelson', name: 'Nguyễn Xuân Son (Rafaelson)', pos: 'FW', club: 'Nam Định', ovr: 84, price: 25, ovrBoost: 1, icon: '⚽' },
+      { id: 'tien_linh', name: 'Nguyễn Tiến Linh', pos: 'FW', club: 'Bình Dương', ovr: 80, price: 15, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'tuan_hai', name: 'Phạm Tuấn Hải', pos: 'FW', club: 'Hà Nội', ovr: 80, price: 14, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'al_dawsari', name: 'Salem Al-Dawsari', pos: 'FW', club: 'Al-Hilal', ovr: 82, price: 18, ovrBoost: 1, icon: '🌙' },
+
+      // TIỀN VỆ (MF)
+      { id: 'rodri', name: 'Rodri (Quả Bóng Vàng)', pos: 'MF', club: 'Man City', ovr: 91, price: 105, ovrBoost: 3, icon: '🏆' },
+      { id: 'kdb', name: 'Kevin De Bruyne', pos: 'MF', club: 'Man City', ovr: 90, price: 85, ovrBoost: 2, icon: '🪄' },
+      { id: 'bellingham', name: 'Jude Bellingham', pos: 'MF', club: 'Real Madrid', ovr: 90, price: 110, ovrBoost: 3, icon: '⭐' },
+      { id: 'odegaard', name: 'Martin Ødegaard', pos: 'MF', club: 'Arsenal', ovr: 88, price: 70, ovrBoost: 2, icon: '🎯' },
+      { id: 'bruno_f', name: 'Bruno Fernandes', pos: 'MF', club: 'Man United', ovr: 87, price: 60, ovrBoost: 2, icon: '⚡' },
+      { id: 'valverde', name: 'Federico Valverde', pos: 'MF', club: 'Real Madrid', ovr: 88, price: 75, ovrBoost: 2, icon: '🚀' },
+      { id: 'modric', name: 'Luka Modrić', pos: 'MF', club: 'Real Madrid', ovr: 86, price: 30, ovrBoost: 1, icon: '👑' },
+      { id: 'quang_hai', name: 'Nguyễn Quang Hải', pos: 'MF', club: 'CAHN', ovr: 82, price: 20, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'hoang_duc', name: 'Nguyễn Hoàng Đức', pos: 'MF', club: 'Ninh Bình', ovr: 82, price: 20, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'hendrio', name: 'Hendrio Araújo', pos: 'MF', club: 'Nam Định', ovr: 81, price: 16, ovrBoost: 1, icon: '🪄' },
+      { id: 'chanathip', name: 'Chanathip Songkrasin', pos: 'MF', club: 'BG Pathum', ovr: 80, price: 14, ovrBoost: 1, icon: '🇹🇭' },
+
+      // HẬU VỆ (DF)
+      { id: 'vvd', name: 'Virgil van Dijk', pos: 'DF', club: 'Liverpool', ovr: 89, price: 75, ovrBoost: 2, icon: '🧱' },
+      { id: 'ruben_dias', name: 'Rúben Dias', pos: 'DF', club: 'Man City', ovr: 88, price: 70, ovrBoost: 2, icon: '🛡️' },
+      { id: 'saliba', name: 'William Saliba', pos: 'DF', club: 'Arsenal', ovr: 87, price: 65, ovrBoost: 2, icon: '🛡️' },
+      { id: 'rudiger', name: 'Antonio Rüdiger', pos: 'DF', club: 'Real Madrid', ovr: 87, price: 55, ovrBoost: 2, icon: '🧱' },
+      { id: 'trent', name: 'Trent Alexander-Arnold', pos: 'DF', club: 'Liverpool', ovr: 86, price: 60, ovrBoost: 2, icon: '🎯' },
+      { id: 'theo_h', name: 'Theo Hernández', pos: 'DF', club: 'AC Milan', ovr: 87, price: 50, ovrBoost: 1, icon: '⚡' },
+      { id: 'viet_anh', name: 'Bùi Hoàng Việt Anh', pos: 'DF', club: 'CAHN', ovr: 79, price: 12, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'van_hau', name: 'Đoàn Văn Hậu', pos: 'DF', club: 'CAHN', ovr: 79, price: 12, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'que_ngoc_hai', name: 'Quế Ngọc Hải', pos: 'DF', club: 'Bình Dương', ovr: 78, price: 10, ovrBoost: 1, icon: '🇻🇳' },
+
+      // THỦ MÔN (GK)
+      { id: 'courtois', name: 'Thibaut Courtois', pos: 'GK', club: 'Real Madrid', ovr: 89, price: 65, ovrBoost: 2, icon: '🧤' },
+      { id: 'alisson', name: 'Alisson Becker', pos: 'GK', club: 'Liverpool', ovr: 89, price: 65, ovrBoost: 2, icon: '🧤' },
+      { id: 'ederson', name: 'Ederson Moraes', pos: 'GK', club: 'Man City', ovr: 88, price: 55, ovrBoost: 2, icon: '🧤' },
+      { id: 'martinez', name: 'Emiliano Martínez', pos: 'GK', club: 'Aston Villa', ovr: 87, price: 50, ovrBoost: 2, icon: '🧤' },
+      { id: 'filip_nguyen', name: 'Nguyễn Filip', pos: 'GK', club: 'CAHN', ovr: 80, price: 15, ovrBoost: 1, icon: '🇻🇳' },
+      { id: 'van_lam', name: 'Đặng Văn Lâm', pos: 'GK', club: 'Ninh Bình', ovr: 79, price: 12, ovrBoost: 1, icon: '🇻🇳' }
+    ];
+
+    function renderTransferMarket() {
+      const budgetEl = document.getElementById('managerBudgetDisplay');
+      if (budgetEl) {
+        budgetEl.textContent = `${state.manager.budget || 150}M €`;
+      }
+
+      const team = TEAMS_DB.find(t => t.id === state.manager.teamId);
+      const isSigned = !!(state.manager && state.manager.isContractLocked && team);
+
+      const marketContainer = document.getElementById('transferMarketContainer');
+      const squadContainer = document.getElementById('transferSquadContainer');
+
+      const filter = state.transferFilter || 'all';
+
+      // 1. RENDER MARKET TARGETS (MUA CẦU THỦ)
+      if (marketContainer) {
+        const filteredPlayers = TRANSFER_MARKET_PLAYERS.filter(p => filter === 'all' || p.pos === filter);
+        const currentStars = team ? (team.stars || []) : [];
+
+        marketContainer.innerHTML = filteredPlayers.map(p => {
+          const alreadyOwned = currentStars.some(s => s.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(s.toLowerCase()));
+          const canAfford = (state.manager.budget || 150) >= p.price;
+
+          let posBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+          if (p.pos === 'FW') posBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+          else if (p.pos === 'MF') posBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+          else if (p.pos === 'DF') posBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
+          else if (p.pos === 'GK') posBadgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+
+          return `
+            <div class="transfer-card p-3 rounded-xl bg-slate-900/90 border border-white/10 hover:border-amber-400/50 flex flex-col justify-between gap-2 shadow transition">
+              <div class="flex items-start justify-between gap-1.5">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-black border ${posBadgeClass}">${p.pos}</span>
+                    <span class="text-xs font-mono font-bold text-amber-300">OVR ${p.ovr}</span>
+                  </div>
+                  <h5 class="text-xs sm:text-sm font-black text-white truncate mt-1">${p.name}</h5>
+                  <div class="text-[11px] text-slate-400">${p.club} · Tăng <strong class="text-emerald-400">+${p.ovrBoost} OVR</strong></div>
+                </div>
+                <div class="text-right shrink-0">
+                  <div class="text-xs sm:text-sm font-black font-mono text-amber-300">${p.price}M €</div>
+                  <div class="text-[10px] text-slate-400">Giá mua</div>
+                </div>
+              </div>
+
+              <div>
+                ${alreadyOwned ? `
+                  <button type="button" disabled class="w-full py-1.5 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold cursor-not-allowed">
+                    ĐÃ CÓ TRONG ĐỘI HÌNH
+                  </button>
+                ` : !isSigned ? `
+                  <button type="button" disabled class="w-full py-1.5 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold cursor-not-allowed">
+                    CẦN KÝ HỢP ĐỒNG ĐỂ MUA
+                  </button>
+                ` : `
+                  <button type="button" onclick="window.buyPlayer('${p.id}')" class="btn-tap w-full py-1.5 rounded-lg text-xs font-black transition flex items-center justify-center gap-1 ${canAfford ? 'bg-amber-400 hover:bg-amber-300 text-slate-950 shadow' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                    <span>${canAfford ? `MUA NGAY (-${p.price}M €)` : 'KHÔNG ĐỦ NGÂN SÁCH'}</span>
+                  </button>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. RENDER CURRENT SQUAD (BÁN CẦU THỦ)
+      if (squadContainer) {
+        if (!team || !isSigned) {
+          squadContainer.innerHTML = `
+            <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+              Bạn chưa ký hợp đồng với CLB nào. Hãy chọn đội và ký hợp đồng HLV ở trên để quản lý đội hình & bán cầu thủ!
+            </div>
+          `;
+        } else {
+          const stars = team.stars || [];
+          const canSell = stars.length > 11;
+          const sellPrice = Math.max(10, Math.round(team.rating * 0.35));
+
+          const squadItems = stars.map((name, idx) => {
+            let pos = 'MF';
+            if (idx <= 3) pos = 'FW';
+            else if (idx <= 6) pos = 'MF';
+            else if (idx <= 9) pos = 'DF';
+            else pos = 'GK';
+
+            // keyword heuristic
+            if (/filip|lâm|chuẩn|mạnh|triệu|toàn|hoàng|phong|việt|courtois|alisson|ederson|martínez/i.test(name)) pos = 'GK';
+            else if (/hậu|anh|dũng|bình|hải|chung|tài|duy|thanh|dias|dijk|saliba|rüdiger/i.test(name)) pos = 'DF';
+            else if (/son|linh|hải|artur|lucão|silva|mbappe|haaland|vinicius|salah/i.test(name)) pos = 'FW';
+
+            return { name, pos, idx, price: sellPrice };
+          });
+
+          const filteredSquad = squadItems.filter(p => filter === 'all' || p.pos === filter);
+
+          squadContainer.innerHTML = filteredSquad.map(item => {
+            let posBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+            if (item.pos === 'FW') posBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+            else if (item.pos === 'MF') posBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+            else if (item.pos === 'DF') posBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
+            else if (item.pos === 'GK') posBadgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+
+            return `
+              <div class="transfer-card p-3 rounded-xl bg-slate-900/90 border border-white/10 hover:border-rose-400/50 flex flex-col justify-between gap-2 shadow transition">
+                <div class="flex items-start justify-between gap-1.5">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-black border ${posBadgeClass}">${item.pos}</span>
+                      <span class="text-xs font-mono font-bold text-slate-300">OVR ${team.rating}</span>
+                    </div>
+                    <h5 class="text-xs sm:text-sm font-black text-white truncate mt-1">${item.name}</h5>
+                    <div class="text-[11px] text-slate-400">${team.name} · Trụ cột CLB</div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <div class="text-xs sm:text-sm font-black font-mono text-emerald-400">+${item.price}M €</div>
+                    <div class="text-[10px] text-slate-400">Thu về quỹ</div>
+                  </div>
+                </div>
+
+                <div>
+                  <button type="button" onclick="window.sellPlayer(${item.idx})" ${!canSell ? 'disabled' : ''} class="btn-tap w-full py-1.5 rounded-lg text-xs font-black transition flex items-center justify-center gap-1 ${canSell ? 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 shadow' : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5'}">
+                    <i data-lucide="user-minus" class="w-3.5 h-3.5"></i>
+                    <span>${canSell ? `BÁN CẦU THỦ (+${item.price}M €)` : 'ĐỘI HÌNH CẦN TỐI THIỂU 11 NGƯỜI'}</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function buyPlayer(playerId) {
+      const p = TRANSFER_MARKET_PLAYERS.find(item => item.id === playerId);
+      if (!p) return;
+      const team = TEAMS_DB.find(t => t.id === state.manager.teamId);
+      if (!team || !state.manager.isContractLocked) {
+        showPhaseNotice('⚠️ Bạn cần ký hợp đồng HLV với một CLB để chiêu mộ cầu thủ!');
+        return;
+      }
+      if ((state.manager.budget || 150) < p.price) {
+        showPhaseNotice(`⚠️ Ngân sách CLB không đủ! Hiện có ${state.manager.budget || 0}M €, cần ${p.price}M €.`);
+        return;
+      }
+
+      SoundFX.whistle();
+      state.manager.budget = (state.manager.budget || 150) - p.price;
+      team.stars = team.stars || [];
+      if (!team.stars.includes(p.name)) {
+        team.stars.push(p.name);
+      }
+      team.rating = Math.min(125, team.rating + (p.ovrBoost || 1));
+      saveCustomRatings();
+      saveManagerCareer();
+
+      if (window.confetti) {
+        window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+      showPhaseNotice(`🎉 ĐÃ CHIÊU MỘ THÀNH CÔNG ${p.name}! Chỉ số OVR của ${team.name} tăng lên ${team.rating}!`);
+
+      renderTransferMarket();
+      renderManagerUI();
+      renderTeamsDirectory(document.getElementById('teamSearchInput')?.value);
+      pickNextMatch();
+    }
+    window.buyPlayer = buyPlayer;
+
+    function sellPlayer(playerIndex) {
+      const team = TEAMS_DB.find(t => t.id === state.manager.teamId);
+      if (!team || !state.manager.isContractLocked) return;
+      if (!team.stars || team.stars.length <= 11) {
+        showPhaseNotice('⚠️ Đội hình phải có tối thiểu 11 cầu thủ để ra sân! Không thể bán thêm.');
+        return;
+      }
+
+      const playerName = team.stars[playerIndex];
+      const sellPrice = Math.max(10, Math.round(team.rating * 0.35));
+
+      SoundFX.click();
+      team.stars.splice(playerIndex, 1);
+      state.manager.budget = (state.manager.budget || 150) + sellPrice;
+      saveManagerCareer();
+
+      showPhaseNotice(`💰 ĐÃ BÁN ${playerName} THU VỀ +${sellPrice}M €! Ngân sách hiện tại: ${state.manager.budget}M €`);
+
+      renderTransferMarket();
+      renderManagerUI();
+      renderTeamsDirectory(document.getElementById('teamSearchInput')?.value);
+      pickNextMatch();
+    }
+    window.sellPlayer = sellPlayer;
+
+    function resetAllTournamentsAndFifa() {
+      const confirmReset = window.confirm("⚠️ CẢNH BÁO: Bạn có chắc chắn muốn RESET TOÀN BỘ GIẢI ĐẤU & ĐƯA ĐIỂM FIFA VỀ 0?\\n\\n- Toàn bộ kết quả bảng đấu sẽ trở về vạch xuất phát mùa giải 2026/2027.\\n- Điểm số BXH FIFA của tất cả các đội bóng & quốc gia sẽ trở về 0.00.\\n- Hợp đồng HLV hiện tại sẽ được thanh lý.\\n\\nHành động này không thể hoàn tác!");
+      if (!confirmReset) return;
+
+      SoundFX.whistle();
+      // 1. Reset tournament tables & fixtures
+      state.standingsByTourney = {};
+      state.groupFixturesByTourney = {};
+      try {
+        localStorage.removeItem('football_standings_v3');
+        localStorage.removeItem('football_fixtures_v3');
+      } catch (e) {}
+
+      // 2. Reset FIFA points to 0 for all teams
+      state.fifaPointsMap = {};
+      state.fifaLastDeltaMap = {};
+      state.fifaPrevRankMap = {};
+      state.fifaPrevClubRankMap = {};
+      TEAMS_DB.forEach(t => {
+        state.fifaPointsMap[t.id] = 0.0;
+        state.fifaLastDeltaMap[t.id] = 0.0;
+      });
+      try {
+        localStorage.setItem('football_fifa_points', JSON.stringify(state.fifaPointsMap));
+      } catch (e) {}
+
+      // 3. Reset season year
+      state.seasonYear = 2026;
+      try {
+        localStorage.setItem('football_season_year', '2026');
+      } catch (e) {}
+
+      // 4. Reset manager contract & career
+      state.manager.isContractLocked = false;
+      state.manager.teamId = null;
+      state.manager.tourneyId = null;
+      state.manager.matches = 0;
+      state.manager.wins = 0;
+      state.manager.draws = 0;
+      state.manager.losses = 0;
+      state.manager.gf = 0;
+      state.manager.ga = 0;
+      state.manager.boardConfidence = 90;
+      state.manager.trophies = [];
+      state.manager.budget = 150;
+      saveManagerCareer();
+
+      // 5. Close settings dialog
+      const settingsDialog = document.getElementById('settings');
+      if (settingsDialog && settingsDialog.close) {
+        settingsDialog.close();
+      }
+
+      // 6. Re-init tournament and re-render everything
+      initStandingsForTournament(state.activeTournamentId, true);
+      renderLeagueStandings();
+      renderFifaWorldRankings();
+      renderManagerUI();
+      updateSeasonHeaderBadge();
+      pickNextMatch();
+
+      if (window.confetti) {
+        window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.5 } });
+      }
+      showPhaseNotice('✅ ĐÃ RESET TOÀN BỘ GIẢI ĐẤU & ĐƯA ĐIỂM FIFA VỀ 0 THÀNH CÔNG! Sẵn sàng cho Mùa giải 2026/2027!');
     }
 
     function signManagerContract(teamId, tourneyId, mgrName) {
@@ -4448,18 +4913,27 @@
     }
 
     function selectTournament(tournamentId) {
-      if (state.manager && state.manager.isContractLocked && tournamentId !== state.manager.tourneyId) {
-        const tObj = TOURNAMENTS.find(t => t.id === state.manager.tourneyId);
-        showContractLockedModal(`Bạn đang có hợp đồng HLV chính thức tại giải <strong>${tObj ? tObj.name : ''}</strong>. Bạn phải hoàn thành trọn vẹn mùa giải mới được phép chuyển sang giải đấu khác!`);
-        const selLeague = document.getElementById('selectLeagueFilter');
-        if (selLeague) selLeague.value = state.manager.tourneyId;
-        return;
+      if (state.manager && state.manager.isContractLocked && state.manager.teamId) {
+        const myTeam = TEAMS_DB.find(t => t.id === state.manager.teamId);
+        if (myTeam && !myTeam.tournaments.includes(tournamentId)) {
+          const allowedTourneys = TOURNAMENTS.filter(t => myTeam.tournaments.includes(t.id));
+          const allowedNames = allowedTourneys.map(t => `${t.icon} ${t.shortName || t.name}`).join(', ');
+          showContractLockedModal(`CLB <strong>${myTeam.name}</strong> của bạn hiện đang thi đấu tại các giải trong khu vực: <br><strong class="text-amber-300">${allowedNames}</strong>.<br><br>Hãy chọn một trong các giải đấu trên để tiếp tục chỉ đạo CLB!`);
+          const selLeague = document.getElementById('selectLeagueFilter');
+          if (selLeague) selLeague.value = state.activeTournamentId;
+          return;
+        }
       }
       state.activeTournamentId = tournamentId;
       const tourney = getActiveTournament();
       state.stageIndex = 0;
       state.activeGroupFilter = 'ALL';
-      state.focusedTeamId = getTeamsInActiveTournament()[0].id;
+      const myTeam = (state.manager && state.manager.isContractLocked && state.manager.teamId)
+        ? TEAMS_DB.find(t => t.id === state.manager.teamId)
+        : null;
+      state.focusedTeamId = (myTeam && myTeam.tournaments.includes(tournamentId))
+        ? myTeam.id
+        : getTeamsInActiveTournament()[0].id;
       document.getElementById('activeTournamentHeaderBadge').textContent = `${tourney.icon} ${tourney.name}`;
       document.getElementById('currentLeagueDesc').textContent = tourney.groupCount ? 'Chọn đội để xem lịch đấu và bảng điểm của bảng tương ứng.' : 'Mỗi đội gặp tất cả các đối thủ một trận sân nhà và một trận sân khách.';
       initStandingsForTournament(tournamentId);
@@ -4677,7 +5151,6 @@
       document.getElementById('liveTouchBadge').textContent = 'Chờ giao bóng';
       state.pitchDirty = true;
       initPitchPlayers();
-      if (window.Stickman3D) window.Stickman3D.updateTeamNames(home, away);
       updateScoreDisplay();
       if (window.lucide) window.lucide.createIcons();
     }
@@ -4819,7 +5292,6 @@
       setTimeout(() => {
         SoundFX.netSwish();
         SoundFX.goal();
-        if (window.Stickman3D) window.Stickman3D.onGoalScored(side);
         triggerGoalCelebrationPopup(scorer, minute, teamName, homeScore, awayScore);
       }, 380);
     }
@@ -5175,7 +5647,12 @@
       renderLeagueStandings();
       renderFifaWorldRankings();
 
-      // Manager Career Stats update
+      // Manager Career Stats & Performance update
+      const isMgr = state.gameMode === 'manager';
+      let verdictTitle = '';
+      let badgeClass = '';
+      let totalEarned = 0;
+
       if (state.manager) {
         state.manager.activeShout = null;
         state.manager.shoutTimer = 0;
@@ -5193,12 +5670,31 @@
             state.manager.ga += oppGoals;
             if (myGoals > oppGoals) {
               state.manager.wins++;
-              state.manager.boardConfidence = Math.min(100, state.manager.boardConfidence + 3);
+              state.manager.boardConfidence = Math.min(100, (state.manager.boardConfidence || 90) + 4);
+              if (isMgr) {
+                state.manager.budget = (state.manager.budget || 150) + 5;
+                verdictTitle = '🏆 CHIẾN THẮNG VANG DỘI! (+5M €)';
+                badgeClass = 'bg-amber-400/25 text-amber-300 border-amber-400/50';
+                SoundFX.winExact();
+                if (window.confetti) {
+                  window.confetti({ particleCount: 75, spread: 65, origin: { y: 0.6 } });
+                }
+              }
             } else if (myGoals === oppGoals) {
               state.manager.draws++;
+              state.manager.boardConfidence = Math.min(100, (state.manager.boardConfidence || 90) + 1);
+              if (isMgr) {
+                state.manager.budget = (state.manager.budget || 150) + 2;
+                verdictTitle = '🤝 CHIA ĐIỂM KỊCH TÍNH! (+2M €)';
+                badgeClass = 'bg-sky-500/25 text-sky-300 border-sky-400/50';
+              }
             } else {
               state.manager.losses++;
-              state.manager.boardConfidence = Math.max(10, state.manager.boardConfidence - 4);
+              state.manager.boardConfidence = Math.max(15, (state.manager.boardConfidence || 90) - 3);
+              if (isMgr) {
+                verdictTitle = '⚡ THẤT BẠI TRÊN SÂN CỎ!';
+                badgeClass = 'bg-rose-500/25 text-rose-300 border-rose-400/50';
+              }
             }
             saveManagerCareer();
             renderManagerUI();
@@ -5209,70 +5705,82 @@
       const predH = state.predHome;
       const predA = state.predAway;
 
-      const exactHit = (actualH === predH && actualA === predA);
-      const actualOutcome = actualH > actualA ? 'home' : (actualH < actualA ? 'away' : 'draw');
-      const actualSign = Math.sign(actualH - actualA);
-      const predSign = Math.sign(predH - predA);
-      const outcomeHit = (actualOutcome === state.predOutcome) || (actualSign === predSign);
-      const diffHit = outcomeHit && ((actualH - actualA) === (predH - predA));
+      if (!isMgr) {
+        const exactHit = (actualH === predH && actualA === predA);
+        const actualOutcome = actualH > actualA ? 'home' : (actualH < actualA ? 'away' : 'draw');
+        const actualSign = Math.sign(actualH - actualA);
+        const predSign = Math.sign(predH - predA);
+        const outcomeHit = (actualOutcome === state.predOutcome) || (actualSign === predSign);
+        const diffHit = outcomeHit && ((actualH - actualA) === (predH - predA));
 
-      let basePoints = 0;
-      let streakBonus = 0;
-      let verdictTitle = '';
-      let badgeClass = '';
+        let basePoints = 0;
+        let streakBonus = 0;
+        state.totalMatches++;
 
-      state.totalMatches++;
-
-      if (exactHit) {
-        basePoints = 150;
-        state.streak++;
-        state.exactHits++;
-        state.outcomeHits++;
-        streakBonus = state.streak > 1 ? state.streak * 25 : 0;
-        verdictTitle = '🎯 CHÍNH XÁC TUYỆT ĐỐI TỶ SỐ!';
-        badgeClass = 'bg-emerald-500/25 text-emerald-300 border-emerald-400/50';
-        SoundFX.winExact();
-        if (window.confetti) {
-          window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        if (exactHit) {
+          basePoints = 150;
+          state.streak++;
+          state.exactHits++;
+          state.outcomeHits++;
+          streakBonus = state.streak > 1 ? state.streak * 25 : 0;
+          verdictTitle = '🎯 CHÍNH XÁC TUYỆT ĐỐI TỶ SỐ!';
+          badgeClass = 'bg-emerald-500/25 text-emerald-300 border-emerald-400/50';
+          SoundFX.winExact();
+          if (window.confetti) {
+            window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+          }
+        } else if (diffHit) {
+          basePoints = 75;
+          state.streak++;
+          state.outcomeHits++;
+          streakBonus = state.streak > 1 ? state.streak * 15 : 0;
+          verdictTitle = '🔥 ĐÚNG KẾT QUẢ & HIỆU SỐ BÀN!';
+          badgeClass = 'bg-sky-500/25 text-sky-300 border-sky-400/50';
+        } else if (outcomeHit) {
+          basePoints = 50;
+          state.streak++;
+          state.outcomeHits++;
+          streakBonus = state.streak > 1 ? state.streak * 10 : 0;
+          verdictTitle = '✅ ĐÚNG KẾT QUẢ TRẬN ĐẤU!';
+          badgeClass = 'bg-indigo-500/25 text-indigo-300 border-indigo-400/50';
+        } else {
+          basePoints = 0;
+          state.streak = 0;
+          verdictTitle = '😅 CHƯA CHÍNH XÁC — THỬ LẠI TRẬN SAU!';
+          badgeClass = 'bg-rose-500/25 text-rose-300 border-rose-400/50';
         }
-      } else if (diffHit) {
-        basePoints = 75;
-        state.streak++;
-        state.outcomeHits++;
-        streakBonus = state.streak > 1 ? state.streak * 15 : 0;
-        verdictTitle = '🔥 ĐÚNG KẾT QUẢ & HIỆU SỐ BÀN!';
-        badgeClass = 'bg-sky-500/25 text-sky-300 border-sky-400/50';
-      } else if (outcomeHit) {
-        basePoints = 50;
-        state.streak++;
-        state.outcomeHits++;
-        streakBonus = state.streak > 1 ? state.streak * 10 : 0;
-        verdictTitle = '✅ ĐÚNG KẾT QUẢ TRẬN ĐẤU!';
-        badgeClass = 'bg-indigo-500/25 text-indigo-300 border-indigo-400/50';
+
+        totalEarned = basePoints + streakBonus;
+        state.points += totalEarned;
+        if (state.points > state.bestPoints) state.bestPoints = state.points;
+        saveStats();
+        updateStatsUI();
+
+        state.history.unshift({
+          round: state.roundNumber,
+          tournament: tourney.shortName,
+          home: state.homeTeam,
+          away: state.awayTeam,
+          pred: `${predH} - ${predA}`,
+          actual: `${actualH} - ${actualA}${state.inExtraTime ? ' (HP)' : ''}${penNote}`,
+          earned: totalEarned,
+          exactHit,
+          outcomeHit
+        });
       } else {
-        basePoints = 0;
-        state.streak = 0;
-        verdictTitle = '😅 CHƯA CHÍNH XÁC — THỬ LẠI TRẬN SAU!';
-        badgeClass = 'bg-rose-500/25 text-rose-300 border-rose-400/50';
+        // Manager Mode History Item (Không cờ bạc điểm số dự đoán)
+        state.history.unshift({
+          round: state.roundNumber,
+          tournament: tourney.shortName,
+          home: state.homeTeam,
+          away: state.awayTeam,
+          pred: `HLV chỉ đạo (${state.manager.formation || '4-3-3'})`,
+          actual: `${actualH} - ${actualA}${state.inExtraTime ? ' (HP)' : ''}${penNote}`,
+          earned: 0,
+          exactHit: false,
+          outcomeHit: true
+        });
       }
-
-      const totalEarned = basePoints + streakBonus;
-      state.points += totalEarned;
-      if (state.points > state.bestPoints) state.bestPoints = state.points;
-      saveStats();
-      updateStatsUI();
-
-      state.history.unshift({
-        round: state.roundNumber,
-        tournament: tourney.shortName,
-        home: state.homeTeam,
-        away: state.awayTeam,
-        pred: `${predH} - ${predA}`,
-        actual: `${actualH} - ${actualA}${state.inExtraTime ? ' (HP)' : ''}${penNote}`,
-        earned: totalEarned,
-        exactHit,
-        outcomeHit
-      });
       renderHistory();
 
       document.getElementById('timerStatusText').textContent = 'Kết thúc trận đấu';
@@ -5280,8 +5788,8 @@
       document.getElementById('simBadge').className = "px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase bg-slate-700 text-slate-200";
 
       const resultBadge = document.getElementById('resultBadge');
-      resultBadge.textContent = verdictTitle;
-      resultBadge.className = `px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1.5 border ${badgeClass}`;
+      resultBadge.textContent = verdictTitle || 'KẾT QUẢ TRẬN ĐẤU';
+      resultBadge.className = `px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1.5 border ${badgeClass || 'bg-slate-800 text-white'}`;
 
       document.getElementById('resultHeadline').textContent = `${state.homeTeam.name} ${actualH} - ${actualA} ${state.awayTeam.name}${penNote}`;
       const fifaSummary = `Điểm FIFA: ${state.homeTeam.code} ${fifaDelta.deltaHome >= 0 ? '+' : ''}${fifaDelta.deltaHome} | ${state.awayTeam.code} ${fifaDelta.deltaAway >= 0 ? '+' : ''}${fifaDelta.deltaAway}`;
@@ -5289,9 +5797,15 @@
       const concurrentNote = totalConcurrentMatches > 0
         ? ` • Đồng thời: ${concurrentTourneyMatches} trận bảng đấu & ${concurrentWorldMatches} trận ${isNationalMode ? 'quốc tế' : 'CLB'} khác đã thi đấu`
         : '';
-      document.getElementById('resultSubtext').textContent = totalEarned > 0
-        ? `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • Nhận +${totalEarned}đ (Chuỗi: ${state.streak}🔥) • ${fifaSummary}${concurrentNote}`
-        : `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • 0đ lượt này • ${fifaSummary}${concurrentNote}`;
+      
+      const subtextEl = document.getElementById('resultSubtext');
+      if (isMgr) {
+        subtextEl.innerHTML = `[${tourney.shortName}] HLV chỉ đạo: <strong>${state.manager.name}</strong> • ${fifaSummary}${concurrentNote}<br><span class="text-amber-300 font-bold">Ngân sách CLB: ${state.manager.budget || 150}M €</span>`;
+      } else {
+        subtextEl.textContent = totalEarned > 0
+          ? `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • Nhận +${totalEarned}đ (Chuỗi: ${state.streak}🔥) • ${fifaSummary}${concurrentNote}`
+          : `[${tourney.shortName}] Bạn đoán ${predH}-${predA} • 0đ lượt này • ${fifaSummary}${concurrentNote}`;
+      }
 
       document.getElementById('resultOverlay').classList.remove('hidden');
 
@@ -5838,16 +6352,11 @@
     function drawPitch() {
       requestAnimationFrame(drawPitch);
 
-      // ALWAYS run player physics regardless of 2D canvas visibility
-      // so 3D stickmen get updated positions when 3D tab is active
       if (state.phase === 'simulating') {
         const steps = Math.min(4, state.speedMultiplier);
         for (let step = 0; step < steps; step++) updatePlayersAndBallTouchPhysics();
       }
 
-      if (window.Stickman3D && window.Stickman3D.isActive()) {
-        window.Stickman3D.update(state);
-      }
       if (!pitchVisible || (!state.pitchDirty && state.phase !== 'simulating')) return;
       state.pitchDirty = false;
       const w = canvas.width;
@@ -6423,61 +6932,51 @@
         });
       }
 
-      // 3D Stickman Sub-panel Tabs (Mục con để tránh lag web)
-      const tab2D = document.getElementById('tabSim2D');
-      const tab3D = document.getElementById('tabSim3D');
-      const panel2D = document.getElementById('panelSim2D');
-      const panel3D = document.getElementById('panelSim3D');
-      const controls3D = document.getElementById('controls3D');
+      // Cài đặt: Reset Toàn Bộ Giải Đấu & Điểm FIFA về 0
+      document.getElementById('btnResetAllTournamentsAndFifa')?.addEventListener('click', () => {
+        resetAllTournamentsAndFifa();
+      });
 
-      if (tab2D && tab3D) {
-        tab2D.addEventListener('click', () => {
+      // Transfer Market Tabs Switcher
+      const tabMarket = document.getElementById('tabTransferMarket');
+      const tabSquad = document.getElementById('tabTransferSquad');
+      const contMarket = document.getElementById('transferMarketContainer');
+      const contSquad = document.getElementById('transferSquadContainer');
+
+      if (tabMarket && tabSquad) {
+        tabMarket.addEventListener('click', () => {
           SoundFX.click();
-          tab2D.className = 'sim-tab px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 transition flex items-center gap-1.5 shadow font-bold';
-          tab2D.setAttribute('aria-selected', 'true');
-          tab3D.className = 'sim-tab px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5';
-          tab3D.setAttribute('aria-selected', 'false');
-
-          panel2D?.classList.remove('hidden');
-          panel3D?.classList.add('hidden');
-          controls3D?.classList.add('hidden');
-
-          // Pause 3D WebGL loop to guarantee 0% CPU/GPU overhead when 2D is shown
-          if (window.Stickman3D) window.Stickman3D.setActive(false);
-          resizeCanvas();
+          state.transferTab = 'market';
+          tabMarket.className = 'px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-black transition flex items-center gap-1.5 shadow';
+          tabSquad.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5';
+          contMarket?.classList.remove('hidden');
+          contSquad?.classList.add('hidden');
+          renderTransferMarket();
         });
 
-        tab3D.addEventListener('click', () => {
+        tabSquad.addEventListener('click', () => {
           SoundFX.click();
-          tab3D.className = 'sim-tab px-3.5 py-1.5 rounded-lg bg-amber-400 text-slate-950 transition flex items-center gap-1.5 shadow font-black';
-          tab3D.setAttribute('aria-selected', 'true');
-          tab2D.className = 'sim-tab px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5';
-          tab2D.setAttribute('aria-selected', 'false');
-
-          panel3D?.classList.remove('hidden');
-          panel2D?.classList.add('hidden');
-          controls3D?.classList.remove('hidden');
-
-          // Activate 3D Stickman WebGL loop
-          if (window.Stickman3D) {
-            window.Stickman3D.setActive(true);
-            window.Stickman3D.updateTeamNames(state.homeTeam, state.awayTeam);
-          }
+          state.transferTab = 'squad';
+          tabSquad.className = 'px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-black transition flex items-center gap-1.5 shadow';
+          tabMarket.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5';
+          contSquad?.classList.remove('hidden');
+          contMarket?.classList.add('hidden');
+          renderTransferMarket();
         });
       }
 
-      // 3D Camera Controls
-      document.getElementById('btnCamBroadcast')?.addEventListener('click', () => {
-        SoundFX.click();
-        window.Stickman3D?.setCameraMode('broadcast');
-      });
-      document.getElementById('btnCamTactical')?.addEventListener('click', () => {
-        SoundFX.click();
-        window.Stickman3D?.setCameraMode('tactical');
-      });
-      document.getElementById('btnCamBehindGoal')?.addEventListener('click', () => {
-        SoundFX.click();
-        window.Stickman3D?.setCameraMode('behind_goal');
+      // Position Filter Buttons
+      document.querySelectorAll('.market-pos-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.click();
+          state.transferFilter = btn.dataset.posFilter || 'all';
+          document.querySelectorAll('.market-pos-btn').forEach(b => {
+            b.className = (b.dataset.posFilter === state.transferFilter)
+              ? 'market-pos-btn px-2 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950'
+              : 'market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10';
+          });
+          renderTransferMarket();
+        });
       });
 
       document.getElementById('btnSkipMatch').addEventListener('click', () => {

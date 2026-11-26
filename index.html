@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Siêu Dự Đoán Bóng Đá — Mùa Giải 2026/2027 & Giả Lập 3D Người Que</title>
+  <title>Siêu Dự Đoán Bóng Đá & Huấn Luyện Viên Tương Lai — Mùa Giải 2026/2027</title>
   <!-- Google Fonts: Be Vietnam Pro & Inter with Full Vietnamese Subsets -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Tailwind CSS Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Three.js 3D Engine for Authentic Stickman Simulation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Lucide Icons & Confetti FX -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -238,7 +236,7 @@
               <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
               <h4 class="font-black text-sm sm:text-base text-white">BẢNG CHIẾN THUẬT HUẤN LUYỆN VIÊN</h4>
             </div>
-            <span class="text-xs text-slate-400">Đổi sơ đồ sẽ cập nhật trực tiếp đội hình trên sân 2D & 3D</span>
+            <span class="text-xs text-slate-400">Đổi sơ đồ sẽ cập nhật trực tiếp đội hình trên sân 2D</span>
           </div>
 
           <!-- Formation Switcher -->
@@ -307,6 +305,63 @@
                 <span>🛡️ Lùi sâu tử thủ!</span>
               </button>
             </div>
+          </div>
+        </div>
+
+        <!-- THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ (TRANSFER MARKET) -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-amber-400/40 shadow-xl space-y-3.5">
+          <div class="flex items-center justify-between pb-2.5 border-b border-white/10 flex-wrap gap-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-black text-base shadow">
+                🛒
+              </div>
+              <div>
+                <h4 class="font-black text-sm sm:text-base text-white flex items-center gap-2">
+                  <span>THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MỞ CỬA</span>
+                </h4>
+                <p class="text-xs text-slate-400">Mua sắm siêu sao để nâng cấp OVR hoặc bán cầu thủ để thu về ngân sách CLB</p>
+              </div>
+            </div>
+
+            <!-- Transfer Budget Badge -->
+            <div class="flex items-center gap-1.5 bg-slate-950/90 px-3.5 py-1.5 rounded-xl border border-amber-400/40 shadow-inner">
+              <span class="text-xs text-slate-400">Ngân sách CLB:</span>
+              <span id="managerBudgetDisplay" class="font-mono font-black text-sm sm:text-base text-amber-300">150M €</span>
+            </div>
+          </div>
+
+          <!-- Transfer Tabs & Position Filters -->
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10 text-xs font-bold" role="tablist">
+              <button id="tabTransferMarket" type="button" class="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-black transition flex items-center gap-1.5 shadow">
+                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                <span>Chợ mua cầu thủ</span>
+              </button>
+              <button id="tabTransferSquad" type="button" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5">
+                <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                <span>Đội hình & Bán cầu thủ</span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-1 text-[11px] flex-wrap">
+              <span class="text-slate-400 hidden sm:inline">Vị trí:</span>
+              <button type="button" data-pos-filter="all" class="market-pos-btn px-2 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950">Tất cả</button>
+              <button type="button" data-pos-filter="FW" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền đạo (FW)</button>
+              <button type="button" data-pos-filter="MF" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền vệ (MF)</button>
+              <button type="button" data-pos-filter="DF" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Hậu vệ (DF)</button>
+              <button type="button" data-pos-filter="GK" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Thủ môn (GK)</button>
+            </div>
+          </div>
+
+          <!-- Market Target Cards Container (Mua cầu thủ) -->
+          <div id="transferMarketContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto pr-1">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <!-- Squad Sell Cards Container (Bán cầu thủ) -->
+          <div id="transferSquadContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto pr-1">
+            <!-- Populated dynamically by JS -->
           </div>
         </div>
       </div>
@@ -427,35 +482,47 @@
 
             <!-- CENTER SCORE CONTROLS -->
             <div class="col-span-4 flex flex-col items-center justify-center">
-              <div class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 mb-1.5">DỰ ĐOÁN TỶ SỐ</div>
-              <div class="flex items-center gap-1.5 sm:gap-3">
-                <!-- Home Score Column -->
-                <div class="flex flex-col items-center gap-1">
-                  <button id="btnHomePlus" aria-label="Tăng tỷ số chủ nhà" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
-                    <i data-lucide="chevron-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                  </button>
-                  <div id="predHomeScore" class="w-12 h-14 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 border-emerald-400/50 flex items-center justify-center text-3xl sm:text-4xl font-black score-num text-white shadow-inner">
-                    2
+              <div id="predScoreControls" class="flex flex-col items-center justify-center w-full">
+                <div class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 mb-1.5">DỰ ĐOÁN TỶ SỐ</div>
+                <div class="flex items-center gap-1.5 sm:gap-3">
+                  <!-- Home Score Column -->
+                  <div class="flex flex-col items-center gap-1">
+                    <button id="btnHomePlus" aria-label="Tăng tỷ số chủ nhà" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                      <i data-lucide="chevron-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    </button>
+                    <div id="predHomeScore" class="w-12 h-14 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 border-emerald-400/50 flex items-center justify-center text-3xl sm:text-4xl font-black score-num text-white shadow-inner">
+                      2
+                    </div>
+                    <button id="btnHomeMinus" aria-label="Giảm tỷ số chủ nhà" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                      <i data-lucide="chevron-down" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    </button>
                   </div>
-                  <button id="btnHomeMinus" aria-label="Giảm tỷ số chủ nhà" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
-                    <i data-lucide="chevron-down" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                  </button>
-                </div>
 
-                <span class="text-xl sm:text-2xl font-black text-emerald-400">:</span>
+                  <span class="text-xl sm:text-2xl font-black text-emerald-400">:</span>
 
-                <!-- Away Score Column -->
-                <div class="flex flex-col items-center gap-1">
-                  <button id="btnAwayPlus" aria-label="Tăng tỷ số đội khách" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
-                    <i data-lucide="chevron-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                  </button>
-                  <div id="predAwayScore" class="w-12 h-14 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 border-emerald-400/50 flex items-center justify-center text-3xl sm:text-4xl font-black score-num text-white shadow-inner">
-                    1
+                  <!-- Away Score Column -->
+                  <div class="flex flex-col items-center gap-1">
+                    <button id="btnAwayPlus" aria-label="Tăng tỷ số đội khách" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                      <i data-lucide="chevron-up" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    </button>
+                    <div id="predAwayScore" class="w-12 h-14 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 border-emerald-400/50 flex items-center justify-center text-3xl sm:text-4xl font-black score-num text-white shadow-inner">
+                      1
+                    </div>
+                    <button id="btnAwayMinus" aria-label="Giảm tỷ số đội khách" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
+                      <i data-lucide="chevron-down" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    </button>
                   </div>
-                  <button id="btnAwayMinus" aria-label="Giảm tỷ số đội khách" type="button" class="score-btn btn-tap w-11 h-9 sm:w-12 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-rose-500 text-white font-bold flex items-center justify-center border border-white/15 transition shadow">
-                    <i data-lucide="chevron-down" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                  </button>
                 </div>
+              </div>
+
+              <!-- HLV Tương Lai Match Preparation Center (Hiện thay cho ô dự đoán tỷ số) -->
+              <div id="managerScoreControls" class="hidden flex flex-col items-center justify-center w-full text-center space-y-1.5 p-2 rounded-xl bg-slate-950/80 border border-amber-400/30">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow">
+                  👔 HLV CHỈ ĐẠO
+                </span>
+                <div class="text-2xl sm:text-3xl font-black text-amber-300 score-num tracking-wider">VS</div>
+                <div class="text-[11px] text-emerald-300 font-bold" id="managerMatchTacticsSummary">Sơ đồ: 4-3-3 • Tấn công</div>
+                <span class="text-[10px] text-slate-400">Không cần đoán tỷ số · Bấm bắt đầu để HLV ra sân</span>
               </div>
             </div>
 
@@ -494,8 +561,8 @@
             </div>
           </div></details>
 
-          <!-- Quick Preset Score Pills & Win / Draw / Loss (Thắng - Hòa - Thua) Selector -->
-          <div class="mt-4 pt-3 border-t border-white/10 space-y-3">
+          <!-- Quick Preset Score Pills & Win / Draw / Loss (Thắng - Hòa - Thua) Selector (Chỉ hiện ở Chế độ Dự đoán) -->
+          <div id="predictionOptionsSection" class="mt-4 pt-3 border-t border-white/10 space-y-3">
             <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
               <span class="text-[11px] text-slate-400 font-medium mr-1">Tỷ số nhanh:</span>
               <button type="button" data-preset="1-0" class="preset-btn score-ctrl btn-tap px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 text-slate-200 border border-white/10 transition">1 - 0</button>
@@ -588,28 +655,15 @@
             </div>
           </div>
 
-          <!-- SUB-PANEL TABS: 2D Pitch vs 3D Stickman (Mục con để tránh lag web) -->
-          <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 flex-wrap gap-2">
-            <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/15 text-xs font-extrabold" role="tablist">
-              <button id="tabSim2D" type="button" role="tab" aria-selected="true" class="sim-tab px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 transition flex items-center gap-1.5 shadow">
-                <i data-lucide="layout" class="w-3.5 h-3.5"></i>
-                <span>Sân 2D</span>
-              </button>
-              <button id="tabSim3D" type="button" role="tab" aria-selected="false" class="sim-tab px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5">
-                <i data-lucide="box" class="w-3.5 h-3.5 text-amber-400"></i>
-                <span>Sân 3D</span>
-              </button>
+          <!-- Match Simulation Pitch Header -->
+          <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-white/10 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-black text-white uppercase tracking-wider">Mô Phỏng Trực Tiếp Trên Sân Cỏ</span>
+              <span class="text-[10px] text-emerald-300 font-bold bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30">Mượt mà 60 FPS</span>
             </div>
-
-            <!-- 3D Camera Controls & Anti-Lag Indicator (Hiển thị khi ở tab 3D) -->
-            <div id="controls3D" class="hidden flex items-center gap-2 flex-wrap text-xs">
-              <div class="flex items-center gap-1 bg-slate-950/80 px-2 py-1 rounded-lg border border-white/10">
-                <span class="text-slate-400 text-[11px] hidden sm:inline">Góc quay:</span>
-                <button type="button" id="btnCamBroadcast" class="cam-btn px-2 py-0.5 rounded text-[11px] font-bold bg-amber-400 text-slate-950">Truyền hình</button>
-                <button type="button" id="btnCamTactical" class="cam-btn px-2 py-0.5 rounded text-[11px] font-bold text-slate-300 hover:bg-white/10">Toàn cảnh</button>
-                <button type="button" id="btnCamBehindGoal" class="cam-btn px-2 py-0.5 rounded text-[11px] font-bold text-slate-300 hover:bg-white/10">Cầu môn</button>
-              </div>
-              <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 hidden md:inline-block">⚡ 60 FPS Tối ưu</span>
+            <div class="text-[11px] text-slate-400">
+              Đổi sân tự động khi hết hiệp • Cầu thủ di chuyển chân thực
             </div>
           </div>
 
@@ -658,17 +712,6 @@
                 <i data-lucide="play" class="w-4 h-4 fill-current"></i>
                 <span>TRẬN TIẾP THEO CÙNG GIẢI ĐẤU</span>
               </button>
-            </div>
-          </div>
-
-          <!-- PANEL 2: Authentic 3D Stickman Football Simulation (Three.js WebGL) -->
-          <div id="panelSim3D" class="hidden relative w-full rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-slate-950 shadow-2xl">
-            <div id="canvas3DContainer" class="w-full h-72 sm:h-96 relative"></div>
-
-            <!-- 3D Touch Hint & Controls Overlay -->
-            <div class="absolute bottom-2 left-2 z-10 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-sm border border-white/10 text-[10px] sm:text-xs text-amber-300 font-semibold pointer-events-none flex items-center gap-1.5">
-              <i data-lucide="hand" class="w-3.5 h-3.5 text-amber-400"></i>
-              <span>Chạm & kéo để xoay góc nhìn 3D • Cuộn phóng to / thu nhỏ</span>
             </div>
           </div>
 
@@ -943,9 +986,12 @@
 
       <!-- Scrollable Content: Allows scrolling through all remaining teams -->
       <div class="overflow-y-auto flex-1 my-2.5 pr-1 space-y-3 min-h-0">
-        <!-- Champion Spotlight Banner -->
-        <div id="seasonChampionBanner" class="p-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-emerald-500/20 border border-amber-400/40 flex items-center gap-3">
-          <!-- Populated by JS -->
+        <!-- BẢNG VINH DANH MÙA GIẢI: VÔ ĐỊCH • Á QUÂN • HẠNG BA • TOP 4 & SUẤT CÚP CHÂU LỤC -->
+        <div id="seasonHonorsPodium" class="space-y-2.5">
+          <!-- Populated dynamically by JS with Champion, Runner-up, 3rd, 4th place & continental spots -->
+          <div id="seasonChampionBanner" class="p-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-emerald-500/20 border border-amber-400/40 flex items-center gap-3">
+            <!-- Populated by JS -->
+          </div>
         </div>
 
         <!-- Rules explanation note -->
@@ -1086,10 +1132,58 @@
     </div>
   </div>
 
-  <dialog id="settings" aria-labelledby="settingsTitle"><form method="dialog"><h2 id="settingsTitle">Cài đặt trận đấu</h2><fieldset id="durationChoices"><legend>Thời gian hai hiệp chính</legend><div class="segments"><label><input type="radio" name="duration" value="120"><span>2 phút</span></label><label><input type="radio" name="duration" value="240"><span>4 phút</span></label><label><input type="radio" name="duration" value="360"><span>6 phút</span></label></div></fieldset><fieldset id="speedChoices"><legend>Tốc độ mô phỏng</legend><div class="segments"><label><input type="radio" name="speed" value="1"><span>1×</span></label><label><input type="radio" name="speed" value="4"><span>4×</span></label><label><input type="radio" name="speed" value="12"><span>12×</span></label></div></fieldset><button class="settings-done">Xong</button></form></dialog>
+  <dialog id="settings" aria-labelledby="settingsTitle">
+    <form method="dialog" class="space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-white/10">
+        <h2 id="settingsTitle" class="font-extrabold text-base text-white flex items-center gap-2">
+          <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i>
+          <span>Cài đặt trò chơi</span>
+        </h2>
+        <button value="cancel" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <fieldset id="durationChoices">
+        <legend class="text-xs font-bold text-slate-300 mb-1.5">Thời gian hai hiệp chính</legend>
+        <div class="segments">
+          <label><input type="radio" name="duration" value="120"><span>2 phút</span></label>
+          <label><input type="radio" name="duration" value="240"><span>4 phút</span></label>
+          <label><input type="radio" name="duration" value="360"><span>6 phút</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset id="speedChoices">
+        <legend class="text-xs font-bold text-slate-300 mb-1.5">Tốc độ mô phỏng</legend>
+        <div class="segments">
+          <label><input type="radio" name="speed" value="1"><span>1×</span></label>
+          <label><input type="radio" name="speed" value="4"><span>4×</span></label>
+          <label><input type="radio" name="speed" value="12"><span>12×</span></label>
+        </div>
+      </fieldset>
+
+      <!-- Vùng Đặt Lại Toàn Bộ (Reset All Tournaments & FIFA Points to 0) -->
+      <div class="pt-3 border-t border-rose-500/30 space-y-2">
+        <label class="block text-xs font-extrabold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i>
+          <span>ĐẶT LẠI TOÀN BỘ GIẢI ĐẤU & ĐIỂM FIFA</span>
+        </label>
+        <p class="text-[11px] text-slate-400 leading-relaxed">
+          Đặt lại toàn bộ tiến độ của tất cả giải đấu về đầu mùa, đưa điểm số BXH FIFA của tất cả 186 quốc gia về 0, khôi phục Mùa giải 1 và hủy hợp đồng HLV hiện tại.
+        </p>
+        <button id="btnResetAllTournamentsAndFifa" type="button" class="btn-tap w-full py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-black flex items-center justify-center gap-2 transition">
+          <i data-lucide="rotate-ccw" class="w-4 h-4 text-rose-400"></i>
+          <span>RESET TOÀN BỘ GIẢI ĐẤU & ĐIỂM FIFA VỀ 0</span>
+        </button>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button class="settings-done px-5 py-2 rounded-xl text-xs font-extrabold bg-emerald-400 text-slate-950 hover:bg-emerald-300">Xong</button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Scripts -->
-  <script src="stickman3d.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
