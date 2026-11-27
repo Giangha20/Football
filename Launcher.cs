@@ -12,7 +12,10 @@ namespace FootballApp
     {
         private static HttpListener _listener;
         private static string _appDir;
-        private static int _port;
+        private static int _port = 8899;
+        private static DateTime _lastRequestTime = DateTime.UtcNow;
+        private static bool _hasReceivedRequests = false;
+        private static volatile bool _isRunning = true;
 
         [STAThread]
         static void Main()
@@ -21,13 +24,9 @@ namespace FootballApp
             {
                 _appDir = AppDomain.CurrentDomain.BaseDirectory;
 
-                // Find a free TCP port
-                var tcpListener = new TcpListener(IPAddress.Loopback, 0);
-                tcpListener.Start();
-                _port = ((IPEndPoint)tcpListener.LocalEndpoint).Port;
-                tcpListener.Stop();
+                // Pick an available port (try 8899, fallback to free port)
+                _port = GetAvailablePort(8899);
 
-                // Start local embedded offline HTTP server
                 _listener = new HttpListener();
                 _listener.Prefixes.Add("http://127.0.0.1:" + _port + "/");
                 _listener.Start();
@@ -38,20 +37,51 @@ namespace FootballApp
                 };
                 serverThread.Start();
 
-                // Launch Desktop App Window using Edge or Chrome in app mode
+                // Target URL
                 string targetUrl = "http://127.0.0.1:" + _port + "/index.html";
+
+                // Launch Edge or Chrome in isolated App Mode
                 Process browserProc = LaunchAppWindow(targetUrl);
 
-                if (browserProc != null)
+                DateTime startTime = DateTime.UtcNow;
+
+                // Keep-alive loop: stays alive while browser is open or heartbeat is active
+                while (_isRunning)
                 {
-                    browserProc.WaitForExit();
-                }
-                else
-                {
-                    // Fallback to default browser
-                    Process.Start(targetUrl);
-                    // Keep server alive while user interacts
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
+
+                    // If browser process has a valid handle and is alive, keep running
+                    if (browserProc != null)
+                    {
+                        try
+                        {
+                            if (!browserProc.HasExited)
+                            {
+                                continue;
+                            }
+                        }
+                        catch { }
+                    }
+
+                    // If browserProc exited early (Chromium process handoff):
+                    // Keep server alive using heartbeat and activity tracking
+                    double elapsedSinceStart = (DateTime.UtcNow - startTime).TotalSeconds;
+                    if (!_hasReceivedRequests)
+                    {
+                        // Give user at least 25 seconds to start loading
+                        if (elapsedSinceStart < 25)
+                            continue;
+                    }
+                    else
+                    {
+                        // Window was active: if no heartbeat received for > 7 seconds, user closed the window
+                        double idleSecs = (DateTime.UtcNow - _lastRequestTime).TotalSeconds;
+                        if (idleSecs < 7)
+                            continue;
+                    }
+
+                    // Window closed -> Exit
+                    break;
                 }
             }
             catch (Exception ex)
@@ -62,10 +92,40 @@ namespace FootballApp
                 }
                 catch { }
             }
+            finally
+            {
+                _isRunning = false;
+                try
+                {
+                    if (_listener != null) _listener.Stop();
+                }
+                catch { }
+            }
+        }
+
+        private static int GetAvailablePort(int preferredPort)
+        {
+            try
+            {
+                var test = new TcpListener(IPAddress.Loopback, preferredPort);
+                test.Start();
+                test.Stop();
+                return preferredPort;
+            }
+            catch
+            {
+                var rnd = new TcpListener(IPAddress.Loopback, 0);
+                rnd.Start();
+                int p = ((IPEndPoint)rnd.LocalEndpoint).Port;
+                rnd.Stop();
+                return p;
+            }
         }
 
         private static Process LaunchAppWindow(string url)
         {
+            string userDataDir = Path.Combine(Path.GetTempPath(), "FootballGameOfflineProfile");
+
             string[] possibleBrowsers = new string[]
             {
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft\Edge\Application\msedge.exe"),
@@ -81,19 +141,21 @@ namespace FootballApp
                     var psi = new ProcessStartInfo
                     {
                         FileName = browserPath,
-                        Arguments = "--app=\"" + url + "\" --window-size=1360,860",
+                        Arguments = "--user-data-dir=\"" + userDataDir + "\" --app=\"" + url + "\" --window-size=1360,860 --disable-features=Translate",
                         UseShellExecute = false
                     };
                     return Process.Start(psi);
                 }
             }
 
+            // Fallback: standard system default browser
+            Process.Start(url);
             return null;
         }
 
         private static void ServerWorker()
         {
-            while (_listener != null && _listener.IsListening)
+            while (_isRunning && _listener != null && _listener.IsListening)
             {
                 try
                 {
@@ -112,13 +174,26 @@ namespace FootballApp
             var ctx = (HttpListenerContext)state;
             try
             {
+                _hasReceivedRequests = true;
+                _lastRequestTime = DateTime.UtcNow;
+
                 string rawUrl = ctx.Request.Url.AbsolutePath.TrimStart('/');
                 if (string.IsNullOrEmpty(rawUrl) || rawUrl == "/")
                 {
                     rawUrl = "index.html";
                 }
 
-                // Security check to avoid directory traversal
+                // Heartbeat API
+                if (rawUrl.Equals("api/heartbeat", StringComparison.OrdinalIgnoreCase))
+                {
+                    byte[] ok = Encoding.UTF8.GetBytes("{\"ok\":true}");
+                    ctx.Response.ContentType = "application/json";
+                    ctx.Response.ContentLength64 = ok.Length;
+                    ctx.Response.OutputStream.Write(ok, 0, ok.Length);
+                    return;
+                }
+
+                // Security check against directory traversal
                 rawUrl = rawUrl.Replace('/', Path.DirectorySeparatorChar);
                 string filePath = Path.Combine(_appDir, rawUrl);
 

@@ -1438,6 +1438,12 @@
         navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
+    // Offline Desktop Launcher Keep-Alive Heartbeat
+    if (location.hostname === '127.0.0.1' || location.hostname === 'localhost') {
+      setInterval(() => {
+        fetch('/api/heartbeat').catch(() => {});
+      }, 2000);
+    }
   </script>
 </body>
 </html>
