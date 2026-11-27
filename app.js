@@ -9555,6 +9555,36 @@
         renderTeamsDirectory(e.target.value);
       });
 
+      // Landscape Orientation Handler
+      window.requestLandscapeMode = async function() {
+        try {
+          if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen().catch(() => {});
+          }
+          if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock('landscape').catch(() => {});
+          }
+        } catch (e) {}
+      };
+
+      document.getElementById('btnToggleLandscape')?.addEventListener('click', () => {
+        SoundFX.click();
+        window.requestLandscapeMode();
+      });
+
+      function checkOrientationPrompt() {
+        const isPortraitMobile = window.innerHeight > window.innerWidth && window.innerWidth <= 768;
+        const prompt = document.getElementById('portraitRotatePrompt');
+        if (prompt) {
+          if (isPortraitMobile) prompt.classList.remove('hidden');
+          else prompt.classList.add('hidden');
+        }
+      }
+
+      window.addEventListener('resize', checkOrientationPrompt);
+      window.addEventListener('orientationchange', checkOrientationPrompt);
+      checkOrientationPrompt();
+
       // Sound Toggle
       document.getElementById('btnToggleSound').addEventListener('click', () => {
         SoundFX.enabled = !SoundFX.enabled;

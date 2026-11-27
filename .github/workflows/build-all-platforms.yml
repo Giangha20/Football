@@ -74,6 +74,8 @@ jobs:
           }
           EOF
           npx cap add android
+          # Lock Android screen orientation to landscape
+          sed -i 's/android:name="MainActivity"/android:name="MainActivity" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml || true
           npx cap sync android
 
       - name: Build Android APK with Gradle
@@ -122,6 +124,9 @@ jobs:
           }
           EOF
           npx cap add ios
+          # Lock iOS screen orientation to landscape
+          plutil -replace UISupportedInterfaceOrientations -json '["UIInterfaceOrientationLandscapeLeft", "UIInterfaceOrientationLandscapeRight"]' ios/App/App/Info.plist || true
+          plutil -replace UISupportedInterfaceOrientations~ipad -json '["UIInterfaceOrientationLandscapeLeft", "UIInterfaceOrientationLandscapeRight"]' ios/App/App/Info.plist || true
           npx cap sync ios
 
       - name: Build iOS App with Xcode

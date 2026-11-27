@@ -936,5 +936,58 @@ button:disabled {cursor:default;}
   display: block;
 }
 
+/* =========================================================================
+   CHẾ ĐỘ MÀN HÌNH NGANG ĐIỆN THOẠI (MOBILE LANDSCAPE ORIENTATION)
+   ========================================================================= */
+@media (orientation: landscape) and (max-height: 560px) {
+  body {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  /* Compact header on mobile landscape to save vertical viewport */
+  header.sticky {
+    position: static;
+  }
+  header > div {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  
+  /* Optimize main spacing */
+  main {
+    padding-top: 8px;
+    padding-bottom: 16px;
+    gap: 12px;
+  }
+
+  /* Tactical Pitch Board in Manager Mode */
+  .tactical-pitch-board {
+    min-height: 280px;
+    max-height: 380px;
+  }
+
+  /* Scrollable lineup & squad lists */
+  #managerLineupList {
+    max-height: 280px;
+  }
+
+  /* Transfer market container in landscape phone */
+  #transferMarketContainer {
+    max-height: 320px;
+  }
+
+  /* Global player search grid in landscape phone */
+  #globalPlayerSearchGrid {
+    max-height: 360px;
+    overflow-y: auto;
+  }
+
+  /* Dialogs fit screen height properly */
+  dialog {
+    max-height: 94vh;
+  }
+}
+
 
 
