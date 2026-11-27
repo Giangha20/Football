@@ -10176,18 +10176,280 @@
     };
 
     // =========================================================================
-    // FEATURE: ACCOUNT & MULTI-DEVICE CLOUD SYNC
+    // FEATURE: REGISTERED ACCOUNT AUTH & MULTI-DEVICE CLOUD SYNC
     // =========================================================================
+    state.currentUser = localStorage.getItem('football_current_user') || null;
+
+    function getAccountsDb() {
+      try {
+        return JSON.parse(localStorage.getItem('football_accounts') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveAccountsDb(db) {
+      localStorage.setItem('football_accounts', JSON.stringify(db));
+    }
+
+    async function uploadUserToCloud(username, accountRecord) {
+      try {
+        await fetch('https://api.restful-api.dev/objects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'football_user_' + username.toLowerCase(), data: accountRecord })
+        }).catch(() => {});
+      } catch (e) {}
+    }
+
+    async function fetchUserFromCloud(username) {
+      try {
+        const res = await fetch('https://api.restful-api.dev/objects?id=football_user_' + username.toLowerCase()).catch(() => null);
+        if (res && res.ok) {
+          const data = await res.json();
+          if (data && data.data) return data.data;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    window.updateAuthUI = function() {
+      const syncLabel = document.getElementById('headerSyncLabel');
+      const formLogin = document.getElementById('formAccountLogin');
+      const formReg = document.getElementById('formAccountRegister');
+      const viewLoggedIn = document.getElementById('viewAccountLoggedIn');
+
+      if (state.currentUser) {
+        if (syncLabel) syncLabel.textContent = '👤 ' + state.currentUser;
+        if (formLogin) formLogin.classList.add('hidden');
+        if (formReg) formReg.classList.add('hidden');
+        if (viewLoggedIn) viewLoggedIn.classList.remove('hidden');
+
+        const db = getAccountsDb();
+        const acc = db[state.currentUser];
+
+        const userBadge = document.getElementById('loggedUsernameBadge');
+        if (userBadge) userBadge.textContent = state.currentUser;
+
+        const mgrName = document.getElementById('loggedManagerName');
+        if (mgrName) mgrName.textContent = state.manager?.name || acc?.managerName || state.currentUser;
+
+        const clubName = document.getElementById('loggedClubName');
+        if (clubName) {
+          const myTeam = state.manager?.teamId ? TEAMS_DB.find(t => t.id === state.manager.teamId) : null;
+          clubName.textContent = myTeam ? (myTeam.icon || '🛡️') + ' ' + myTeam.name : 'Chưa ký hợp đồng';
+        }
+
+        const budgetEl = document.getElementById('loggedBudget');
+        if (budgetEl) budgetEl.textContent = (state.manager?.budget || 150) + 'M €';
+
+        const lastSavedEl = document.getElementById('loggedLastSaved');
+        if (lastSavedEl) {
+          if (acc?.updatedAt) {
+            try {
+              const d = new Date(acc.updatedAt);
+              lastSavedEl.textContent = d.toLocaleTimeString('vi-VN') + ' ' + d.toLocaleDateString('vi-VN');
+            } catch (e) {
+              lastSavedEl.textContent = 'Vừa xong';
+            }
+          } else {
+            lastSavedEl.textContent = 'Vừa xong';
+          }
+        }
+      } else {
+        if (syncLabel) syncLabel.textContent = '☁️ Lưu tiến độ';
+        if (viewLoggedIn) viewLoggedIn.classList.add('hidden');
+        if (formLogin) formLogin.classList.remove('hidden');
+        if (formReg) formReg.classList.add('hidden');
+      }
+    };
+
+    window.registerAccount = async function(username, password, managerName) {
+      SoundFX.click();
+      username = (username || '').trim();
+      password = (password || '').trim();
+      managerName = (managerName || '').trim();
+
+      if (!username || username.length < 3) {
+        alert('Tên đăng nhập phải có ít nhất 3 ký tự!');
+        return;
+      }
+      if (!password || password.length < 3) {
+        alert('Mật khẩu phải có ít nhất 3 ký tự!');
+        return;
+      }
+
+      const db = getAccountsDb();
+      if (db[username]) {
+        alert('Tên đăng nhập này đã được sử dụng trên máy! Vui lòng chọn tên khác hoặc chuyển sang Đăng nhập.');
+        return;
+      }
+
+      if (!managerName) managerName = 'HLV ' + username;
+      if (state.manager) state.manager.name = managerName;
+
+      const statePkg = {
+        manager: state.manager,
+        customLineups: state.customLineups || {},
+        fifaPoints: state.fifaPoints || {},
+        predictionStats: state.predictionStats || {},
+        seasonAwards: state.seasonAwards || {}
+      };
+
+      const accountRecord = {
+        username: username,
+        password: password,
+        managerName: managerName,
+        data: statePkg,
+        updatedAt: new Date().toISOString()
+      };
+
+      db[username] = accountRecord;
+      saveAccountsDb(db);
+
+      state.currentUser = username;
+      localStorage.setItem('football_current_user', username);
+
+      // Async cloud backup
+      uploadUserToCloud(username, accountRecord);
+
+      window.updateAuthUI();
+      SoundFX.cheer();
+      showPhaseNotice(`🎉 Đăng ký thành công tài khoản HLV: ${username}!`);
+      alert(`Chúc mừng HLV ${managerName}! Tài khoản "${username}" đã được tạo và lưu tiến độ hiện tại thành công.`);
+    };
+
+    window.loginAccount = async function(username, password) {
+      SoundFX.click();
+      username = (username || '').trim();
+      password = (password || '').trim();
+
+      if (!username || !password) {
+        alert('Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!');
+        return;
+      }
+
+      let db = getAccountsDb();
+      let acc = db[username];
+
+      // If not in local db, attempt to fetch from Cloud
+      if (!acc) {
+        showPhaseNotice('⏳ Đang tìm kiếm tài khoản trên Cloud...');
+        const cloudAcc = await fetchUserFromCloud(username);
+        if (cloudAcc) {
+          acc = cloudAcc;
+          db[username] = acc;
+          saveAccountsDb(db);
+        }
+      }
+
+      if (!acc) {
+        alert('Tài khoản không tồn tại trên hệ thống! Vui lòng kiểm tra lại hoặc Đăng ký tài khoản mới.');
+        return;
+      }
+
+      if (acc.password !== password) {
+        alert('Mật khẩu không chính xác! Vui lòng thử lại.');
+        return;
+      }
+
+      // Restore game state
+      if (acc.data) {
+        if (acc.data.manager) state.manager = acc.data.manager;
+        if (acc.data.customLineups) state.customLineups = acc.data.customLineups;
+        if (acc.data.fifaPoints) state.fifaPoints = acc.data.fifaPoints;
+        if (acc.data.predictionStats) state.predictionStats = acc.data.predictionStats;
+        if (acc.data.seasonAwards) state.seasonAwards = acc.data.seasonAwards;
+      }
+
+      state.currentUser = username;
+      localStorage.setItem('football_current_user', username);
+
+      saveManagerCareer();
+      renderManagerUI();
+      initPitchPlayers();
+      window.updateAuthUI();
+
+      SoundFX.cheer();
+      showPhaseNotice(`✅ Đã đăng nhập tài khoản: ${username}`);
+      alert(`Đăng nhập thành công! Chào mừng HLV ${acc.managerName || username} đã quay trở lại.`);
+    };
+
+    window.saveCurrentProgressToAccount = async function() {
+      SoundFX.click();
+      if (!state.currentUser) {
+        alert('Vui lòng Đăng nhập hoặc Đăng ký tài khoản trước khi lưu tiến độ!');
+        return;
+      }
+
+      const db = getAccountsDb();
+      const acc = db[state.currentUser] || {
+        username: state.currentUser,
+        password: '',
+        managerName: state.manager?.name || state.currentUser
+      };
+
+      const statePkg = {
+        manager: state.manager,
+        customLineups: state.customLineups || {},
+        fifaPoints: state.fifaPoints || {},
+        predictionStats: state.predictionStats || {},
+        seasonAwards: state.seasonAwards || {}
+      };
+
+      acc.data = statePkg;
+      acc.updatedAt = new Date().toISOString();
+      db[state.currentUser] = acc;
+      saveAccountsDb(db);
+
+      // Upload to Cloud
+      uploadUserToCloud(state.currentUser, acc);
+
+      saveManagerCareer();
+      window.updateAuthUI();
+      SoundFX.cheer();
+      showPhaseNotice(`☁️ Đã lưu tiến độ chơi vào tài khoản ${state.currentUser}!`);
+      alert(`Tiến độ của HLV ${acc.managerName || state.currentUser} đã được lưu an toàn trên máy và Cloud!`);
+    };
+
+    window.reloadFromAccount = async function() {
+      SoundFX.click();
+      if (!state.currentUser) return;
+      const db = getAccountsDb();
+      let acc = db[state.currentUser];
+      if (!acc) {
+        acc = await fetchUserFromCloud(state.currentUser);
+      }
+      if (acc && acc.data) {
+        if (acc.data.manager) state.manager = acc.data.manager;
+        if (acc.data.customLineups) state.customLineups = acc.data.customLineups;
+        if (acc.data.fifaPoints) state.fifaPoints = acc.data.fifaPoints;
+        if (acc.data.predictionStats) state.predictionStats = acc.data.predictionStats;
+        if (acc.data.seasonAwards) state.seasonAwards = acc.data.seasonAwards;
+        saveManagerCareer();
+        renderManagerUI();
+        initPitchPlayers();
+        window.updateAuthUI();
+        SoundFX.cheer();
+        alert('Đã tải lại toàn bộ tiến độ mới nhất từ tài khoản!');
+      }
+    };
+
+    window.logoutAccount = function() {
+      SoundFX.click();
+      const prev = state.currentUser;
+      state.currentUser = null;
+      localStorage.removeItem('football_current_user');
+      window.updateAuthUI();
+      showPhaseNotice('👋 Đã đăng xuất khỏi tài khoản: ' + prev);
+    };
+
     window.openAccountSyncModal = function() {
       SoundFX.click();
       const modal = document.getElementById('modalAccountSync');
       if (!modal) return;
 
-      const myTeam = state.manager && state.manager.teamId ? TEAMS_DB.find(t => t.id === state.manager.teamId) : null;
-      document.getElementById('syncProfileManagerName').textContent = state.manager?.name || 'HLV Trưởng';
-      document.getElementById('syncProfileClubName').textContent = myTeam ? (myTeam.icon || '🛡️') + ' ' + myTeam.name : 'Chưa ký hợp đồng';
-      document.getElementById('syncProfileBudget').textContent = (state.manager?.budget || 150) + 'M €';
-      document.getElementById('syncProfileRecord').textContent = `${state.manager?.wins || 0}T - ${state.manager?.draws || 0}H - ${state.manager?.losses || 0}B`;
+      window.updateAuthUI();
 
       // Pre-fill existing PIN or generate clean one
       let existingPin = localStorage.getItem('football_sync_pin');
@@ -10234,11 +10496,9 @@
       };
 
       try {
-        // Multi-device sync storage: try free KV endpoint, fallback to localStorage + clipboard
         const payloadStr = JSON.stringify(statePkg);
         localStorage.setItem('football_cloud_save_' + pin, payloadStr);
 
-        // Attempt cloud store
         await fetch('https://api.restful-api.dev/objects', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -10278,7 +10538,6 @@
         }
 
         if (!loadedData) {
-          // Try network load
           const res = await fetch(`https://api.restful-api.dev/objects?id=football_save_${pin}`).catch(() => null);
           if (res && res.ok) {
             const data = await res.json();
@@ -10399,6 +10658,57 @@
           }
         }
       });
+      // Account & Cloud Sync Modal Subtabs & Forms
+      document.getElementById('btnSubTabAuth')?.addEventListener('click', () => {
+        SoundFX.click();
+        document.getElementById('sectionAuthArea')?.classList.remove('hidden');
+        document.getElementById('sectionPinArea')?.classList.add('hidden');
+        const bA1 = document.getElementById('btnSubTabAuth'); if (bA1) bA1.className = 'flex-1 py-1.5 rounded-lg font-black transition bg-sky-400 text-slate-950 flex items-center justify-center gap-1.5 shadow';
+        const bP1 = document.getElementById('btnSubTabPin'); if (bP1) bP1.className = 'flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5';
+      });
+
+      document.getElementById('btnSubTabPin')?.addEventListener('click', () => {
+        SoundFX.click();
+        document.getElementById('sectionAuthArea')?.classList.add('hidden');
+        document.getElementById('sectionPinArea')?.classList.remove('hidden');
+        const bP2 = document.getElementById('btnSubTabPin'); if (bP2) bP2.className = 'flex-1 py-1.5 rounded-lg font-black transition bg-sky-400 text-slate-950 flex items-center justify-center gap-1.5 shadow';
+        const bA2 = document.getElementById('btnSubTabAuth'); if (bA2) bA2.className = 'flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5';
+      });
+
+      document.getElementById('btnToggleToRegister')?.addEventListener('click', () => {
+        SoundFX.click();
+        document.getElementById('formAccountLogin')?.classList.add('hidden');
+        document.getElementById('formAccountRegister')?.classList.remove('hidden');
+      });
+
+      document.getElementById('btnToggleToLogin')?.addEventListener('click', () => {
+        SoundFX.click();
+        document.getElementById('formAccountRegister')?.classList.add('hidden');
+        document.getElementById('formAccountLogin')?.classList.remove('hidden');
+      });
+
+      document.getElementById('btnSubmitLogin')?.addEventListener('click', () => {
+        const u = document.getElementById('inputLoginUsername')?.value;
+        const p = document.getElementById('inputLoginPassword')?.value;
+        window.loginAccount(u, p);
+      });
+
+      document.getElementById('btnSubmitRegister')?.addEventListener('click', () => {
+        const u = document.getElementById('inputRegUsername')?.value;
+        const p = document.getElementById('inputRegPassword')?.value;
+        const m = document.getElementById('inputRegManagerName')?.value;
+        window.registerAccount(u, p, m);
+      });
+
+      document.getElementById('btnSaveToAccount')?.addEventListener('click', window.saveCurrentProgressToAccount);
+      document.getElementById('btnReloadFromAccount')?.addEventListener('click', window.reloadFromAccount);
+      document.getElementById('btnLogoutAccount')?.addEventListener('click', window.logoutAccount);
+
+      // Initialize Auth UI on page load
+      if (typeof window.updateAuthUI === 'function') {
+        window.updateAuthUI();
+      }
+
 
       // Player Stats Modal Close Buttons
       document.getElementById('btnClosePlayerStatsModal')?.addEventListener('click', () => {

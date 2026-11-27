@@ -979,7 +979,7 @@
     <!-- ===================================================================== -->
     <!-- DEDICATED SECTION: ĐUA VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG (GOLDEN BOOT & BALLON D'OR) -->
     <!-- ===================================================================== -->
-    <section id="awardsRaceSection" class="glass-card rounded-2xl p-4 sm:p-6 border border-amber-400/35 space-y-4">
+    <section id="awardsRaceSection" class="hidden glass-card rounded-2xl p-4 sm:p-6 border border-amber-400/35 space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30 shrink-0">
@@ -1093,7 +1093,7 @@
     <!-- ===================================================================== -->
     <!-- DEDICATED STANDALONE SECTION: BẢNG XẾP HẠNG FIFA THẾ GIỚI (186 QUỐC GIA) -->
     <!-- ===================================================================== -->
-    <section id="fifaWorldRankingSection" class="glass-card rounded-2xl p-4 sm:p-6 border border-sky-500/30 space-y-4">
+    <section id="fifaWorldRankingSection" class="hidden glass-card rounded-2xl p-4 sm:p-6 border border-sky-500/30 space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
@@ -1467,18 +1467,18 @@
     </div>
   </div>
 
-  <!-- MODAL: Account & Multi-Device Cloud Sync (Đăng nhập & Giữ tiến độ đa thiết bị) -->
+  <!-- MODAL: Account & Multi-Device Cloud Sync (Đăng nhập tài khoản & Giữ tiến độ đa thiết bị) -->
   <div id="modalAccountSync" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="glass-card rounded-2xl max-w-lg w-full p-4 sm:p-6 border border-sky-400/40 shadow-2xl shadow-sky-500/20 space-y-4 m-auto">
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-3 border-b border-white/10">
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-slate-950 shadow">
-            <i data-lucide="cloud" class="w-5 h-5 stroke-[2.5]"></i>
+            <i data-lucide="user-check" class="w-5 h-5 stroke-[2.5]"></i>
           </div>
           <div>
             <h3 class="font-black text-sm sm:text-base text-white">TÀI KHOẢN & ĐỒNG BỘ ĐA THIẾT BỊ</h3>
-            <p class="text-[11px] text-sky-300">Lưu và đồng bộ tiến độ chơi giữa Điện thoại, Máy tính & Tablet</p>
+            <p class="text-[11px] text-sky-300">Đăng ký tài khoản để giữ trọn vẹn tiến độ trên Mọi Điện thoại & Máy tính</p>
           </div>
         </div>
         <button id="btnCloseAccountSyncModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg transition">
@@ -1486,67 +1486,168 @@
         </button>
       </div>
 
-      <!-- Current Profile Card -->
-      <div class="p-3.5 rounded-xl bg-slate-950/80 border border-white/10 space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-slate-400">HLV Trưởng:</span>
-          <span id="syncProfileManagerName" class="font-black text-sm text-amber-300">HLV Trưởng</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400">CLB đang dẫn dắt:</span>
-          <span id="syncProfileClubName" class="font-bold text-white">CLB Hà Nội</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400">Ngân sách hiện có:</span>
-          <span id="syncProfileBudget" class="font-mono font-bold text-emerald-400">150M €</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400">Thành tích mùa giải:</span>
-          <span id="syncProfileRecord" class="font-mono font-bold text-sky-300">0T - 0H - 0B</span>
-        </div>
+      <!-- Account Mode Switcher Tabs -->
+      <div class="inline-flex p-1 rounded-xl bg-slate-950 border border-white/10 w-full text-xs font-bold gap-1" role="tablist">
+        <button id="btnSubTabAuth" type="button" class="flex-1 py-1.5 rounded-lg font-black transition bg-sky-400 text-slate-950 flex items-center justify-center gap-1.5 shadow">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i>
+          <span>Tài khoản HLV</span>
+        </button>
+        <button id="btnSubTabPin" type="button" class="flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+          <i data-lucide="key" class="w-3.5 h-3.5"></i>
+          <span>Mã PIN Cloud / Sao lưu nhanh</span>
+        </button>
       </div>
 
-      <!-- Cloud Sync PIN Section -->
-      <div class="p-3.5 rounded-xl bg-gradient-to-br from-sky-950/30 to-slate-900 border border-sky-400/30 space-y-3">
-        <div class="flex items-center justify-between">
+      <!-- SECTION 1: REGISTERED ACCOUNT (ĐĂNG KÝ / ĐĂNG NHẬP / THÔNG TIN TÀI KHOẢN) -->
+      <div id="sectionAuthArea" class="space-y-3.5">
+        <!-- 1A: Form Đăng nhập (Login Form) -->
+        <div id="formAccountLogin" class="space-y-3">
+          <div class="p-3.5 rounded-xl bg-slate-950/80 border border-sky-400/25 space-y-2.5">
+            <h4 class="text-xs font-black text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <span>ĐĂNG NHẬP TÀI KHOẢN HLV</span>
+            </h4>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Tên đăng nhập (Username):</label>
+              <input id="inputLoginUsername" type="text" placeholder="Nhập tên tài khoản..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/15 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Mật khẩu:</label>
+              <input id="inputLoginPassword" type="password" placeholder="Nhập mật khẩu..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/15 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400" />
+            </div>
+            <button id="btnSubmitLogin" type="button" class="btn-tap w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-slate-950 font-black text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-1.5">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <span>Đăng nhập & Tải tiến độ</span>
+            </button>
+          </div>
+          <div class="text-center">
+            <button id="btnToggleToRegister" type="button" class="text-xs text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-2">
+              Chưa có tài khoản? Bấm vào đây để Đăng ký tài khoản mới
+            </button>
+          </div>
+        </div>
+
+        <!-- 1B: Form Đăng ký (Register Form) -->
+        <div id="formAccountRegister" class="hidden space-y-3">
+          <div class="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-400/25 space-y-2.5">
+            <h4 class="text-xs font-black text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>ĐĂNG KÝ TÀI KHOẢN HLV MỚI</span>
+            </h4>
+            <p class="text-[11px] text-slate-300">Tạo tài khoản để tự động lưu hồ sơ HLV, tiền chuyển nhượng và cúp vô địch.</p>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Tên đăng nhập (Username):</label>
+              <input id="inputRegUsername" type="text" placeholder="Đặt tên đăng nhập (VD: giangha20)..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/15 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Mật khẩu:</label>
+              <input id="inputRegPassword" type="password" placeholder="Đặt mật khẩu..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/15 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Tên Huấn Luyện Viên hiển thị:</label>
+              <input id="inputRegManagerName" type="text" placeholder="Tên HLV (VD: HLV Giang)..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/15 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400" />
+            </div>
+            <button id="btnSubmitRegister" type="button" class="btn-tap w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-1.5">
+              <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+              <span>Đăng ký & Lưu tiến độ hiện tại</span>
+            </button>
+          </div>
+          <div class="text-center">
+            <button id="btnToggleToLogin" type="button" class="text-xs text-slate-400 hover:text-white font-semibold underline underline-offset-2">
+              Đã có tài khoản? Bấm vào đây để Đăng nhập
+            </button>
+          </div>
+        </div>
+
+        <!-- 1C: Logged In Account Dashboard -->
+        <div id="viewAccountLoggedIn" class="hidden space-y-3">
+          <div class="p-3.5 rounded-xl bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-400/40 space-y-2">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Tài khoản:</span>
+                <strong id="loggedUsernameBadge" class="text-emerald-300 text-sm">giangha20</strong>
+              </span>
+              <button id="btnLogoutAccount" type="button" class="btn-tap px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30 hover:bg-rose-500/30 transition">
+                Đăng xuất
+              </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+              <div>
+                <span class="text-slate-400 block text-[10px]">HLV Trưởng:</span>
+                <span id="loggedManagerName" class="font-bold text-white truncate">HLV Trưởng</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px]">CLB dẫn dắt:</span>
+                <span id="loggedClubName" class="font-bold text-amber-300 truncate">CLB Hà Nội</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px]">Ngân sách:</span>
+                <span id="loggedBudget" class="font-mono font-bold text-emerald-400">150M €</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px]">Lưu lần cuối:</span>
+                <span id="loggedLastSaved" class="font-mono text-slate-300 text-[11px]">Vừa xong</span>
+              </div>
+            </div>
+            <div class="pt-2 flex items-center gap-2">
+              <button id="btnSaveToAccount" type="button" class="btn-tap flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs shadow transition flex items-center justify-center gap-1.5">
+                <i data-lucide="cloud" class="w-4 h-4"></i>
+                <span>Lưu tiến độ vào tài khoản</span>
+              </button>
+              <button id="btnReloadFromAccount" type="button" class="btn-tap py-2 px-3 rounded-xl border border-white/20 hover:bg-white/10 text-slate-300 font-bold text-xs transition flex items-center justify-center gap-1">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                <span>Tải lại</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Message -->
+        <div id="authAccountStatusMsg" class="text-xs font-semibold text-center min-h-[18px]"></div>
+      </div>
+
+      <!-- SECTION 2: FAST CLOUD PIN & DIRECT CODE (GIỮ LẠI LỰA CHỌN MÃ PIN 6 KÝ TỰ) -->
+      <div id="sectionPinArea" class="hidden space-y-3">
+        <!-- Cloud Sync PIN Section -->
+        <div class="p-3.5 rounded-xl bg-gradient-to-br from-sky-950/30 to-slate-900 border border-sky-400/30 space-y-2.5">
           <label class="text-xs font-black text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
             <i data-lucide="key" class="w-4 h-4"></i>
             <span>Mã Đồng Bộ Đám Mây (Cloud Sync PIN)</span>
           </label>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            Nhập mã PIN bất kỳ (VD: HLV-9921) để lưu hoặc tải tiến độ giữa các thiết bị mà không cần tài khoản.
+          </p>
+          <div class="flex items-center gap-2">
+            <input id="inputSyncCode" type="text" placeholder="Nhập mã Cloud (VD: HLV-9921)" class="uppercase font-mono font-black text-center text-sm px-3 py-2 rounded-xl bg-slate-950 border border-white/20 text-white placeholder-slate-500 flex-1 focus:outline-none focus:border-sky-400" />
+            <button id="btnCloudSave" type="button" class="btn-tap px-3 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1">
+              <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+              <span>Lưu</span>
+            </button>
+            <button id="btnCloudLoad" type="button" class="btn-tap px-3 py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1">
+              <i data-lucide="download-cloud" class="w-4 h-4"></i>
+              <span>Tải</span>
+            </button>
+          </div>
+          <div id="cloudSyncStatusMsg" class="text-[11px] font-semibold text-center text-slate-400 min-h-[16px]"></div>
         </div>
-        <p class="text-[11px] text-slate-300 leading-relaxed">
-          Nhấn <strong>"Lưu lên Đám Mây"</strong> để tạo hoặc cập nhật mã PIN lưu trữ. Sau đó trên điện thoại chỉ cần nhập mã PIN này là có thể tiếp tục chơi!
-        </p>
 
-        <div class="flex items-center gap-2">
-          <input id="inputSyncCode" type="text" placeholder="Nhập mã Cloud (VD: HLV-9921)" class="uppercase font-mono font-black text-center text-sm px-3 py-2 rounded-xl bg-slate-950 border border-white/20 text-white placeholder-slate-500 flex-1 focus:outline-none focus:border-sky-400" />
-          <button id="btnCloudSave" type="button" class="btn-tap px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1">
-            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-            <span>Lưu lên Cloud</span>
-          </button>
-          <button id="btnCloudLoad" type="button" class="btn-tap px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1">
-            <i data-lucide="download-cloud" class="w-4 h-4"></i>
-            <span>Tải về</span>
-          </button>
-        </div>
-        <div id="cloudSyncStatusMsg" class="text-[11px] font-semibold text-center text-slate-400 min-h-[18px]"></div>
-      </div>
-
-      <!-- Fast Direct Backup Code (Offline / Direct Copy-Paste) -->
-      <div class="p-3 rounded-xl bg-slate-900/60 border border-white/10 space-y-2">
-        <label class="text-xs font-bold text-slate-300 flex items-center justify-between">
-          <span>Sao lưu nhanh qua Mã trực tiếp (Offline Code):</span>
-        </label>
-        <div class="flex items-center gap-2">
-          <input id="inputFastBackupCode" type="text" readonly placeholder="Mã sao lưu trực tiếp..." class="text-[10px] font-mono px-2.5 py-1.5 rounded-lg bg-slate-950 border border-white/10 text-slate-400 flex-1 truncate select-all" />
-          <button id="btnCopyBackupCode" type="button" class="btn-tap px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1">
-            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-            <span>Sao chép</span>
-          </button>
-          <button id="btnRestoreFromCode" type="button" class="btn-tap px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-            <span>Nhập mã</span>
-          </button>
+        <!-- Fast Direct Backup Code (Offline / Direct Copy-Paste) -->
+        <div class="p-3 rounded-xl bg-slate-900/60 border border-white/10 space-y-2">
+          <label class="text-xs font-bold text-slate-300 flex items-center justify-between">
+            <span>Sao lưu nhanh qua Mã trực tiếp (Offline Code):</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <input id="inputFastBackupCode" type="text" readonly placeholder="Mã sao lưu trực tiếp..." class="text-[10px] font-mono px-2.5 py-1.5 rounded-lg bg-slate-950 border border-white/10 text-slate-400 flex-1 truncate select-all" />
+            <button id="btnCopyBackupCode" type="button" class="btn-tap px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>Sao chép</span>
+            </button>
+            <button id="btnRestoreFromCode" type="button" class="btn-tap px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span>Nhập mã</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
