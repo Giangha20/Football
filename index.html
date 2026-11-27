@@ -76,22 +76,18 @@
           </div>
         </div>
 
-        <!-- Jump to Standalone Player Search, Awards & FIFA World Ranking Sections + Audio & Rules Buttons -->
-        <button id="btnJumpPlayerSearch" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-emerald-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-emerald-500/30" title="Tìm kiếm cầu thủ V.League & Thế Giới">
-          <i data-lucide="search" class="w-4 h-4 text-emerald-400"></i>
-          <span class="hidden sm:inline">Tìm cầu thủ</span>
-        </button>
-        <button id="btnJumpAwardsSection" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-amber-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-amber-500/30" title="Xem Đua Vua Phá Lưới & Quả Bóng Vàng">
-          <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
-          <span class="hidden md:inline">Vua Phá Lưới & QBV</span>
-        </button>
-        <button id="btnJumpFifaSection" type="button" class="btn-tap px-3 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-sky-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-sky-500/30" title="Xem mục Bảng Xếp Hạng FIFA Thế Giới (186 Quốc gia)">
-          <i data-lucide="globe" class="w-4 h-4 text-sky-400"></i>
-          <span class="hidden sm:inline">BXH FIFA (186 QG)</span>
-        </button>
-        <button id="btnToggleLandscape" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-amber-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-amber-500/30" title="Chuyển sang chế độ màn hình ngang">
+        <!-- Mobile Orientation, Account & Cloud Sync, Sound, Settings & Rules Buttons -->
+        <button id="btnScreenLandscape" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-amber-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-amber-500/30" title="Xoay ngang màn hình">
           <i data-lucide="smartphone" class="w-4 h-4 rotate-90 text-amber-400"></i>
-          <span class="hidden sm:inline">Chế độ ngang</span>
+          <span class="hidden sm:inline">Xoay ngang</span>
+        </button>
+        <button id="btnScreenPortrait" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-sky-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-sky-500/30" title="Xoay dọc màn hình">
+          <i data-lucide="smartphone" class="w-4 h-4 text-sky-400"></i>
+          <span class="hidden sm:inline">Xoay dọc</span>
+        </button>
+        <button id="btnOpenAccountSync" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-emerald-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-emerald-500/30" title="Đăng nhập tài khoản & Đồng bộ tiến độ đa thiết bị">
+          <i data-lucide="cloud" class="w-4 h-4 text-emerald-400"></i>
+          <span class="hidden sm:inline">Tài khoản & Đồng bộ</span>
         </button>
         <button id="btnToggleSound" type="button" class="btn-tap p-2 rounded-xl glass-card hover:bg-slate-800/80 text-slate-300 hover:text-white transition" title="Bật/Tắt âm thanh">
           <i id="iconSound" data-lucide="volume-2" class="w-5 h-5 text-emerald-400"></i>
@@ -110,31 +106,41 @@
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-5 space-y-5">
 
-    <!-- TOP GAME MODE SELECTOR: DỰ ĐOÁN TỶ SỐ vs HLV TƯƠNG LAI -->
-    <section class="glass-card rounded-2xl p-2.5 sm:p-3 border border-emerald-500/30 flex items-center justify-between gap-3 flex-wrap">
-      <div class="flex items-center gap-2 flex-wrap">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">Chế độ chơi:</span>
-        <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10" role="tablist">
-          <button id="btnModePredict" type="button" class="btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md">
-            <i data-lucide="target" class="w-4 h-4"></i>
-            <span>Dự đoán tỷ số</span>
-          </button>
-          <button id="btnModeManager" type="button" class="btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white">
-            <i data-lucide="briefcase" class="w-4 h-4 text-amber-400"></i>
-            <span>HLV Tương lai</span>
-            <span class="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow">MỚI</span>
-          </button>
-        </div>
+    <!-- TOP APP TABS: CHUYỂN ĐỔI GIAO DIỆN CHÍNH (ẨN HIỆN TAB KHÔNG CUỘN TRANG) -->
+    <section class="glass-card rounded-2xl p-2 sm:p-2.5 border border-emerald-500/30 flex items-center justify-between gap-2 flex-wrap">
+      <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10 flex-wrap gap-1" role="tablist">
+        <button id="tabBtnMatch" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md">
+          <i data-lucide="target" class="w-4 h-4"></i>
+          <span>Trận đấu & Dự đoán</span>
+        </button>
+        <button id="tabBtnCareer" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white">
+          <i data-lucide="briefcase" class="w-4 h-4 text-amber-400"></i>
+          <span>Sự nghiệp HLV</span>
+          <span class="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow">VIP</span>
+        </button>
+        <button id="tabBtnMarket" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white">
+          <i data-lucide="shopping-cart" class="w-4 h-4 text-sky-400"></i>
+          <span>Chợ chuyển nhượng</span>
+        </button>
+        <button id="tabBtnAwards" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white">
+          <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+          <span>Vua Phá Lưới & QBV</span>
+        </button>
+        <button id="tabBtnFifa" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white">
+          <i data-lucide="globe" class="w-4 h-4 text-teal-400"></i>
+          <span>BXH FIFA (186 QG)</span>
+        </button>
       </div>
-      <div id="modeStatusBadge" class="flex items-center gap-2 text-xs">
-        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Chế độ: Dự đoán tự do</span>
-        </span>
+
+      <div class="flex items-center gap-2">
+        <button id="btnHeaderSync" type="button" class="btn-tap px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-400/30 text-sky-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition shadow" title="Đăng nhập tài khoản & Lưu tiến độ đa thiết bị">
+          <i data-lucide="cloud" class="w-4 h-4 text-sky-400"></i>
+          <span id="headerSyncLabel" class="hidden sm:inline">Lưu / Đồng bộ Cloud</span>
+        </button>
       </div>
     </section>
 
-    <!-- HLV TƯƠNG LAI: CAREER DASHBOARD & TACTICAL BOARD (Hiện khi chọn HLV Tương lai) -->
+    <!-- SỰ NGHIỆP HLV: CAREER DASHBOARD & TACTICAL BOARD (Hiện khi chọn Sự nghiệp HLV) -->
     <section id="panelManagerHub" class="hidden space-y-4">
       <!-- Unsigned State: Contract Signing Form -->
       <div id="managerUnsignedCard" class="glass-card rounded-2xl p-4 sm:p-5 border border-amber-400/40 shadow-xl space-y-4">
@@ -264,7 +270,7 @@
           <!-- Formation Switcher -->
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1.5">Sơ đồ chiến thuật ra sân:</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
               <button type="button" data-formation="4-3-3" class="tactical-form-btn btn-tap p-2 rounded-xl border border-emerald-400 bg-emerald-500/20 text-white font-extrabold text-xs flex flex-col items-center gap-0.5">
                 <span class="text-emerald-300">4-3-3</span>
                 <span class="text-[10px] text-slate-300 font-normal">Tấn công cánh</span>
@@ -288,6 +294,38 @@
               <button type="button" data-formation="3-4-3" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
                 <span class="text-rose-300">3-4-3</span>
                 <span class="text-[10px] text-slate-400 font-normal">Tổng lực 3 mũi nhọn</span>
+              </button>
+              <button type="button" data-formation="4-1-4-1" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-lime-300">4-1-4-1</span>
+                <span class="text-[10px] text-slate-400 font-normal">Mỏ neo trung tuyến</span>
+              </button>
+              <button type="button" data-formation="4-3-1-2" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-yellow-300">4-3-1-2</span>
+                <span class="text-[10px] text-slate-400 font-normal">Kim cương hẹp</span>
+              </button>
+              <button type="button" data-formation="4-1-2-1-2" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-cyan-300">4-1-2-1-2</span>
+                <span class="text-[10px] text-slate-400 font-normal">Kim cương biến ảo</span>
+              </button>
+              <button type="button" data-formation="4-5-1" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-orange-300">4-5-1</span>
+                <span class="text-[10px] text-slate-400 font-normal">Thép tuyến giữa</span>
+              </button>
+              <button type="button" data-formation="3-4-2-1" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-fuchsia-300">3-4-2-1</span>
+                <span class="text-[10px] text-slate-400 font-normal">Đột phá nách trung lộ</span>
+              </button>
+              <button type="button" data-formation="5-4-1" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-blue-300">5-4-1</span>
+                <span class="text-[10px] text-slate-400 font-normal">Bê tông phản công</span>
+              </button>
+              <button type="button" data-formation="4-2-4" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-red-400">4-2-4</span>
+                <span class="text-[10px] text-slate-400 font-normal">4 Tiền đạo vũ bão</span>
+              </button>
+              <button type="button" data-formation="4-3-2-1" class="tactical-form-btn btn-tap p-2 rounded-xl border border-white/15 bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-extrabold text-xs flex flex-col items-center gap-0.5">
+                <span class="text-emerald-400">4-3-2-1</span>
+                <span class="text-[10px] text-slate-400 font-normal">Cây thông Ancelotti</span>
               </button>
             </div>
           </div>
@@ -387,71 +425,99 @@
           </div>
         </div>
 
-        <!-- THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ (TRANSFER MARKET) -->
-        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-amber-400/40 shadow-xl space-y-3.5">
-          <div class="flex items-center justify-between pb-2.5 border-b border-white/10 flex-wrap gap-2">
-            <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-black text-base shadow">
-                🛒
-              </div>
-              <div>
-                <h4 class="font-black text-sm sm:text-base text-white flex items-center gap-2">
-                  <span>THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MỞ CỬA</span>
-                </h4>
-                <p class="text-xs text-slate-400">Mua sắm siêu sao để nâng cấp OVR hoặc bán cầu thủ để thu về ngân sách CLB</p>
-              </div>
+        <!-- THỊ TRƯỜNG CHUYỂN NHƯỢNG SHORTCUT BANNER -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-amber-400/40 shadow-xl flex items-center justify-between gap-3 flex-wrap">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-black text-xl shadow">
+              🛒
             </div>
-
-            <!-- Transfer Budget Badge -->
+            <div>
+              <h4 class="font-black text-sm sm:text-base text-white flex items-center gap-2">
+                <span>THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">12.000+ CẦU THỦ</span>
+              </h4>
+              <p class="text-xs text-slate-400">Mua sắm siêu sao để nâng cấp OVR hoặc bán cầu thủ để thu về ngân sách CLB</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap">
             <div class="flex items-center gap-1.5 bg-slate-950/90 px-3.5 py-1.5 rounded-xl border border-amber-400/40 shadow-inner">
               <span class="text-xs text-slate-400">Ngân sách CLB:</span>
               <span id="managerBudgetDisplay" class="font-mono font-black text-sm sm:text-base text-amber-300">150M €</span>
             </div>
-          </div>
-
-          <!-- Transfer Tabs, Search & Position Filters -->
-          <div class="flex items-center justify-between gap-2 flex-wrap">
-            <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10 text-xs font-bold" role="tablist">
-              <button id="tabTransferMarket" type="button" class="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-black transition flex items-center gap-1.5 shadow">
-                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
-                <span>Chợ mua cầu thủ</span>
-              </button>
-              <button id="tabTransferSquad" type="button" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5">
-                <i data-lucide="users" class="w-3.5 h-3.5"></i>
-                <span>Đội hình & Bán cầu thủ</span>
-              </button>
-            </div>
-
-            <div class="flex items-center gap-1.5 flex-wrap flex-1 justify-end">
-              <input id="transferSearchInput" type="text" placeholder="Tìm kiếm trong 4.000+ cầu thủ toàn cầu..." class="px-3 py-1.5 rounded-xl bg-slate-950 border border-white/15 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 min-w-[200px] flex-1 sm:flex-initial" />
-            </div>
-
-            <div class="flex items-center gap-1 text-[11px] flex-wrap w-full">
-              <span class="text-slate-400 hidden sm:inline">Vị trí:</span>
-              <button type="button" data-pos-filter="all" class="market-pos-btn px-2 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950">Tất cả</button>
-              <button type="button" data-pos-filter="FW" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền đạo (FW)</button>
-              <button type="button" data-pos-filter="MF" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền vệ (MF)</button>
-              <button type="button" data-pos-filter="DF" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Hậu vệ (DF)</button>
-              <button type="button" data-pos-filter="GK" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Thủ môn (GK)</button>
-            </div>
-          </div>
-
-          <!-- Market Target Cards Container (Mua cầu thủ) -->
-          <div id="transferMarketContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-[480px] overflow-y-auto pr-1">
-            <!-- Populated dynamically by JS -->
-          </div>
-
-          <!-- Squad Sell Cards Container (Bán cầu thủ) -->
-          <div id="transferSquadContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto pr-1">
-            <!-- Populated dynamically by JS -->
+            <button type="button" onclick="window.switchMainTab('market')" class="btn-tap px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-xs shadow-lg hover:brightness-110 transition flex items-center gap-1.5">
+              <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+              <span>Vào Chợ Chuyển Nhượng →</span>
+            </button>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ TOÀN CẦU (STANDALONE SECTION TAB) -->
+    <section id="sectionTransferMarket" class="hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border border-amber-400/40 shadow-xl space-y-3.5">
+        <div class="flex items-center justify-between pb-2.5 border-b border-white/10 flex-wrap gap-2">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-black text-xl shadow">
+              🛒
+            </div>
+            <div>
+              <h4 class="font-black text-sm sm:text-base text-white flex items-center gap-2">
+                <span>THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ TOÀN CẦU</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">12.000+ CẦU THỦ</span>
+              </h4>
+              <p class="text-xs text-slate-400">Khám phá, tra cứu và mua sắm hơn 12.000 cầu thủ từ V.League đến các siêu sao hàng đầu thế giới</p>
+            </div>
+          </div>
+
+          <!-- Transfer Budget Badge -->
+          <div class="flex items-center gap-1.5 bg-slate-950/90 px-3.5 py-1.5 rounded-xl border border-amber-400/40 shadow-inner">
+            <span class="text-xs text-slate-400">Ngân sách HLV:</span>
+            <span id="transferMarketBudgetBadge" class="font-mono font-black text-sm sm:text-base text-amber-300">150M €</span>
+          </div>
+        </div>
+
+        <!-- Transfer Tabs, Search & Position Filters -->
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10 text-xs font-bold" role="tablist">
+            <button id="tabTransferMarket" type="button" class="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-black transition flex items-center gap-1.5 shadow">
+              <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+              <span>Chợ mua cầu thủ</span>
+            </button>
+            <button id="tabTransferSquad" type="button" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5">
+              <i data-lucide="users" class="w-3.5 h-3.5"></i>
+              <span>Đội hình & Bán cầu thủ</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-1.5 flex-wrap flex-1 justify-end">
+            <input id="transferSearchInput" type="text" placeholder="Tìm kiếm trong 12.000+ cầu thủ toàn cầu..." class="px-3.5 py-2 rounded-xl bg-slate-950 border border-amber-400/30 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 min-w-[240px] flex-1 sm:flex-initial shadow-inner" />
+          </div>
+
+          <div class="flex items-center gap-1 text-[11px] flex-wrap w-full">
+            <span class="text-slate-400 hidden sm:inline">Vị trí:</span>
+            <button type="button" data-pos-filter="all" class="market-pos-btn px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950">Tất cả (12.000+)</button>
+            <button type="button" data-pos-filter="FW" class="market-pos-btn px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền đạo (FW)</button>
+            <button type="button" data-pos-filter="MF" class="market-pos-btn px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền vệ (MF)</button>
+            <button type="button" data-pos-filter="DF" class="market-pos-btn px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Hậu vệ (DF)</button>
+            <button type="button" data-pos-filter="GK" class="market-pos-btn px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Thủ môn (GK)</button>
+          </div>
+        </div>
+
+        <!-- Market Target Cards Container (Mua cầu thủ) -->
+        <div id="transferMarketContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-[520px] overflow-y-auto pr-1">
+          <!-- Populated dynamically by JS -->
+        </div>
+
+        <!-- Squad Sell Cards Container (Bán cầu thủ) -->
+        <div id="transferSquadContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto pr-1">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </section>
+
     <!-- STRICT TOURNAMENT / LEAGUE SELECTOR HUB -->
-    <section class="match-hub">
+    <section id="sectionMatchHub" class="match-hub">
       <div class="hub-heading"><h2 id="hubMainHeading">Dự đoán trận đấu</h2><div class="pitch-mark" aria-hidden="true"><b></b></div></div>
       <div class="picker-row">
         <label>Giải đấu<select id="selectLeagueFilter"></select></label>
@@ -904,52 +970,7 @@
       </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- DEDICATED SECTION: TÌM KIẾM CẦU THỦ TOÀN CẦU (V.LEAGUE & THẾ GIỚI) -->
-    <!-- ===================================================================== -->
-    <section id="playerSearchSection" class="glass-card rounded-2xl p-4 sm:p-6 border border-emerald-500/35 space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/25 shrink-0">
-            <i data-lucide="search" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
-          </div>
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <h2 class="text-sm sm:text-base font-black uppercase tracking-wider text-white">
-                TÌM KIẾM & TRA CỨU CẦU THỦ TOÀN CẦU
-              </h2>
-              <span id="playerSearchCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                V.League & Thế Giới
-              </span>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Tra cứu hồ sơ, ảnh thật, vị trí thi đấu & chỉ số ghi bàn của hàng nghìn cầu thủ (đặc biệt đủ ảnh V.League 1)
-            </p>
-          </div>
-        </div>
 
-        <div class="w-full lg:w-auto flex-1 max-w-md">
-          <input id="globalPlayerSearchInput" type="text" placeholder="Tìm tên cầu thủ, CLB, giải đấu hoặc vị trí (VD: Xuân Son, Quang Hải, Haaland, GK)..." class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-emerald-500/35 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400 shadow-inner" />
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
-          <button type="button" data-psearch="all" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-black bg-emerald-500 text-slate-950 transition">Tất cả cầu thủ</button>
-          <button type="button" data-psearch="vleague" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-bold bg-slate-900 text-amber-300 border border-amber-400/25 hover:text-white transition">🇻🇳 V.League 1</button>
-          <button type="button" data-psearch="market" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-bold bg-slate-900 text-sky-300 border border-sky-400/25 hover:text-white transition">🛒 Chợ chuyển nhượng</button>
-          <button type="button" data-psearch="FW" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Tiền đạo (FW)</button>
-          <button type="button" data-psearch="MF" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Tiền vệ (MF)</button>
-          <button type="button" data-psearch="DF" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Hậu vệ (DF)</button>
-          <button type="button" data-psearch="GK" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Thủ môn (GK)</button>
-        </div>
-        <span id="playerSearchResultMeta" class="text-[11px] text-slate-400 font-semibold"></span>
-      </div>
-
-      <div id="globalPlayerSearchGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-96 overflow-y-auto pr-1">
-        <!-- Populated dynamically by JS -->
-      </div>
-    </section>
 
     <!-- ===================================================================== -->
     <!-- DEDICATED SECTION: ĐUA VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG (GOLDEN BOOT & BALLON D'OR) -->
@@ -1348,19 +1369,224 @@
     </div>
   </div>
 
-  <!-- MODAL: Contract Locked Warning (Bắt buộc hết mùa mới được đổi đội) -->
+  <!-- MODAL: Player Stats & Attributes Detail (Thông số chi tiết cầu thủ) -->
+  <div id="modalPlayerStats" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="glass-card rounded-2xl max-w-lg w-full p-4 sm:p-5 border border-emerald-500/40 shadow-2xl shadow-emerald-500/20 space-y-4 m-auto">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shield" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="font-black text-sm sm:text-base text-white uppercase tracking-wider">HỒ SƠ & THÔNG SỐ CẦU THỦ</h3>
+        </div>
+        <button id="btnClosePlayerStatsModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Player Header Card (FIFA/EA FC Ultimate Team Card Style) -->
+      <div class="p-3.5 rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-emerald-950/40 border border-emerald-400/30 flex items-center gap-4">
+        <!-- Avatar Frame with Real Photo -->
+        <div class="relative shrink-0">
+          <div id="playerStatsAvatarWrap" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-slate-950 border-2 border-emerald-400/60 shadow-xl flex items-center justify-center">
+            <!-- Populated by JS -->
+          </div>
+          <span id="playerStatsOvrPill" class="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-lg text-xs font-black bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow-lg border border-white/40">
+            91 OVR
+          </span>
+        </div>
+
+        <!-- Info Column -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="playerStatsPosBadge" class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-500/25 text-emerald-300 border border-emerald-400/40">
+              ST
+            </span>
+            <span id="playerStatsRoleBadge" class="text-[11px] font-bold text-slate-400">
+              Tiền đạo
+            </span>
+            <span id="playerStatsNationBadge" class="text-xs">
+              🇳🇴
+            </span>
+          </div>
+          <h2 id="playerStatsName" class="font-black text-base sm:text-lg text-white truncate mt-0.5">
+            Erling Haaland
+          </h2>
+          <div class="flex items-center gap-2 mt-1 text-xs text-amber-300 font-semibold truncate">
+            <span id="playerStatsClub">CLB Man City</span>
+            <span class="text-slate-500">•</span>
+            <span id="playerStatsPrice" class="font-mono text-emerald-400">110M €</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Season Performance Stats -->
+      <div class="grid grid-cols-4 gap-2 text-center">
+        <div class="p-2 rounded-xl bg-slate-950/80 border border-white/10">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Bàn thắng</span>
+          <span id="playerStatsGoals" class="font-mono font-black text-sm sm:text-base text-amber-300">0</span>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/80 border border-white/10">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kiến tạo</span>
+          <span id="playerStatsAssists" class="font-mono font-black text-sm sm:text-base text-sky-300">0</span>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/80 border border-white/10">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Số trận</span>
+          <span id="playerStatsMatches" class="font-mono font-black text-sm sm:text-base text-slate-200">0</span>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/80 border border-white/10">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Điểm số</span>
+          <span id="playerStatsRating" class="font-mono font-black text-sm sm:text-base text-emerald-400">7.8</span>
+        </div>
+      </div>
+
+      <!-- Detailed 6 Key Attributes (EA FC Style) -->
+      <div class="space-y-2 pt-1">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+          <span>Chỉ số chuyên môn (Capped 125 OVR):</span>
+          <span id="playerStatsAttrSummary" class="text-[11px] text-emerald-400 font-mono">Đẳng cấp thế giới</span>
+        </h4>
+        <div id="playerStatsAttrGrid" class="grid grid-cols-2 gap-2 text-xs">
+          <!-- Populated dynamically: Pace, Shoot, Pass, Dribble, Defense, Physical -->
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 pt-2 border-t border-white/10">
+        <button id="btnPlayerStatsAction" type="button" class="btn-tap flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-lg transition flex items-center justify-center gap-1.5">
+          <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+          <span id="playerStatsActionText">Chiêu mộ vào đội hình</span>
+        </button>
+        <button id="btnClosePlayerStatsModalBtn" type="button" class="btn-tap py-2.5 px-4 rounded-xl border border-white/20 hover:bg-white/10 text-slate-300 font-bold text-xs transition">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Account & Multi-Device Cloud Sync (Đăng nhập & Giữ tiến độ đa thiết bị) -->
+  <div id="modalAccountSync" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="glass-card rounded-2xl max-w-lg w-full p-4 sm:p-6 border border-sky-400/40 shadow-2xl shadow-sky-500/20 space-y-4 m-auto">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-slate-950 shadow">
+            <i data-lucide="cloud" class="w-5 h-5 stroke-[2.5]"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm sm:text-base text-white">TÀI KHOẢN & ĐỒNG BỘ ĐA THIẾT BỊ</h3>
+            <p class="text-[11px] text-sky-300">Lưu và đồng bộ tiến độ chơi giữa Điện thoại, Máy tính & Tablet</p>
+          </div>
+        </div>
+        <button id="btnCloseAccountSyncModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Current Profile Card -->
+      <div class="p-3.5 rounded-xl bg-slate-950/80 border border-white/10 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400">HLV Trưởng:</span>
+          <span id="syncProfileManagerName" class="font-black text-sm text-amber-300">HLV Trưởng</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">CLB đang dẫn dắt:</span>
+          <span id="syncProfileClubName" class="font-bold text-white">CLB Hà Nội</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Ngân sách hiện có:</span>
+          <span id="syncProfileBudget" class="font-mono font-bold text-emerald-400">150M €</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Thành tích mùa giải:</span>
+          <span id="syncProfileRecord" class="font-mono font-bold text-sky-300">0T - 0H - 0B</span>
+        </div>
+      </div>
+
+      <!-- Cloud Sync PIN Section -->
+      <div class="p-3.5 rounded-xl bg-gradient-to-br from-sky-950/30 to-slate-900 border border-sky-400/30 space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-black text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="key" class="w-4 h-4"></i>
+            <span>Mã Đồng Bộ Đám Mây (Cloud Sync PIN)</span>
+          </label>
+        </div>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+          Nhấn <strong>"Lưu lên Đám Mây"</strong> để tạo hoặc cập nhật mã PIN lưu trữ. Sau đó trên điện thoại chỉ cần nhập mã PIN này là có thể tiếp tục chơi!
+        </p>
+
+        <div class="flex items-center gap-2">
+          <input id="inputSyncCode" type="text" placeholder="Nhập mã Cloud (VD: HLV-9921)" class="uppercase font-mono font-black text-center text-sm px-3 py-2 rounded-xl bg-slate-950 border border-white/20 text-white placeholder-slate-500 flex-1 focus:outline-none focus:border-sky-400" />
+          <button id="btnCloudSave" type="button" class="btn-tap px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1">
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+            <span>Lưu lên Cloud</span>
+          </button>
+          <button id="btnCloudLoad" type="button" class="btn-tap px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1">
+            <i data-lucide="download-cloud" class="w-4 h-4"></i>
+            <span>Tải về</span>
+          </button>
+        </div>
+        <div id="cloudSyncStatusMsg" class="text-[11px] font-semibold text-center text-slate-400 min-h-[18px]"></div>
+      </div>
+
+      <!-- Fast Direct Backup Code (Offline / Direct Copy-Paste) -->
+      <div class="p-3 rounded-xl bg-slate-900/60 border border-white/10 space-y-2">
+        <label class="text-xs font-bold text-slate-300 flex items-center justify-between">
+          <span>Sao lưu nhanh qua Mã trực tiếp (Offline Code):</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <input id="inputFastBackupCode" type="text" readonly placeholder="Mã sao lưu trực tiếp..." class="text-[10px] font-mono px-2.5 py-1.5 rounded-lg bg-slate-950 border border-white/10 text-slate-400 flex-1 truncate select-all" />
+          <button id="btnCopyBackupCode" type="button" class="btn-tap px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Sao chép</span>
+          </button>
+          <button id="btnRestoreFromCode" type="button" class="btn-tap px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Nhập mã</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Confirmation for Switching Clubs (Xác nhận đổi CLB) -->
+  <div id="modalConfirmSwitchTeam" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="glass-card rounded-2xl max-w-md w-full p-5 sm:p-6 border border-amber-400/50 shadow-2xl space-y-4 text-center m-auto">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-3xl shadow-lg">
+        🔄
+      </div>
+      <h3 class="font-black text-lg text-white">XÁC NHẬN CHUYỂN SANG CLB MỚI</h3>
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+        Bạn hiện đang dẫn dắt <strong id="switchOldClubName" class="text-amber-300">CLB cũ</strong>.<br>
+        Bạn có chắc chắn muốn rời đi để ký hợp đồng dẫn dắt <strong id="switchNewClubName" class="text-emerald-300">CLB mới</strong> không?
+      </p>
+      <div class="p-3 rounded-xl bg-slate-950/80 border border-white/10 text-xs text-slate-400 text-left space-y-1">
+        <div>• Ngân sách CLB và hồ sơ HLV sẽ được chuyển sang CLB mới.</div>
+        <div>• Đội hình chính sẽ được tự động xếp lại theo các ngôi sao của CLB mới.</div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button id="btnCancelSwitchTeam" type="button" class="btn-tap py-2.5 px-4 rounded-xl border border-white/20 hover:bg-white/10 text-slate-300 text-xs font-bold transition">
+          Giữ CLB hiện tại
+        </button>
+        <button id="btnConfirmSwitchTeam" type="button" class="btn-tap py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 text-xs font-black shadow-lg transition">
+          Xác nhận đổi CLB
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Contract Locked Warning -->
   <div id="modalContractLocked" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="glass-card rounded-2xl max-w-md w-full p-5 border border-rose-500/50 shadow-2xl shadow-rose-500/20 space-y-4 m-auto text-center">
-      <div class="w-14 h-14 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center mx-auto text-rose-400 shadow-lg">
-        <i data-lucide="lock" class="w-7 h-7 stroke-[2.5]"></i>
+    <div class="glass-card rounded-2xl max-w-md w-full p-5 border border-amber-400/50 shadow-2xl shadow-amber-500/20 space-y-4 m-auto text-center">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center mx-auto text-amber-400 shadow-lg">
+        <i data-lucide="help-circle" class="w-7 h-7 stroke-[2.5]"></i>
       </div>
       <div>
-        <h3 class="font-black text-lg text-white">HỢP ĐỒNG HLV ĐANG CÓ HIỆU LỰC!</h3>
-        <p class="text-xs text-rose-300 font-semibold mt-1">Quy định giải đấu và hợp đồng thể thao (Soccer Manager)</p>
+        <h3 class="font-black text-lg text-white">BẠN CÓ MUỐN CHUYỂN CLB KHÔNG?</h3>
+        <p class="text-xs text-amber-300 font-semibold mt-1">Quản lý sự nghiệp Huấn luyện viên</p>
       </div>
       <div class="p-3.5 rounded-xl bg-slate-900/90 border border-white/10 text-left text-xs text-slate-300 space-y-2">
         <div class="flex items-center justify-between pb-2 border-b border-white/5">
-          <span class="text-slate-400">Đội bóng bạn đang dẫn dắt:</span>
+          <span class="text-slate-400">Đội bóng hiện tại:</span>
           <span id="lockedModalTeamName" class="font-bold text-amber-300">CLB Hà Nội</span>
         </div>
         <div class="flex items-center justify-between pb-2 border-b border-white/5">
@@ -1373,11 +1599,16 @@
         </div>
       </div>
       <p id="lockedModalMessage" class="text-xs text-slate-300 leading-relaxed">
-        Theo quy chế HLV, bạn <strong>không được phép chuyển sang đội bóng khác giữa mùa giải</strong>. Hãy hoàn thành trọn vẹn tất cả các trận đấu của mùa giải này để thanh lý hợp đồng hoặc nhận lời mời từ CLB mới!
+        Bạn có muốn chấm dứt hợp đồng hiện tại để chuyển sang dẫn dắt đội bóng mới không?
       </p>
-      <button id="btnCloseContractLockedModal" type="button" class="btn-tap w-full py-3 rounded-xl font-black text-sm bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-lg shadow-rose-500/25">
-        ĐÃ HIỂU, TIẾP TỤC DẪN DẮT ĐỘI
-      </button>
+      <div class="grid grid-cols-2 gap-2 pt-2">
+        <button id="btnCloseContractLockedModal" type="button" class="btn-tap py-2.5 px-3 rounded-xl border border-white/20 hover:bg-white/10 text-slate-300 font-bold text-xs transition">
+          Ở lại CLB hiện tại
+        </button>
+        <button id="btnSwitchTeamFromModal" type="button" class="btn-tap py-2.5 px-3 rounded-xl font-black text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow-lg">
+          Xác nhận đổi sang CLB mới
+        </button>
+      </div>
     </div>
   </div>
 

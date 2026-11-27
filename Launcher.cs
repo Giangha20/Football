@@ -13,8 +13,6 @@ namespace FootballApp
         private static HttpListener _listener;
         private static string _appDir;
         private static int _port = 8899;
-        private static DateTime _lastRequestTime = DateTime.UtcNow;
-        private static bool _hasReceivedRequests = false;
         private static volatile bool _isRunning = true;
 
         [STAThread]
@@ -24,7 +22,16 @@ namespace FootballApp
             {
                 _appDir = AppDomain.CurrentDomain.BaseDirectory;
 
-                // Pick an available port (try 8899, fallback to free port)
+                // Check if port 8899 is already running our server
+                bool isPort8899InUse = IsPortOccupied(8899);
+                if (isPort8899InUse)
+                {
+                    // Server is already running in background, just open the window
+                    string existingUrl = "http://127.0.0.1:8899/index.html";
+                    LaunchAppWindow(existingUrl);
+                    return;
+                }
+
                 _port = GetAvailablePort(8899);
 
                 _listener = new HttpListener();
@@ -43,14 +50,11 @@ namespace FootballApp
                 // Launch Edge or Chrome in isolated App Mode
                 Process browserProc = LaunchAppWindow(targetUrl);
 
-                DateTime startTime = DateTime.UtcNow;
-
-                // Keep-alive loop: stays alive while browser is open or heartbeat is active
+                // Keep server alive reliably while the user is playing
                 while (_isRunning)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
 
-                    // If browser process has a valid handle and is alive, keep running
                     if (browserProc != null)
                     {
                         try
@@ -63,25 +67,7 @@ namespace FootballApp
                         catch { }
                     }
 
-                    // If browserProc exited early (Chromium process handoff):
-                    // Keep server alive using heartbeat and activity tracking
-                    double elapsedSinceStart = (DateTime.UtcNow - startTime).TotalSeconds;
-                    if (!_hasReceivedRequests)
-                    {
-                        // Give user at least 25 seconds to start loading
-                        if (elapsedSinceStart < 25)
-                            continue;
-                    }
-                    else
-                    {
-                        // Window was active: if no heartbeat received for > 7 seconds, user closed the window
-                        double idleSecs = (DateTime.UtcNow - _lastRequestTime).TotalSeconds;
-                        if (idleSecs < 7)
-                            continue;
-                    }
-
-                    // Window closed -> Exit
-                    break;
+                    // Keep-alive loop: stays active without premature 7-second termination
                 }
             }
             catch (Exception ex)
@@ -100,6 +86,21 @@ namespace FootballApp
                     if (_listener != null) _listener.Stop();
                 }
                 catch { }
+            }
+        }
+
+        private static bool IsPortOccupied(int port)
+        {
+            try
+            {
+                var test = new TcpListener(IPAddress.Loopback, port);
+                test.Start();
+                test.Stop();
+                return false;
+            }
+            catch
+            {
+                return true;
             }
         }
 
@@ -174,9 +175,6 @@ namespace FootballApp
             var ctx = (HttpListenerContext)state;
             try
             {
-                _hasReceivedRequests = true;
-                _lastRequestTime = DateTime.UtcNow;
-
                 string rawUrl = ctx.Request.Url.AbsolutePath.TrimStart('/');
                 if (string.IsNullOrEmpty(rawUrl) || rawUrl == "/")
                 {

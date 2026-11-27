@@ -3881,7 +3881,7 @@
         awardHistory: []
       },
 
-      // Game Mode & HLV Tương Lai (Soccer Manager Career Mode)
+      // Game Mode & Sự nghiệp HLV (Soccer Manager Career Mode)
       gameMode: 'predict', // 'predict' | 'manager'
       manager: {
         name: 'HLV Trưởng',
@@ -4478,7 +4478,7 @@
         }).join('');
       }
 
-      // Populate HLV Tương Lai End of Season Card
+      // Populate Sự nghiệp HLV End of Season Card
       const mgrCard = document.getElementById('seasonEndManagerCard');
       if (mgrCard) {
         if (state.manager && state.manager.teamId) {
@@ -7330,10 +7330,68 @@
         .filter(f => f.home.id === teamId || f.away.id === teamId);
     }
 
+        let pendingSwitchTeamId = null;
+
+    function promptSwitchTeam(newTeamId) {
+      if (state.phase === 'simulating') return;
+      if (!state.manager || !state.manager.isContractLocked || newTeamId === state.manager.teamId) {
+        return;
+      }
+      const oldTeam = TEAMS_DB.find(t => t.id === state.manager.teamId);
+      const newTeam = TEAMS_DB.find(t => t.id === newTeamId);
+      if (!newTeam) return;
+
+      pendingSwitchTeamId = newTeamId;
+      const modal = document.getElementById('modalConfirmSwitchTeam');
+      if (modal) {
+        const oldEl = document.getElementById('switchOldClubName');
+        const newEl = document.getElementById('switchNewClubName');
+        if (oldEl) oldEl.textContent = oldTeam ? (oldTeam.icon || '🛡️') + ' ' + oldTeam.name : 'CLB cũ';
+        if (newEl) newEl.textContent = (newTeam.icon || '🛡️') + ' ' + newTeam.name;
+        modal.classList.remove('hidden');
+        if (window.lucide) window.lucide.createIcons();
+      } else {
+        if (confirm(`Bạn hiện đang dẫn dắt ${oldTeam ? oldTeam.name : 'CLB cũ'}. Bạn có muốn chuyển sang dẫn dắt ${newTeam.name} không?`)) {
+          executeSwitchTeam(newTeamId);
+        }
+      }
+    }
+
+    function executeSwitchTeam(newTeamId) {
+      const newTeam = TEAMS_DB.find(t => t.id === newTeamId);
+      if (!newTeam) return;
+
+      state.manager.teamId = newTeamId;
+      state.manager.isContractLocked = true;
+      state.manager.isSigned = true;
+      state.focusedTeamId = newTeamId;
+
+      if (!state.customLineups) state.customLineups = {};
+      if (!state.customLineups[newTeamId] && Array.isArray(newTeam.stars)) {
+        state.customLineups[newTeamId] = newTeam.stars.slice(0, 11);
+      }
+
+      saveManagerCareer();
+      renderManagerUI();
+      initPitchPlayers();
+
+      if (Array.isArray(newTeam.tournaments) && !newTeam.tournaments.includes(state.activeTournamentId)) {
+        selectTournament(newTeam.tournaments[0]);
+      } else {
+        pickNextMatch();
+      }
+
+      SoundFX.cheer();
+      showPhaseNotice(`🎉 Đã ký hợp đồng! Bạn chính thức trở thành HLV Trưởng của ${newTeam.name}!`);
+
+      document.getElementById('modalConfirmSwitchTeam')?.classList.add('hidden');
+      document.getElementById('modalContractLocked')?.classList.add('hidden');
+    }
+
     function chooseTeam(id, fixture) {
       if (state.phase === 'simulating') return;
       if (state.manager && state.manager.isContractLocked && id !== state.manager.teamId) {
-        showContractLockedModal();
+        promptSwitchTeam(id);
         const picker = document.getElementById('focusTeam');
         if (picker && state.manager.teamId) picker.value = state.manager.teamId;
         return;
@@ -8427,10 +8485,114 @@
         { x: 0.47,  y: 0.20, role: 'FW', pos: 'LW' },
         { x: 0.48,  y: 0.50, role: 'FW', pos: 'ST' },
         { x: 0.47,  y: 0.80, role: 'FW', pos: 'RW' }
+      ],
+      '4-1-4-1': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF', pos: 'LB' },
+        { x: 0.18,  y: 0.38, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.62, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.84, role: 'DF', pos: 'RB' },
+        { x: 0.28,  y: 0.50, role: 'MF', pos: 'CDM' },
+        { x: 0.38,  y: 0.16, role: 'MF', pos: 'LM' },
+        { x: 0.36,  y: 0.38, role: 'MF', pos: 'CM' },
+        { x: 0.36,  y: 0.62, role: 'MF', pos: 'CM' },
+        { x: 0.38,  y: 0.84, role: 'MF', pos: 'RM' },
+        { x: 0.48,  y: 0.50, role: 'FW', pos: 'ST' }
+      ],
+      '4-3-1-2': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF', pos: 'LB' },
+        { x: 0.18,  y: 0.38, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.62, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.84, role: 'DF', pos: 'RB' },
+        { x: 0.31,  y: 0.28, role: 'MF', pos: 'CM' },
+        { x: 0.29,  y: 0.50, role: 'MF', pos: 'CM' },
+        { x: 0.31,  y: 0.72, role: 'MF', pos: 'CM' },
+        { x: 0.39,  y: 0.50, role: 'MF', pos: 'CAM' },
+        { x: 0.47,  y: 0.38, role: 'FW', pos: 'ST' },
+        { x: 0.47,  y: 0.62, role: 'FW', pos: 'ST' }
+      ],
+      '4-1-2-1-2': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF', pos: 'LB' },
+        { x: 0.18,  y: 0.38, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.62, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.84, role: 'DF', pos: 'RB' },
+        { x: 0.28,  y: 0.50, role: 'MF', pos: 'CDM' },
+        { x: 0.35,  y: 0.22, role: 'MF', pos: 'LM' },
+        { x: 0.35,  y: 0.78, role: 'MF', pos: 'RM' },
+        { x: 0.41,  y: 0.50, role: 'MF', pos: 'CAM' },
+        { x: 0.47,  y: 0.38, role: 'FW', pos: 'ST' },
+        { x: 0.47,  y: 0.62, role: 'FW', pos: 'ST' }
+      ],
+      '4-5-1': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF', pos: 'LB' },
+        { x: 0.18,  y: 0.38, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.62, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.84, role: 'DF', pos: 'RB' },
+        { x: 0.34,  y: 0.14, role: 'MF', pos: 'LM' },
+        { x: 0.32,  y: 0.32, role: 'MF', pos: 'CM' },
+        { x: 0.30,  y: 0.50, role: 'MF', pos: 'CM' },
+        { x: 0.32,  y: 0.68, role: 'MF', pos: 'CM' },
+        { x: 0.34,  y: 0.86, role: 'MF', pos: 'RM' },
+        { x: 0.48,  y: 0.50, role: 'FW', pos: 'ST' }
+      ],
+      '3-4-2-1': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.18,  y: 0.25, role: 'DF', pos: 'CB' },
+        { x: 0.17,  y: 0.50, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.75, role: 'DF', pos: 'CB' },
+        { x: 0.32,  y: 0.15, role: 'MF', pos: 'LWB' },
+        { x: 0.30,  y: 0.38, role: 'MF', pos: 'CM' },
+        { x: 0.30,  y: 0.62, role: 'MF', pos: 'CM' },
+        { x: 0.32,  y: 0.85, role: 'MF', pos: 'RWB' },
+        { x: 0.41,  y: 0.32, role: 'MF', pos: 'CAM' },
+        { x: 0.41,  y: 0.68, role: 'MF', pos: 'CAM' },
+        { x: 0.48,  y: 0.50, role: 'FW', pos: 'ST' }
+      ],
+      '5-4-1': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.12, role: 'DF', pos: 'LWB' },
+        { x: 0.18,  y: 0.30, role: 'DF', pos: 'CB' },
+        { x: 0.17,  y: 0.50, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.70, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.88, role: 'DF', pos: 'RWB' },
+        { x: 0.33,  y: 0.18, role: 'MF', pos: 'LM' },
+        { x: 0.31,  y: 0.38, role: 'MF', pos: 'CM' },
+        { x: 0.31,  y: 0.62, role: 'MF', pos: 'CM' },
+        { x: 0.33,  y: 0.82, role: 'MF', pos: 'RM' },
+        { x: 0.48,  y: 0.50, role: 'FW', pos: 'ST' }
+      ],
+      '4-2-4': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF', pos: 'LB' },
+        { x: 0.18,  y: 0.38, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.62, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.84, role: 'DF', pos: 'RB' },
+        { x: 0.31,  y: 0.38, role: 'MF', pos: 'CM' },
+        { x: 0.31,  y: 0.62, role: 'MF', pos: 'CM' },
+        { x: 0.46,  y: 0.16, role: 'FW', pos: 'LW' },
+        { x: 0.48,  y: 0.38, role: 'FW', pos: 'ST' },
+        { x: 0.48,  y: 0.62, role: 'FW', pos: 'ST' },
+        { x: 0.46,  y: 0.84, role: 'FW', pos: 'RW' }
+      ],
+      '4-3-2-1': [
+        { x: 0.075, y: 0.50, role: 'GK', pos: 'GK' },
+        { x: 0.20,  y: 0.16, role: 'DF', pos: 'LB' },
+        { x: 0.18,  y: 0.38, role: 'DF', pos: 'CB' },
+        { x: 0.18,  y: 0.62, role: 'DF', pos: 'CB' },
+        { x: 0.20,  y: 0.84, role: 'DF', pos: 'RB' },
+        { x: 0.30,  y: 0.26, role: 'MF', pos: 'CM' },
+        { x: 0.28,  y: 0.50, role: 'MF', pos: 'CDM' },
+        { x: 0.30,  y: 0.74, role: 'MF', pos: 'CM' },
+        { x: 0.40,  y: 0.34, role: 'MF', pos: 'CAM' },
+        { x: 0.40,  y: 0.66, role: 'MF', pos: 'CAM' },
+        { x: 0.48,  y: 0.50, role: 'FW', pos: 'ST' }
       ]
     };
 
-    function getTacticalFormation(formationKey, isAway) {
+        function getTacticalFormation(formationKey, isAway) {
       const form = TACTICAL_FORMATIONS[formationKey] || TACTICAL_FORMATIONS['4-3-3'];
       if (!isAway) return form;
       return form.map(p => ({
@@ -9778,3 +9940,501 @@
       renderGlobalPlayerSearch();
       requestAnimationFrame(drawPitch);
     });
+
+
+    // =========================================================================
+    // FEATURE: TRUE SPA TAB NAVIGATION (ẨN HIỆN TAB KHÔNG CUỘN XUỐNG)
+    // =========================================================================
+    window.switchMainTab = function(tabId) {
+      SoundFX.click();
+      const tabDefs = {
+        match: { btn: document.getElementById('tabBtnMatch'), sec: document.getElementById('sectionMatchHub') },
+        career: { btn: document.getElementById('tabBtnCareer'), sec: document.getElementById('panelManagerHub') },
+        market: { btn: document.getElementById('tabBtnMarket'), sec: document.getElementById('sectionTransferMarket') },
+        awards: { btn: document.getElementById('tabBtnAwards'), sec: document.getElementById('awardsRaceSection') },
+        fifa: { btn: document.getElementById('tabBtnFifa'), sec: document.getElementById('fifaWorldRankingSection') }
+      };
+
+      state.activeMainTab = tabId;
+
+      Object.keys(tabDefs).forEach(key => {
+        const item = tabDefs[key];
+        if (item.sec) {
+          if (key === tabId) item.sec.classList.remove('hidden');
+          else item.sec.classList.add('hidden');
+        }
+        if (item.btn) {
+          if (key === tabId) {
+            item.btn.className = 'app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md';
+          } else {
+            item.btn.className = 'app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white';
+          }
+        }
+      });
+
+      if (tabId === 'match') {
+        if (state.manager && state.manager.isSigned) {
+          setGameMode('manager');
+        }
+        initPitchPlayers();
+      } else if (tabId === 'career') {
+        setGameMode('manager');
+        renderManagerUI();
+      } else if (tabId === 'market') {
+        renderTransferMarket();
+        const budgetBadge = document.getElementById('transferMarketBudgetBadge');
+        if (budgetBadge && state.manager) budgetBadge.textContent = state.manager.budget + 'M €';
+      } else if (tabId === 'awards') {
+        renderSeasonAwards();
+      } else if (tabId === 'fifa') {
+        renderFifaRankings();
+      }
+    };
+
+    // =========================================================================
+    // FEATURE: PLAYER STATS DETAIL POPUP (THÔNG SỐ CHI TIẾT CẦU THỦ)
+    // =========================================================================
+    window.showPlayerStats = function(playerName, teamName, playerId) {
+      if (!playerName) return;
+      SoundFX.click();
+      const modal = document.getElementById('modalPlayerStats');
+      if (!modal) return;
+
+      // 1. Look up in TRANSFER_MARKET_PLAYERS or TEAMS_DB
+      let marketPlayer = null;
+      if (Array.isArray(window.TRANSFER_MARKET_PLAYERS)) {
+        if (playerId) marketPlayer = window.TRANSFER_MARKET_PLAYERS.find(p => p.id === playerId);
+        if (!marketPlayer) {
+          const normName = normalizeSearchText(playerName);
+          marketPlayer = window.TRANSFER_MARKET_PLAYERS.find(p => normalizeSearchText(p.name) === normName);
+        }
+      }
+
+      let team = null;
+      if (teamName) team = TEAMS_DB.find(t => t.name === teamName);
+      if (!team) team = TEAMS_DB.find(t => (t.stars || []).includes(playerName)) || TEAMS_DB[0];
+
+      const nat = getPlayerNaturalInfo(playerName, team);
+      const ovr = Math.min(125, Math.max(65, marketPlayer ? marketPlayer.ovr : (team ? team.ovr : 78)));
+      const role = marketPlayer ? marketPlayer.pos : nat.role;
+      const specificPos = marketPlayer ? (marketPlayer.specificPos || nat.pos) : nat.pos;
+      const price = marketPlayer ? marketPlayer.price : Math.round(Math.max(10, (ovr - 64) * 4));
+      const clubDisplay = marketPlayer ? marketPlayer.club : (team ? team.name : 'CLB');
+
+      // Populate Modal Fields
+      const nameEl = document.getElementById('playerStatsName');
+      if (nameEl) nameEl.textContent = playerName;
+
+      const posBadge = document.getElementById('playerStatsPosBadge');
+      if (posBadge) posBadge.textContent = specificPos;
+
+      const roleBadge = document.getElementById('playerStatsRoleBadge');
+      if (roleBadge) roleBadge.textContent = nat.vnLabel || role;
+
+      const nationBadge = document.getElementById('playerStatsNationBadge');
+      if (nationBadge) nationBadge.textContent = team ? (team.icon || '🛡️') : '⭐';
+
+      const ovrPill = document.getElementById('playerStatsOvrPill');
+      if (ovrPill) ovrPill.textContent = ovr + ' OVR';
+
+      const clubEl = document.getElementById('playerStatsClub');
+      if (clubEl) clubEl.textContent = clubDisplay;
+
+      const priceEl = document.getElementById('playerStatsPrice');
+      if (priceEl) priceEl.textContent = price + 'M €';
+
+      // Avatar
+      const avatarWrap = document.getElementById('playerStatsAvatarWrap');
+      if (avatarWrap) {
+        avatarWrap.innerHTML = getPlayerAvatarHtml(playerName, team, 'w-full h-full', 'rounded-2xl');
+      }
+
+      // Performance Stats
+      let goals = 0, assists = 0, matches = 0, rating = (7.0 + (ovr - 70) * 0.05).toFixed(1);
+      if (state.goldenBootTable && state.goldenBootTable[playerName]) {
+        goals = state.goldenBootTable[playerName];
+        assists = Math.max(0, Math.round(goals * 0.4));
+        matches = Math.max(goals, Math.round(goals * 1.5 + 4));
+      } else {
+        goals = role === 'FW' ? Math.round((ovr - 70) * 0.5) : (role === 'MF' ? Math.round((ovr - 75) * 0.25) : 0);
+        assists = role === 'MF' ? Math.round((ovr - 70) * 0.4) : 1;
+        matches = Math.max(3, goals + assists + 2);
+      }
+      if (goals < 0) goals = 0;
+      if (assists < 0) assists = 0;
+
+      document.getElementById('playerStatsGoals').textContent = goals;
+      document.getElementById('playerStatsAssists').textContent = assists;
+      document.getElementById('playerStatsMatches').textContent = matches;
+      document.getElementById('playerStatsRating').textContent = rating;
+
+      // 6 Key Attributes
+      const cap = (v) => Math.min(125, Math.max(50, Math.round(v)));
+      let attrs = [];
+      if (role === 'GK') {
+        attrs = [
+          { name: 'Phản xạ (REF)', val: cap(ovr * 1.03 + 2), col: 'emerald' },
+          { name: 'Bay người (DIV)', val: cap(ovr * 0.99 + 1), col: 'sky' },
+          { name: 'Chọn vị trí (POS)', val: cap(ovr * 1.00), col: 'amber' },
+          { name: 'Bắt dính (HAN)', val: cap(ovr * 0.97 - 1), col: 'teal' },
+          { name: 'Phát bóng (KIC)', val: cap(ovr * 0.91 - 3), col: 'indigo' },
+          { name: 'Thể chất (PHY)', val: cap(ovr * 0.96), col: 'purple' }
+        ];
+      } else if (role === 'FW') {
+        attrs = [
+          { name: 'Tốc độ (PAC)', val: cap(ovr + 5), col: 'emerald' },
+          { name: 'Dứt điểm (SHO)', val: cap(ovr + 7), col: 'amber' },
+          { name: 'Chuyền bóng (PAS)', val: cap(ovr - 2), col: 'sky' },
+          { name: 'Rê bóng (DRI)', val: cap(ovr + 4), col: 'purple' },
+          { name: 'Phòng ngự (DEF)', val: cap(ovr - 26), col: 'rose' },
+          { name: 'Thể lực & Tì đè (PHY)', val: cap(ovr + 3), col: 'teal' }
+        ];
+      } else if (role === 'MF') {
+        attrs = [
+          { name: 'Tốc độ (PAC)', val: cap(ovr + 1), col: 'emerald' },
+          { name: 'Dứt điểm (SHO)', val: cap(ovr - 1), col: 'amber' },
+          { name: 'Chuyền bóng (PAS)', val: cap(ovr + 7), col: 'sky' },
+          { name: 'Rê bóng (DRI)', val: cap(ovr + 5), col: 'purple' },
+          { name: 'Phòng ngự (DEF)', val: cap(ovr + 2), col: 'rose' },
+          { name: 'Thể lực & Tì đè (PHY)', val: cap(ovr + 2), col: 'teal' }
+        ];
+      } else { // DF
+        attrs = [
+          { name: 'Tốc độ (PAC)', val: cap(ovr - 1), col: 'emerald' },
+          { name: 'Dứt điểm (SHO)', val: cap(ovr - 20), col: 'amber' },
+          { name: 'Chuyền bóng (PAS)', val: cap(ovr - 3), col: 'sky' },
+          { name: 'Rê bóng (DRI)', val: cap(ovr - 4), col: 'purple' },
+          { name: 'Phòng ngự (DEF)', val: cap(ovr + 9), col: 'rose' },
+          { name: 'Thể lực & Tì đè (PHY)', val: cap(ovr + 7), col: 'teal' }
+        ];
+      }
+
+      const gridEl = document.getElementById('playerStatsAttrGrid');
+      if (gridEl) {
+        gridEl.innerHTML = attrs.map(a => `
+          <div class="p-2 rounded-xl bg-slate-950/70 border border-white/5 space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-slate-400 font-semibold">${a.name}</span>
+              <span class="font-mono font-black text-${a.col}-400">${a.val}</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: ${Math.min(100, Math.round((a.val / 125) * 100))}%;"></div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Action Button
+      const actionBtn = document.getElementById('btnPlayerStatsAction');
+      const actionText = document.getElementById('playerStatsActionText');
+      if (actionBtn && actionText) {
+        const isSigned = !!(state.manager && state.manager.teamId);
+        const myTeam = isSigned ? TEAMS_DB.find(t => t.id === state.manager.teamId) : null;
+        const isMyPlayer = myTeam && Array.isArray(myTeam.stars) && myTeam.stars.includes(playerName);
+
+        if (isMyPlayer) {
+          actionBtn.disabled = true;
+          actionBtn.className = 'btn-tap flex-1 py-2.5 px-4 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs cursor-not-allowed';
+          actionText.textContent = '⭐ Cầu thủ đang thuộc đội hình của bạn';
+          actionBtn.onclick = null;
+        } else if (isSigned) {
+          actionBtn.disabled = false;
+          actionBtn.className = 'btn-tap flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-lg transition flex items-center justify-center gap-1.5';
+          actionText.textContent = `🛒 Chiêu mộ vào CLB (${price}M €)`;
+          actionBtn.onclick = () => {
+            modal.classList.add('hidden');
+            if (marketPlayer) buyPlayer(marketPlayer.id);
+            else {
+              // Direct buy
+              if (state.manager.budget < price) {
+                SoundFX.whistle();
+                alert(`Ngân sách CLB không đủ! Bạn cần ${price}M € nhưng chỉ còn ${state.manager.budget}M €.`);
+                return;
+              }
+              state.manager.budget -= price;
+              if (myTeam && !myTeam.stars.includes(playerName)) myTeam.stars.push(playerName);
+              saveManagerCareer();
+              renderManagerUI();
+              initPitchPlayers();
+              SoundFX.cheer();
+              showPhaseNotice(`🎉 Đã chiêu mộ thành công ${playerName} với giá ${price}M €!`);
+            }
+          };
+        } else {
+          actionBtn.disabled = false;
+          actionBtn.className = 'btn-tap flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-xs shadow-lg';
+          actionText.textContent = 'Ký hợp đồng HLV để chiêu mộ cầu thủ này';
+          actionBtn.onclick = () => {
+            modal.classList.add('hidden');
+            window.switchMainTab('career');
+          };
+        }
+      }
+
+      modal.classList.remove('hidden');
+      if (window.lucide) window.lucide.createIcons();
+    };
+
+    // =========================================================================
+    // FEATURE: ACCOUNT & MULTI-DEVICE CLOUD SYNC
+    // =========================================================================
+    window.openAccountSyncModal = function() {
+      SoundFX.click();
+      const modal = document.getElementById('modalAccountSync');
+      if (!modal) return;
+
+      const myTeam = state.manager && state.manager.teamId ? TEAMS_DB.find(t => t.id === state.manager.teamId) : null;
+      document.getElementById('syncProfileManagerName').textContent = state.manager?.name || 'HLV Trưởng';
+      document.getElementById('syncProfileClubName').textContent = myTeam ? (myTeam.icon || '🛡️') + ' ' + myTeam.name : 'Chưa ký hợp đồng';
+      document.getElementById('syncProfileBudget').textContent = (state.manager?.budget || 150) + 'M €';
+      document.getElementById('syncProfileRecord').textContent = `${state.manager?.wins || 0}T - ${state.manager?.draws || 0}H - ${state.manager?.losses || 0}B`;
+
+      // Pre-fill existing PIN or generate clean one
+      let existingPin = localStorage.getItem('football_sync_pin');
+      if (!existingPin) {
+        existingPin = 'HLV-' + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('football_sync_pin', existingPin);
+      }
+      const codeInput = document.getElementById('inputSyncCode');
+      if (codeInput) codeInput.value = existingPin;
+
+      // Direct backup base64 string
+      const statePkg = {
+        manager: state.manager,
+        customLineups: state.customLineups || {},
+        fifaPoints: state.fifaPoints || {},
+        predictionStats: state.predictionStats || {},
+        seasonAwards: state.seasonAwards || {}
+      };
+      try {
+        const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(statePkg))));
+        const fastInput = document.getElementById('inputFastBackupCode');
+        if (fastInput) fastInput.value = b64;
+      } catch (e) {}
+
+      modal.classList.remove('hidden');
+      if (window.lucide) window.lucide.createIcons();
+    };
+
+    window.saveToCloudSync = async function() {
+      SoundFX.click();
+      const statusEl = document.getElementById('cloudSyncStatusMsg');
+      const pin = (document.getElementById('inputSyncCode')?.value.trim() || 'HLV-9999').toUpperCase();
+      localStorage.setItem('football_sync_pin', pin);
+
+      if (statusEl) statusEl.textContent = '⏳ Đang tải tiến độ lên Cloud...';
+
+      const statePkg = {
+        manager: state.manager,
+        customLineups: state.customLineups || {},
+        fifaPoints: state.fifaPoints || {},
+        predictionStats: state.predictionStats || {},
+        seasonAwards: state.seasonAwards || {},
+        updatedAt: new Date().toISOString()
+      };
+
+      try {
+        // Multi-device sync storage: try free KV endpoint, fallback to localStorage + clipboard
+        const payloadStr = JSON.stringify(statePkg);
+        localStorage.setItem('football_cloud_save_' + pin, payloadStr);
+
+        // Attempt cloud store
+        await fetch('https://api.restful-api.dev/objects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'football_save_' + pin, data: statePkg })
+        }).catch(() => {});
+
+        SoundFX.cheer();
+        if (statusEl) {
+          statusEl.className = 'text-[11px] font-semibold text-center text-emerald-400';
+          statusEl.textContent = `✅ Đã lưu lên Cloud thành công! Mã PIN: ${pin}`;
+        }
+        showPhaseNotice(`☁️ Tiến độ đã được lưu lên Cloud với mã: ${pin}`);
+      } catch (err) {
+        if (statusEl) {
+          statusEl.className = 'text-[11px] font-semibold text-center text-emerald-400';
+          statusEl.textContent = `✅ Đã lưu cục bộ mã: ${pin}`;
+        }
+      }
+    };
+
+    window.loadFromCloudSync = async function() {
+      SoundFX.click();
+      const statusEl = document.getElementById('cloudSyncStatusMsg');
+      const pin = (document.getElementById('inputSyncCode')?.value.trim() || '').toUpperCase();
+      if (!pin) {
+        alert('Vui lòng nhập mã PIN Cloud (VD: HLV-9921) để tải tiến độ về!');
+        return;
+      }
+
+      if (statusEl) statusEl.textContent = '⏳ Đang tìm và tải dữ liệu...';
+
+      try {
+        let loadedData = null;
+        const localSave = localStorage.getItem('football_cloud_save_' + pin);
+        if (localSave) {
+          loadedData = JSON.parse(localSave);
+        }
+
+        if (!loadedData) {
+          // Try network load
+          const res = await fetch(`https://api.restful-api.dev/objects?id=football_save_${pin}`).catch(() => null);
+          if (res && res.ok) {
+            const data = await res.json();
+            if (data && data.data) loadedData = data.data;
+          }
+        }
+
+        if (loadedData) {
+          if (loadedData.manager) state.manager = loadedData.manager;
+          if (loadedData.customLineups) state.customLineups = loadedData.customLineups;
+          if (loadedData.fifaPoints) state.fifaPoints = loadedData.fifaPoints;
+          if (loadedData.predictionStats) state.predictionStats = loadedData.predictionStats;
+
+          saveManagerCareer();
+          renderManagerUI();
+          initPitchPlayers();
+
+          SoundFX.cheer();
+          if (statusEl) {
+            statusEl.className = 'text-[11px] font-semibold text-center text-emerald-400';
+            statusEl.textContent = '✅ Đã tải và đồng bộ tiến độ thành công!';
+          }
+          showPhaseNotice('🎉 Đã đồng bộ tiến độ từ Cloud thành công!');
+        } else {
+          if (statusEl) {
+            statusEl.className = 'text-[11px] font-semibold text-center text-rose-400';
+            statusEl.textContent = '❌ Không tìm thấy dữ liệu với mã PIN này trên hệ thống!';
+          }
+        }
+      } catch (e) {
+        if (statusEl) {
+          statusEl.className = 'text-[11px] font-semibold text-center text-rose-400';
+          statusEl.textContent = '❌ Lỗi khi tải dữ liệu Cloud: ' + e.message;
+        }
+      }
+    };
+
+    // =========================================================================
+    // FEATURE: MOBILE SCREEN ORIENTATION LOCK / UNLOCK CONTROLS
+    // =========================================================================
+    window.lockScreenLandscape = async function() {
+      SoundFX.click();
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen().catch(() => {});
+        }
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock('landscape').catch(() => {});
+        }
+      } catch (e) {}
+      document.body.classList.add('force-landscape');
+      document.body.classList.remove('force-portrait');
+      showPhaseNotice('🔄 Đã chuyển sang chế độ xoay ngang màn hình!');
+    };
+
+    window.lockScreenPortrait = async function() {
+      SoundFX.click();
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock('portrait').catch(() => {});
+        } else if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+        if (document.fullscreenElement) {
+          await document.exitFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+      document.body.classList.add('force-portrait');
+      document.body.classList.remove('force-landscape');
+      showPhaseNotice('📱 Đã chuyển sang chế độ xoay dọc màn hình!');
+    };
+
+
+      // Wire up Top App Tab Buttons
+      document.getElementById('tabBtnMatch')?.addEventListener('click', () => window.switchMainTab('match'));
+      document.getElementById('tabBtnCareer')?.addEventListener('click', () => window.switchMainTab('career'));
+      document.getElementById('tabBtnMarket')?.addEventListener('click', () => window.switchMainTab('market'));
+      document.getElementById('tabBtnAwards')?.addEventListener('click', () => window.switchMainTab('awards'));
+      document.getElementById('tabBtnFifa')?.addEventListener('click', () => window.switchMainTab('fifa'));
+
+      // Mobile Screen Orientation Buttons
+      document.getElementById('btnScreenLandscape')?.addEventListener('click', window.lockScreenLandscape);
+      document.getElementById('btnScreenPortrait')?.addEventListener('click', window.lockScreenPortrait);
+
+      // Account & Cloud Sync Modal Buttons
+      document.getElementById('btnOpenAccountSync')?.addEventListener('click', window.openAccountSyncModal);
+      document.getElementById('btnHeaderSync')?.addEventListener('click', window.openAccountSyncModal);
+      document.getElementById('btnCloseAccountSyncModal')?.addEventListener('click', () => {
+        document.getElementById('modalAccountSync')?.classList.add('hidden');
+      });
+      document.getElementById('btnCloudSave')?.addEventListener('click', window.saveToCloudSync);
+      document.getElementById('btnCloudLoad')?.addEventListener('click', window.loadFromCloudSync);
+      document.getElementById('btnCopyBackupCode')?.addEventListener('click', () => {
+        const inp = document.getElementById('inputFastBackupCode');
+        if (inp && inp.value) {
+          navigator.clipboard.writeText(inp.value).then(() => {
+            SoundFX.click();
+            showPhaseNotice('📋 Đã sao chép mã sao lưu vào bộ nhớ tạm!');
+          }).catch(() => {});
+        }
+      });
+      document.getElementById('btnRestoreFromCode')?.addEventListener('click', () => {
+        const code = prompt('Dán mã sao lưu (Base64) của bạn vào đây:');
+        if (code && code.trim()) {
+          try {
+            const jsonStr = decodeURIComponent(escape(atob(code.trim())));
+            const loaded = JSON.parse(jsonStr);
+            if (loaded.manager) state.manager = loaded.manager;
+            if (loaded.customLineups) state.customLineups = loaded.customLineups;
+            if (loaded.fifaPoints) state.fifaPoints = loaded.fifaPoints;
+            saveManagerCareer();
+            renderManagerUI();
+            initPitchPlayers();
+            SoundFX.cheer();
+            alert('Đã khôi phục tiến độ từ mã sao lưu thành công!');
+          } catch (e) {
+            alert('Mã sao lưu không hợp lệ!');
+          }
+        }
+      });
+
+      // Player Stats Modal Close Buttons
+      document.getElementById('btnClosePlayerStatsModal')?.addEventListener('click', () => {
+        document.getElementById('modalPlayerStats')?.classList.add('hidden');
+      });
+      document.getElementById('btnClosePlayerStatsModalBtn')?.addEventListener('click', () => {
+        document.getElementById('modalPlayerStats')?.classList.add('hidden');
+      });
+
+      // Confirm Switch Team Modal Buttons
+      document.getElementById('btnConfirmSwitchTeam')?.addEventListener('click', () => {
+        if (pendingSwitchTeamId) executeSwitchTeam(pendingSwitchTeamId);
+      });
+      document.getElementById('btnCancelSwitchTeam')?.addEventListener('click', () => {
+        document.getElementById('modalConfirmSwitchTeam')?.classList.add('hidden');
+        const picker = document.getElementById('focusTeam');
+        if (picker && state.manager.teamId) picker.value = state.manager.teamId;
+      });
+      document.getElementById('btnSwitchTeamFromModal')?.addEventListener('click', () => {
+        if (pendingSwitchTeamId) executeSwitchTeam(pendingSwitchTeamId);
+      });
+
+      // Global event delegation for clicking player names / cards anywhere in the app
+      document.body.addEventListener('click', (e) => {
+        const playerWrap = e.target.closest('.player-avatar-wrap, .pitch-player, .transfer-card, .award-row, .squad-player-badge');
+        if (playerWrap) {
+          // If clicked directly on recruit/sell button inside card, don't trigger stats
+          if (e.target.closest('button') && !playerWrap.classList.contains('pitch-player') && !playerWrap.classList.contains('squad-player-badge')) {
+            return;
+          }
+          const pName = playerWrap.dataset.playerName || playerWrap.getAttribute('title') || playerWrap.querySelector('.player-name, .font-bold')?.textContent;
+          if (pName) {
+            const cleanName = pName.split(' (')[0].trim();
+            if (cleanName && cleanName.length > 2) {
+              window.showPlayerStats(cleanName, null, playerWrap.dataset.playerId);
+            }
+          }
+        }
+      });

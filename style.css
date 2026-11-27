@@ -989,5 +989,19 @@ button:disabled {cursor:default;}
   }
 }
 
+/* App Tab Buttons & Mobile Orientation */
+.app-tab-btn {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.player-avatar-wrap {
+  cursor: pointer;
+}
+.player-avatar-wrap:hover {
+  transform: scale(1.08);
+  transition: transform 0.15s ease-out;
+}
+
 
 
