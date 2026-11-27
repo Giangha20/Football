@@ -2355,6 +2355,889 @@
     ];
 
     // =========================================================================
+    // 2B. DEFAULT BENCH RESERVES & EXACT PLAYER POSITION OVERRIDES
+    // =========================================================================
+    const CLUB_DEFAULT_BENCH = {
+      // V.League 1 (14 CLB: đủ 1 GK, 1 DF, 1 MF, 1 FW dự bị)
+      nmd:   ['Trần Liêm Điều', 'Nguyễn Văn Vĩ', 'Hồ Khắc Ngọc', 'Trần Văn Đạt'],
+      cahn:  ['Đỗ Sỹ Huy', 'Giáp Tuấn Dương', 'Hoàng Văn Toản', 'Lê Văn Đô'],
+      hnfc:  ['Nguyễn Văn Hoàng', 'Vũ Đình Hai', 'Đậu Văn Toàn', 'Nguyễn Văn Tùng'],
+      vtl:   ['Quàng Thế Tài', 'Nguyễn Minh Tùng', 'Nguyễn Hữu Thắng', 'Trần Danh Trung'],
+      hpfc:  ['Nguyễn Văn Toản', 'Phạm Mạnh Hùng', 'Lê Tiến Anh', 'Nguyễn Xuân Nam'],
+      bbd:   ['Vũ Tuyên Quang', 'Nguyễn Hùng Thiện Đức', 'Nguyễn Hải Huy', 'Hồ Sỹ Giáp'],
+      bth:   ['Nguyễn Thanh Thắng', 'Nguyễn Thanh Long', 'Lê Quốc Phương', 'Võ Nguyên Hoàng'],
+      hagl:  ['Dương Văn Lợi', 'Nguyễn Văn Triệu', 'Võ Đình Lâm', 'Đinh Thanh Bình'],
+      slna:  ['Cao Văn Bình', 'Mai Sỹ Hoàng', 'Ngô Văn Lương', 'Hồ Phúc Tịnh'],
+      hlht:  ['Dương Tùng Lâm', 'Nguyễn Văn Hạnh', 'Bùi Văn Đức', 'Vũ Quang Nam'],
+      qnbd:  ['Trần Đình Minh Hoàng', 'Lê Ngọc Bảo', 'Đỗ Văn Thuận', 'Nguyễn Đức Hoàng Minh'],
+      hcmc:  ['Phạm Hữu Nghĩa', 'Sầm Ngọc Đức', 'Nguyễn Thanh Khôi', 'Nguyễn Ngọc Hậu'],
+      qnam:  ['Tống Đức An', 'Trần Ngọc Hiệp', 'Mạch Ngọc Hà', 'Lê Xuân Tú'],
+      shbdn: ['Đặng Tuấn Hưng', 'Nguyễn Công Nhật', 'Nguyễn Hữu Dũng', 'Nguyễn Minh Quang'],
+      // ĐTQG Việt Nam
+      vie:   ['Trần Trung Kiên', 'Nguyễn Thành Chung', 'Nguyễn Hai Long', 'Đinh Thanh Bình'],
+      // Top CLB Châu Âu
+      rma:   ['Andriy Lunin', 'Éder Militão', 'Aurélien Tchouaméni', 'Endrick'],
+      fcb:   ['Iñaki Peña', 'Ronald Araújo', 'Fermín López', 'Ferran Torres'],
+      atm:   ['Juan Musso', 'Nahuel Molina', 'Pablo Barrios', 'Ángel Correa'],
+      mci:   ['Stefan Ortega', 'John Stones', 'Mateo Kovačić', 'Jack Grealish'],
+      liv:   ['Caoimhín Kelleher', 'Andrew Robertson', 'Curtis Jones', 'Diogo Jota'],
+      ars:   ['Neto', 'Ben White', 'Mikel Merino', 'Gabriel Jesus'],
+      che:   ['Filip Jörgensen', 'Wesley Fofana', 'Roméo Lavia', 'João Félix'],
+      mun:   ['Altay Bayındır', 'Luke Shaw', 'Christian Eriksen', 'Joshua Zirkzee'],
+      tot:   ['Fraser Forster', 'Destiny Udogie', 'Rodrigo Bentancur', 'Richarlison'],
+      bay:   ['Sven Ulreich', 'Hiroki Ito', 'Leon Goretzka', 'Mathys Tel'],
+      lev:   ['Matěj Kovář', 'Nordi Mukiele', 'Aleix García', 'Nathan Tella'],
+      bvb:   ['Alexander Meyer', 'Ramy Bensebaini', 'Felix Nmecha', 'Maximilian Beier'],
+      int:   ['Josep Martínez', 'Stefan de Vrij', 'Davide Frattesi', 'Mehdi Taremi'],
+      acm:   ['Marco Sportiello', 'Strahinja Pavlović', 'Yunus Musah', 'Samuel Chukwueze'],
+      juv:   ['Mattia Perin', 'Danilo', 'Weston McKennie', 'Arkadiusz Milik'],
+      nap:   ['Elia Caprile', 'Juan Jesus', 'Billy Gilmour', 'Giovanni Simeone'],
+      psg:   ['Matvey Safonov', 'Lucas Beraldo', 'Fabián Ruiz', 'Désiré Doué']
+    };
+
+    const PLAYER_POSITION_OVERRIDES = {
+      // V.League Starters & Mixed Positions
+      'trần nguyên mạnh': { role: 'GK', pos: 'GK' },
+      'nguyễn filip': { role: 'GK', pos: 'GK' },
+      'quan văn chuẩn': { role: 'GK', pos: 'GK' },
+      'phạm văn phong': { role: 'GK', pos: 'GK' },
+      'nguyễn đình triệu': { role: 'GK', pos: 'GK' },
+      'trần minh toàn': { role: 'GK', pos: 'GK' },
+      'trịnh xuân hoàng': { role: 'GK', pos: 'GK' },
+      'trần trung kiên': { role: 'GK', pos: 'GK' },
+      'nguyễn văn việt': { role: 'GK', pos: 'GK' },
+      'nguyễn thanh tùng': { role: 'GK', pos: 'GK' },
+      'đặng văn lâm': { role: 'GK', pos: 'GK' },
+      'patrik lê giang': { role: 'GK', pos: 'GK' },
+      'nguyễn văn công': { role: 'GK', pos: 'GK' },
+      'bùi tiến dũng (gk)': { role: 'GK', pos: 'GK' },
+      'lê văn hưng': { role: 'GK', pos: 'GK' },
+      'alisson farias': { role: 'FW', pos: 'LW' },
+      'lâm thuận': { role: 'MF', pos: 'CM' },
+      'lý công hoàng anh': { role: 'MF', pos: 'CM' },
+      'hendrio araújo': { role: 'MF', pos: 'CM' },
+      'nguyễn tuấn anh': { role: 'MF', pos: 'CDM' },
+      'nguyễn quang hải': { role: 'MF', pos: 'CAM' },
+      'nguyễn hoàng đức': { role: 'MF', pos: 'CM' },
+      'đỗ hùng dũng': { role: 'MF', pos: 'CM' },
+      'tô văn vũ': { role: 'DF', pos: 'RB' },
+      'nguyễn xuân son (rafaelson)': { role: 'FW', pos: 'ST' },
+      'nguyễn xuân son': { role: 'FW', pos: 'ST' },
+      'nguyễn tiến linh': { role: 'FW', pos: 'ST' },
+      'phạm tuấn hải': { role: 'FW', pos: 'LW' },
+      'léo artur': { role: 'FW', pos: 'LW' },
+      'alan grafite': { role: 'FW', pos: 'ST' },
+      'rodri': { role: 'MF', pos: 'CDM' },
+      'lisandro martínez': { role: 'DF', pos: 'CB' },
+      'amadou onana': { role: 'MF', pos: 'CDM' },
+      'alisson becker': { role: 'GK', pos: 'GK' },
+      'andré onana': { role: 'GK', pos: 'GK' },
+      'emiliano martínez': { role: 'GK', pos: 'GK' },
+      'thibaut courtois': { role: 'GK', pos: 'GK' },
+      'jan oblak': { role: 'GK', pos: 'GK' },
+      // V.League Bench
+      'trần liêm điều': { role: 'GK', pos: 'GK' },
+      'nguyễn văn vĩ': { role: 'DF', pos: 'LB' },
+      'hồ khắc ngọc': { role: 'MF', pos: 'CM' },
+      'trần văn đạt': { role: 'FW', pos: 'RW' },
+      'đỗ sỹ huy': { role: 'GK', pos: 'GK' },
+      'giáp tuấn dương': { role: 'DF', pos: 'CB' },
+      'hoàng văn toản': { role: 'MF', pos: 'CM' },
+      'lê văn đô': { role: 'FW', pos: 'LW' },
+      'nguyễn văn hoàng': { role: 'GK', pos: 'GK' },
+      'vũ đình hai': { role: 'DF', pos: 'LB' },
+      'đậu văn toàn': { role: 'MF', pos: 'CDM' },
+      'nguyễn văn tùng': { role: 'FW', pos: 'ST' },
+      'quàng thế tài': { role: 'GK', pos: 'GK' },
+      'nguyễn minh tùng': { role: 'DF', pos: 'CB' },
+      'nguyễn hữu thắng': { role: 'MF', pos: 'CAM' },
+      'trần danh trung': { role: 'FW', pos: 'ST' },
+      'nguyễn văn toản': { role: 'GK', pos: 'GK' },
+      'phạm mạnh hùng': { role: 'DF', pos: 'CB' },
+      'lê tiến anh': { role: 'MF', pos: 'CM' },
+      'nguyễn xuân nam': { role: 'FW', pos: 'ST' },
+      'vũ tuyên quang': { role: 'GK', pos: 'GK' },
+      'nguyễn hùng thiện đức': { role: 'DF', pos: 'LB' },
+      'nguyễn hải huy': { role: 'MF', pos: 'CAM' },
+      'hồ sỹ giáp': { role: 'FW', pos: 'ST' },
+      'nguyễn thanh thắng': { role: 'GK', pos: 'GK' },
+      'nguyễn thanh long': { role: 'DF', pos: 'CB' },
+      'lê quốc phương': { role: 'MF', pos: 'LM' },
+      'võ nguyên hoàng': { role: 'FW', pos: 'ST' },
+      'dương văn lợi': { role: 'GK', pos: 'GK' },
+      'nguyễn văn triệu': { role: 'DF', pos: 'CB' },
+      'võ đình lâm': { role: 'MF', pos: 'CM' },
+      'đinh thanh bình': { role: 'FW', pos: 'ST' },
+      'cao văn bình': { role: 'GK', pos: 'GK' },
+      'mai sỹ hoàng': { role: 'DF', pos: 'LB' },
+      'ngô văn lương': { role: 'MF', pos: 'CM' },
+      'hồ phúc tịnh': { role: 'FW', pos: 'ST' },
+      'dương tùng lâm': { role: 'GK', pos: 'GK' },
+      'nguyễn văn hạnh': { role: 'DF', pos: 'CB' },
+      'bùi văn đức': { role: 'MF', pos: 'LM' },
+      'vũ quang nam': { role: 'FW', pos: 'ST' },
+      'trần đình minh hoàng': { role: 'GK', pos: 'GK' },
+      'lê ngọc bảo': { role: 'DF', pos: 'CB' },
+      'đỗ văn thuận': { role: 'MF', pos: 'CDM' },
+      'nguyễn đức hoàng minh': { role: 'FW', pos: 'RW' },
+      'phạm hữu nghĩa': { role: 'GK', pos: 'GK' },
+      'sầm ngọc đức': { role: 'DF', pos: 'LB' },
+      'nguyễn thanh khôi': { role: 'MF', pos: 'CM' },
+      'nguyễn ngọc hậu': { role: 'FW', pos: 'ST' },
+      'tống đức an': { role: 'GK', pos: 'GK' },
+      'trần ngọc hiệp': { role: 'DF', pos: 'CB' },
+      'mạch ngọc hà': { role: 'MF', pos: 'CM' },
+      'lê xuân tú': { role: 'FW', pos: 'LW' },
+      'đặng tuấn hưng': { role: 'GK', pos: 'GK' },
+      'nguyễn công nhật': { role: 'DF', pos: 'LB' },
+      'nguyễn hữu dũng': { role: 'MF', pos: 'CDM' },
+      'nguyễn minh quang': { role: 'FW', pos: 'RW' },
+      // Euro Bench
+      'andriy lunin': { role: 'GK', pos: 'GK' },
+      'éder militão': { role: 'DF', pos: 'CB' },
+      'aurélien tchouaméni': { role: 'MF', pos: 'CDM' },
+      'endrick': { role: 'FW', pos: 'ST' },
+      'iñaki peña': { role: 'GK', pos: 'GK' },
+      'ronald araújo': { role: 'DF', pos: 'CB' },
+      'fermín lópez': { role: 'MF', pos: 'CAM' },
+      'ferran torres': { role: 'FW', pos: 'RW' },
+      'juan musso': { role: 'GK', pos: 'GK' },
+      'nahuel molina': { role: 'DF', pos: 'RB' },
+      'pablo barrios': { role: 'MF', pos: 'CM' },
+      'ángel correa': { role: 'FW', pos: 'ST' },
+      'stefan ortega': { role: 'GK', pos: 'GK' },
+      'john stones': { role: 'DF', pos: 'CB' },
+      'mateo kovačić': { role: 'MF', pos: 'CM' },
+      'jack grealish': { role: 'FW', pos: 'LW' },
+      'caoimhín kelleher': { role: 'GK', pos: 'GK' },
+      'andrew robertson': { role: 'DF', pos: 'LB' },
+      'curtis jones': { role: 'MF', pos: 'CM' },
+      'diogo jota': { role: 'FW', pos: 'ST' },
+      'neto': { role: 'GK', pos: 'GK' },
+      'ben white': { role: 'DF', pos: 'RB' },
+      'mikel merino': { role: 'MF', pos: 'CM' },
+      'gabriel jesus': { role: 'FW', pos: 'ST' },
+      'filip jörgensen': { role: 'GK', pos: 'GK' },
+      'wesley fofana': { role: 'DF', pos: 'CB' },
+      'roméo lavia': { role: 'MF', pos: 'CDM' },
+      'joão félix': { role: 'FW', pos: 'LW' },
+      'altay bayındır': { role: 'GK', pos: 'GK' },
+      'luke shaw': { role: 'DF', pos: 'LB' },
+      'christian eriksen': { role: 'MF', pos: 'CM' },
+      'joshua zirkzee': { role: 'FW', pos: 'ST' },
+      'fraser forster': { role: 'GK', pos: 'GK' },
+      'destiny udogie': { role: 'DF', pos: 'LB' },
+      'rodrigo bentancur': { role: 'MF', pos: 'CM' },
+      'richarlison': { role: 'FW', pos: 'ST' },
+      'sven ulreich': { role: 'GK', pos: 'GK' },
+      'hiroki ito': { role: 'DF', pos: 'CB' },
+      'leon goretzka': { role: 'MF', pos: 'CM' },
+      'mathys tel': { role: 'FW', pos: 'LW' },
+      'matěj kovář': { role: 'GK', pos: 'GK' },
+      'nordi mukiele': { role: 'DF', pos: 'RB' },
+      'aleix garcía': { role: 'MF', pos: 'CM' },
+      'nathan tella': { role: 'FW', pos: 'RW' },
+      'alexander meyer': { role: 'GK', pos: 'GK' },
+      'ramy bensebaini': { role: 'DF', pos: 'LB' },
+      'felix nmecha': { role: 'MF', pos: 'CM' },
+      'maximilian beier': { role: 'FW', pos: 'ST' },
+      'josep martínez': { role: 'GK', pos: 'GK' },
+      'stefan de vrij': { role: 'DF', pos: 'CB' },
+      'davide frattesi': { role: 'MF', pos: 'CM' },
+      'mehdi taremi': { role: 'FW', pos: 'ST' },
+      'marco sportiello': { role: 'GK', pos: 'GK' },
+      'strahinja pavlović': { role: 'DF', pos: 'CB' },
+      'yunus musah': { role: 'MF', pos: 'CM' },
+      'samuel chukwueze': { role: 'FW', pos: 'RW' },
+      'mattia perin': { role: 'GK', pos: 'GK' },
+      'danilo': { role: 'DF', pos: 'CB' },
+      'weston mckennie': { role: 'MF', pos: 'CM' },
+      'arkadiusz milik': { role: 'FW', pos: 'ST' },
+      'elia caprile': { role: 'GK', pos: 'GK' },
+      'juan jesus': { role: 'DF', pos: 'CB' },
+      'billy gilmour': { role: 'MF', pos: 'CM' },
+      'giovanni simeone': { role: 'FW', pos: 'ST' },
+      'matvey safonov': { role: 'GK', pos: 'GK' },
+      'lucas beraldo': { role: 'DF', pos: 'CB' },
+      'fabián ruiz': { role: 'MF', pos: 'CM' },
+      'désiré doué': { role: 'FW', pos: 'RW' }
+    };
+
+    TEAMS_DB.forEach(t => {
+      const extra = CLUB_DEFAULT_BENCH[t.id];
+      if (Array.isArray(extra)) {
+        extra.forEach(p => { if (!t.stars.includes(p)) t.stars.push(p); });
+      }
+      t.baseStars = [...t.stars];
+    });
+
+    // Verified real player portraits (FotMob PNG & official VPF V.League portraits).
+    // Unknown players intentionally fall back to clean initial/role badges instead of broken URLs.
+    const REAL_PLAYER_PHOTOS = {
+  'Kylian Mbappé': 'https://images.fotmob.com/image_resources/playerimages/701154.png',
+  'Vinícius Júnior': 'https://images.fotmob.com/image_resources/playerimages/846033.png',
+  'Son Heung-min': 'https://images.fotmob.com/image_resources/playerimages/1613065.png',
+  'Lamine Yamal': 'https://images.fotmob.com/image_resources/playerimages/1467236.png',
+  'Nguyễn Xuân Son (Rafaelson)': 'https://images.fotmob.com/image_resources/playerimages/690317.png',
+  'Nguyễn Tiến Linh': 'https://images.fotmob.com/image_resources/playerimages/747451.png',
+  'Phạm Tuấn Hải': 'https://images.fotmob.com/image_resources/playerimages/1158847.png',
+  'Rodri (Quả Bóng Vàng)': 'https://images.fotmob.com/image_resources/playerimages/675088.png',
+  'Jude Bellingham': 'https://images.fotmob.com/image_resources/playerimages/1077894.png',
+  'Martin Ødegaard': 'https://images.fotmob.com/image_resources/playerimages/534670.png',
+  'Federico Valverde': 'https://images.fotmob.com/image_resources/playerimages/743533.png',
+  'Nguyễn Quang Hải': 'https://images.fotmob.com/image_resources/playerimages/819727.png',
+  'Nguyễn Hoàng Đức': 'https://images.fotmob.com/image_resources/playerimages/848581.png',
+  'Virgil van Dijk': 'https://images.fotmob.com/image_resources/playerimages/209405.png',
+  'Antonio Rüdiger': 'https://images.fotmob.com/image_resources/playerimages/276738.png',
+  'Trent Alexander-Arnold': 'https://images.fotmob.com/image_resources/playerimages/760712.png',
+  'Bùi Hoàng Việt Anh': 'https://images.fotmob.com/image_resources/playerimages/1138609.png',
+  'Đoàn Văn Hậu': 'https://images.fotmob.com/image_resources/playerimages/848567.png',
+  'Quế Ngọc Hải': 'https://images.fotmob.com/image_resources/playerimages/504588.png',
+  'Thibaut Courtois': 'https://images.fotmob.com/image_resources/playerimages/170323.png',
+  'Alisson Becker': 'https://images.fotmob.com/image_resources/playerimages/319784.png',
+  'Emiliano Martínez': 'https://images.fotmob.com/image_resources/playerimages/268375.png',
+  'Nguyễn Filip': 'https://images.fotmob.com/image_resources/playerimages/307515.png',
+  'Đặng Văn Lâm': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_1_DangVanLam_VN002309-e1787279162738-150x150.jpg',
+  'Nguyễn Văn Toàn': 'https://images.fotmob.com/image_resources/playerimages/734636.png',
+  'Lucas Silva': 'https://images.fotmob.com/image_resources/playerimages/1958447.png',
+  'Nguyễn Phong Hồng Duy': 'https://images.fotmob.com/image_resources/playerimages/613967.png',
+  'Nguyễn Tuấn Anh': 'https://images.fotmob.com/image_resources/playerimages/613971.png',
+  'Trần Nguyên Mạnh': 'https://images.fotmob.com/image_resources/playerimages/504586.png',
+  'Dương Thanh Hào': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_3_DuongThanhHao_VN0001083-150x150.jpg',
+  'Lucas Alves': 'https://vpf.vn/wp-content/uploads/2026/08/TCVT_15_LucasAlvesDeAraujo_BR002912-e1787654429645-150x150.jpg',
+  'Lý Công Hoàng Anh': 'https://images.fotmob.com/image_resources/playerimages/1202037.png',
+  'Tô Văn Vũ': 'https://images.fotmob.com/image_resources/playerimages/937316.png',
+  'Trần Liêm Điều': 'https://images.fotmob.com/image_resources/playerimages/1701301.png',
+  'Nguyễn Văn Vĩ': 'https://images.fotmob.com/image_resources/playerimages/1513640.png',
+  'Hồ Khắc Ngọc': 'https://images.fotmob.com/image_resources/playerimages/504602.png',
+  'Trần Văn Đạt': 'https://images.fotmob.com/image_resources/playerimages/1312556.png',
+  'Léo Artur': 'https://images.fotmob.com/image_resources/playerimages/449784.png',
+  'Alan Grafite': 'https://images.fotmob.com/image_resources/playerimages/1202028.png',
+  'Vũ Văn Thanh': 'https://images.fotmob.com/image_resources/playerimages/613610.png',
+  'Phan Văn Đức': 'https://images.fotmob.com/image_resources/playerimages/839704.png',
+  'Lê Phạm Thành Long': 'https://images.fotmob.com/image_resources/playerimages/890872.png',
+  'Nguyễn Đình Bắc': 'https://images.fotmob.com/image_resources/playerimages/1543684.png',
+  'Đỗ Sỹ Huy': 'https://images.fotmob.com/image_resources/playerimages/848591.png',
+  'Giáp Tuấn Dương': 'https://images.fotmob.com/image_resources/playerimages/1580426.png',
+  'Hoàng Văn Toản': 'https://images.fotmob.com/image_resources/playerimages/1489965.png',
+  'Lê Văn Đô': 'https://images.fotmob.com/image_resources/playerimages/1312554.png',
+  'Nguyễn Văn Quyết': 'https://images.fotmob.com/image_resources/playerimages/243702.png',
+  'Đỗ Hùng Dũng': 'https://images.fotmob.com/image_resources/playerimages/882866.png',
+  'Nguyễn Hai Long': 'https://images.fotmob.com/image_resources/playerimages/1162356.png',
+  'Nguyễn Thành Chung': 'https://images.fotmob.com/image_resources/playerimages/833606.png',
+  'Đỗ Duy Mạnh': 'https://images.fotmob.com/image_resources/playerimages/613540.png',
+  'Phạm Xuân Mạnh': 'https://images.fotmob.com/image_resources/playerimages/944964.png',
+  'Quan Văn Chuẩn': 'https://images.fotmob.com/image_resources/playerimages/1312553.png',
+  'Nguyễn Văn Trường': 'https://images.fotmob.com/image_resources/playerimages/1544663.png',
+  'Nguyễn Văn Hoàng': 'https://images.fotmob.com/image_resources/playerimages/1264321.png',
+  'Vũ Đình Hai': 'https://images.fotmob.com/image_resources/playerimages/1555010.png',
+  'Đậu Văn Toàn': 'https://images.fotmob.com/image_resources/playerimages/1544661.png',
+  'Nguyễn Văn Tùng': 'https://images.fotmob.com/image_resources/playerimages/1366380.png',
+  'Khuất Văn Khang': 'https://images.fotmob.com/image_resources/playerimages/1478892.png',
+  'Nhâm Mạnh Dũng': 'https://images.fotmob.com/image_resources/playerimages/1267711.png',
+  'Pedro Henrique': 'https://images.fotmob.com/image_resources/playerimages/1259576.png',
+  'Bùi Tiến Dũng': 'https://images.fotmob.com/image_resources/playerimages/675738.png',
+  'Nguyễn Thanh Bình': 'https://vpf.vn/wp-content/uploads/2023/10/4-2-150x150.jpg',
+  'Trương Tiến Anh': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_66_TruongTienAnh_VN0001063-e1787629482700-150x150.jpg',
+  'Phan Tuấn Tài': 'https://images.fotmob.com/image_resources/playerimages/1543680.png',
+  'Nguyễn Đức Chiến': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_7_NguyenDucChien_VN0001056-e1787279900330-150x150.jpg',
+  'Phạm Văn Phong': 'https://vpf.vn/wp-content/uploads/2026/08/TT-N_17_PhamVanPhong_VN0001061-e1787713633706-150x150.png',
+  'Quàng Thế Tài': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_25_QuangTheTai_VN001881-e1787629187244-150x150.jpg',
+  'Nguyễn Hữu Thắng': 'https://images.fotmob.com/image_resources/playerimages/1267738.png',
+  'Trần Danh Trung': 'https://images.fotmob.com/image_resources/playerimages/1437422.png',
+  'Triệu Việt Hưng': 'https://images.fotmob.com/image_resources/playerimages/941642.png',
+  'Lương Hoàng Nam': 'https://vpf.vn/wp-content/uploads/2026/08/BNFC_30_LUONGHOANGNAM_VN002842-e1787109903936-150x150.jpg',
+  'Nguyễn Hữu Sơn': 'https://vpf.vn/wp-content/uploads/2026/08/HPFC_77_NguyenHuuSon_VN0001250-e1787202245635-150x150.jpg',
+  'Bicou Bissainthe': 'https://images.fotmob.com/image_resources/playerimages/1057707.png',
+  'Nguyễn Đình Triệu': 'https://images.fotmob.com/image_resources/playerimages/1564537.png',
+  'Đặng Văn Tới': 'https://images.fotmob.com/image_resources/playerimages/1202776.png',
+  'Phạm Trung Hiếu': 'https://images.fotmob.com/image_resources/playerimages/1701127.png',
+  'Lê Mạnh Dũng': 'https://vpf.vn/wp-content/uploads/2026/08/HPFC_19_LeManhDung_VN0000275-e1787201552212-150x150.jpg',
+  'Nguyễn Văn Toản': 'https://images.fotmob.com/image_resources/playerimages/734636.png',
+  'Lê Tiến Anh': 'https://vpf.vn/wp-content/uploads/2026/08/BNFC_11_LeTienAnh_VN0000362-e1787107512812-150x150.jpg',
+  'Bùi Vĩ Hào': 'https://vpf.vn/wp-content/uploads/2022/02/BDFC_11_BuiViHao_VN0001113-150x150.jpg',
+  'Võ Hoàng Minh Khoa': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_10_VoHoangMinhKhoa_VN0001118-150x150.jpg',
+  'Hồ Tấn Tài': 'https://images.fotmob.com/image_resources/playerimages/848566.png',
+  'Nguyễn Trần Việt Cường': 'https://vpf.vn/wp-content/uploads/2018/12/BHCMC_7_NguyenTranVietCuong_VN0001116-150x150.jpg',
+  'Trần Minh Toàn': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_25_TranMinhToan_VN001630-150x150.jpg',
+  'Odilzhon Abdurakhmanov': 'https://vpf.vn/wp-content/uploads/2026/08/ATH_77_AbdurakhmanovOdilzhonAlisherovich_KG002112-e1787126482915-150x150.jpg',
+  'Hà Đức Chinh': 'https://vpf.vn/wp-content/uploads/2018/12/BHCMC_9_HaDucChinh_VN001796-3-150x150.jpg',
+  'Vũ Tuyên Quang': 'https://images.fotmob.com/image_resources/playerimages/1347536.png',
+  'Nguyễn Hùng Thiện Đức': 'https://vpf.vn/wp-content/uploads/2018/12/LAFC_2_NguyenHungThienDuc_VN002065-150x150.png',
+  'Nguyễn Hải Huy': 'https://vpf.vn/wp-content/uploads/2026/08/BNFC_14_NguyenHaiHuy_VN002585-e1787107750693-150x150.jpg',
+  'Hồ Sỹ Giáp': 'https://vpf.vn/wp-content/uploads/2026/09/HCMC_93_HoSyGiap_VN0001112-150x150.jpg',
+  'Luiz Antônio': 'https://images.fotmob.com/image_resources/playerimages/270316.png',
+  'Rimario Gordon': 'https://images.fotmob.com/image_resources/playerimages/951021.png',
+  'Doãn Ngọc Tân': 'https://images.fotmob.com/image_resources/playerimages/884196.png',
+  'A Mít': 'https://images.fotmob.com/image_resources/playerimages/829559.png',
+  'Nguyễn Thái Sơn': 'https://images.fotmob.com/image_resources/playerimages/1419906.png',
+  'Lê Văn Thắng': 'https://vpf.vn/wp-content/uploads/2026/08/ATH_10_LeVanThang_VN0001194-scaled-e1787125120346-150x150.jpg',
+  'Yago Ramos': 'https://vpf.vn/wp-content/uploads/2024/02/16-150x150.jpg',
+  'Đinh Viết Tú': 'https://images.fotmob.com/image_resources/playerimages/979425.png',
+  'Hoàng Thái Bình': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_2_HoangThaiBinh_VN0000282-e1787279228341-150x150.jpg',
+  'Trịnh Xuân Hoàng': 'https://images.fotmob.com/image_resources/playerimages/1677866.png',
+  'Nguyễn Thanh Thắng': 'https://vpf.vn/wp-content/uploads/2026/09/HCMC_1_NguyenThanhThang_VN002013-150x150.jpg',
+  'Lê Quốc Phương': 'https://vpf.vn/wp-content/uploads/2025/08/15-2-150x150.jpg',
+  'Võ Nguyên Hoàng': 'https://vpf.vn/wp-content/uploads/2026/08/SHB-N_28_VoNguyenHoang_VN0000556-scaled-e1787637796942-150x150.jpg',
+  'Trần Minh Vương': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_8_TranMinhVuong_VN0001154-150x150.jpg',
+  'Châu Ngọc Quang': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_89_ChauNgocQuang_VN001695-150x150.jpg',
+  'Marciel Silva': 'https://vpf.vn/wp-content/uploads/2023/10/10-1-150x150.jpg',
+  'Jairo Rodrigues': 'https://vpf.vn/wp-content/uploads/2026/08/SLNA_33_JairoRodriguesPeixotoFilho_BR001700-150x150.jpg',
+  'Nguyễn Quốc Việt': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_99_NguyenQuocViet_VN0001158-e1787630049319-150x150.jpg',
+  'Trần Bảo Toàn': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_15_TranBaoToan_VN0001159-e1787280392364-150x150.jpg',
+  'Dụng Quang Nho': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_86_DungQuangNho_VN0001169-e1787629537752-150x150.jpg',
+  'Phạm Lý Đức': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_33_PhamLyDuc_VN001374-150x150.jpg',
+  'Trần Trung Kiên': 'https://images.fotmob.com/image_resources/playerimages/1701265.png',
+  'Nguyễn Thanh Nhân': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_11_NguyenThanhNhan_VN0000558-150x150.jpg',
+  'Lê Văn Sơn': 'https://vpf.vn/wp-content/uploads/2026/08/TT-N_16_LeVanSon_VN0001149-150x150.jpg',
+  'Dương Văn Lợi': 'https://vpf.vn/wp-content/uploads/2026/09/QNFC_12_DuongVanLoi_VN0001148-150x150.jpg',
+  'Nguyễn Văn Triệu': 'https://vpf.vn/wp-content/uploads/2026/08/HAGL_15_NguyenVanTrieu_VN0001163-scaled-e1787211767946-150x150.jpg',
+  'Võ Đình Lâm': 'https://images.fotmob.com/image_resources/playerimages/1351095.png',
+  'Đinh Thanh Bình': 'https://images.fotmob.com/image_resources/playerimages/848572.png',
+  'Trần Nam Hải': 'https://images.fotmob.com/image_resources/playerimages/1436959.png',
+  'Đinh Xuân Tiến': 'https://images.fotmob.com/image_resources/playerimages/1463274.png',
+  'Hồ Văn Cường': 'https://images.fotmob.com/image_resources/playerimages/1478891.png',
+  'Phan Xuân Đại': 'https://vpf.vn/wp-content/uploads/2026/08/SLNA_21_PhanXuanDai_VN0001184-scaled-e1787646396619-150x150.jpg',
+  'Nguyễn Văn Việt': 'https://images.fotmob.com/image_resources/playerimages/1580424.png',
+  'Lê Nguyên Hoàng': 'https://vpf.vn/wp-content/uploads/2026/08/SLNA_15_LeNguyenHoang_VN001815-scaled-e1787645861602-150x150.jpg',
+  'Vương Văn Huy': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_68_VuongVanHuy_VN0001173-e1787218896439-150x150.jpg',
+  'Nguyễn Quang Vinh': 'https://vpf.vn/wp-content/uploads/2026/08/SLNA_16_NguyenQuangVinh_VN001830-scaled-e1787645958413-150x150.jpg',
+  'Cao Văn Bình': 'https://vpf.vn/wp-content/uploads/2026/08/SLNA_1_CaoVanBinh_VN001834-scaled-e1787643346111-150x150.jpg',
+  'Mai Sỹ Hoàng': 'https://vpf.vn/wp-content/uploads/2021/03/HNFC_79_MaiSyHoang_VN0001190-150x150.jpg',
+  'Ngô Văn Lương': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_19_NgoVanLuong_VN0001183-e1787217379516-150x150.jpg',
+  'Lương Xuân Trường': 'https://vpf.vn/wp-content/uploads/2026/08/TT-N_6_LuongXuanTruong_VN0000237-150x150.jpg',
+  'Viktor Lê': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_23_ViktorLe_VN002944-150x150.jpg',
+  'Nguyễn Trọng Hoàng': 'https://images.fotmob.com/image_resources/playerimages/243321.png',
+  'Adou Minh': 'https://vpf.vn/wp-content/uploads/2026/08/CAHN_38_NguyenAdouLeygleyMinh_VN002848-e1787114629939-150x150.jpg',
+  'Helerson': 'https://images.fotmob.com/image_resources/playerimages/958282.png',
+  'Trần Đình Tiến': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_7_TranDinhTien_VN0001181-150x150.jpg',
+  'Huỳnh Tấn Tài': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_39_HuynhTanTai_VN0001209-scaled-e1787218310890-150x150.jpg',
+  'Vũ Viết Triều': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_5_VuVietTrieu_VN0000376-scaled-e1787215261311-150x150.jpg',
+  'Nguyễn Thanh Tùng': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_1_NguyenThanhTung_VN0001138-150x150.jpg',
+  'Nguyễn Văn Hạnh': 'https://vpf.vn/wp-content/uploads/2025/08/25-150x150.jpg',
+  'Bùi Văn Đức': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_26_BuiVanDuc_VN0001133-e1787218048531-150x150.jpg',
+  'Vũ Quang Nam': 'https://vpf.vn/wp-content/uploads/2026/08/HLHT_18_VuQuangNam_VN0000960-scaled-e1787217117878-150x150.jpg',
+  'Leonardo Melo': 'https://vpf.vn/wp-content/uploads/2026/08/CAHN_10_LeonardoArturDeMelo_BR002122-e1787113689789-150x150.jpg',
+  'Mạc Hồng Quân': 'https://vpf.vn/wp-content/uploads/2026/09/HYFC_8_MacHongQuan_VN0000361-150x150.jpg',
+  'Vũ Minh Tuấn': 'https://vpf.vn/wp-content/uploads/2026/09/QNFC_8_VuMinhTuan_VN001809-150x150.jpg',
+  'Cao Văn Triền': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_23_CaoVanTrien_VN001806-150x150.jpg',
+  'Lục Xuân Hưng': 'https://vpf.vn/wp-content/uploads/2026/08/ATH_5_LucXuanHung_VN0000442-e1787124396430-150x150.png',
+  'Nguyễn Văn Đức': 'https://vpf.vn/wp-content/uploads/2024/09/XTPT_68_NguyenVanDuc_VN002678-150x150.jpg',
+  'Trần Trọng Hiếu': 'https://vpf.vn/wp-content/uploads/2026/08/TT-N_23_TranTrongHieu_VN002167-150x150.jpg',
+  'Phan Ngọc Tín': 'https://images.fotmob.com/image_resources/playerimages/1442498.png',
+  'Huỳnh Tuấn Linh': 'https://vpf.vn/wp-content/uploads/2026/09/HYFC_26_HuynhTuanLinh_VN0001162-150x150.jpg',
+  'Trần Đình Minh Hoàng': 'https://images.fotmob.com/image_resources/playerimages/1735151.png',
+  'Lê Ngọc Bảo': 'https://images.fotmob.com/image_resources/playerimages/1600702.png',
+  'Nguyễn Đức Hoàng Minh': 'https://vpf.vn/wp-content/uploads/2026/08/TCVT_17_NguyenDucHoangMinh_VN002200-e1787654537134-150x150.jpg',
+  'Patrik Lê Giang': 'https://vpf.vn/wp-content/uploads/2026/08/CAHCM_89_LeGiangPatrik_VN002937-150x150.jpg',
+  'Endrick dos Santos': 'https://vpf.vn/wp-content/uploads/2023/10/15-3-150x150.jpg',
+  'Bùi Ngọc Long': 'https://images.fotmob.com/image_resources/playerimages/1572936.png',
+  'Võ Huy Toàn': 'https://images.fotmob.com/image_resources/playerimages/632580.png',
+  'Adriano Schmidt': 'https://images.fotmob.com/image_resources/playerimages/1094533.png',
+  'Nguyễn Hạ Long': 'https://vpf.vn/wp-content/uploads/2026/09/HCMC_29_NguyenHaLong_VN001967-150x150.jpg',
+  'Đào Quốc Gia': 'https://images.fotmob.com/image_resources/playerimages/1681966.png',
+  'Phan Nhật Thanh Long': 'https://vpf.vn/wp-content/uploads/2026/08/HAGL_27_PhanNhatThanhLong_VN001385-scaled-e1787212438921-150x150.jpg',
+  'Lâm Thuận': 'https://vpf.vn/wp-content/uploads/2026/09/VHU_17_LamThuan_VN0000308-150x150.jpg',
+  'Trần Mạnh Cường': 'https://vpf.vn/wp-content/uploads/2023/10/25-3-150x150.jpg',
+  'Phạm Hữu Nghĩa': 'https://vpf.vn/wp-content/uploads/2026/08/TT-N_25_PhamHuuNghia_VN0000550-150x150.jpg',
+  'Sầm Ngọc Đức': 'https://vpf.vn/wp-content/uploads/2026/08/TT-N_77_SamNgocDuc_VN0000189-e1787734714616-150x150.jpg',
+  'Nguyễn Thanh Khôi': 'https://vpf.vn/wp-content/uploads/2023/03/12-1-150x150.jpg',
+  'Hoàng Vũ Samson': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_39_HoangVuOlaleyeSamson_VN001782-150x150.jpg',
+  'Charles Atshimene': 'https://images.fotmob.com/image_resources/playerimages/1123714.png',
+  'Ngân Văn Đại': 'https://vpf.vn/wp-content/uploads/2026/08/BNFC_29_NganVanDai_VN001779-e1787109822265-150x150.jpg',
+  'Nguyễn Văn Công': 'https://vpf.vn/wp-content/uploads/2026/08/BNFC_12_NguyenVanCong_VN0000492-e1787107615158-150x150.jpg',
+  'Võ Văn Toàn': 'https://vpf.vn/wp-content/uploads/2026/08/SHB-N_58_VoVanToan_VN001775-scaled-e1787642096715-150x150.jpg',
+  'Nguyễn Phú Nguyên': 'https://vpf.vn/wp-content/uploads/2026/08/ATH_89_NguyenTrongPhu_VN001305-e1787126553368-150x150.jpg',
+  'Phan Thanh Hậu': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_5_NguyenVanHanh_VN0000231-150x150.jpg',
+  'Đặng Văn Lắm': 'https://vpf.vn/wp-content/uploads/2026/08/NBFC_1_DangVanLam_VN002309-e1787279162738-150x150.jpg',
+  'Tống Đức An': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_26_TongDucAn_VN001777-150x150.png',
+  'Trần Ngọc Hiệp': 'https://vpf.vn/wp-content/uploads/2026/08/SHB-N_2_TranNgocHiep_VN001760-scaled-e1787632977642-150x150.jpg',
+  'Mạch Ngọc Hà': 'https://vpf.vn/wp-content/uploads/2026/09/CAND_10_MachNgocHa_VN001770-150x150.jpg',
+  'Lê Xuân Tú': 'https://vpf.vn/wp-content/uploads/2021/03/HNFC_19_LeXuanTu_VN0000495-150x150.jpg',
+  'Caio César': 'https://images.fotmob.com/image_resources/playerimages/844474.png',
+  'Phan Văn Long': 'https://vpf.vn/wp-content/uploads/2026/08/SHB-N_11_PhanVanLong_VN001565-scaled-e1787636391287-150x150.jpg',
+  'Đặng Anh Tuấn': 'https://vpf.vn/wp-content/uploads/2026/09/BHCMC_18_DangAnhTuan_VN001558-150x150.jpg',
+  'Phạm Đình Duy': 'https://vpf.vn/wp-content/uploads/2026/08/SHB-N_18_PhamDinhDuy_VN001569-e1787636599606-150x150.jpg',
+  'Nguyễn Phi Hoàng': 'https://images.fotmob.com/image_resources/playerimages/1386848.png',
+  'Lương Duy Cương': 'https://vpf.vn/wp-content/uploads/2026/08/SHB-N_20_LuongDuyCuong_VN002179-scaled-e1787636965192-150x150.jpg',
+  'Bùi Tiến Dũng (GK)': 'https://images.fotmob.com/image_resources/playerimages/675738.png',
+  'Lê Văn Hưng': 'https://vpf.vn/wp-content/uploads/2025/09/27-1-150x150.jpg',
+  'Đặng Tuấn Hưng': 'https://vpf.vn/wp-content/uploads/2026/09/HYFC_25_DangTuanHung_VN0001129-150x150.jpg',
+  'Nguyễn Công Nhật': 'https://vpf.vn/wp-content/uploads/2021/03/HNFC_22_NguyenCongNhat_VN001571-e1787198113431-150x150.jpg',
+  'Nguyễn Hữu Dũng': 'https://vpf.vn/wp-content/uploads/2018/12/10.-Nguyen-Huu-Dung-150x150.jpg',
+  'Nguyễn Minh Quang': 'https://images.fotmob.com/image_resources/playerimages/1642863.png',
+  'João Cancelo': 'https://images.fotmob.com/image_resources/playerimages/361757.png',
+  'Cristiano Ronaldo': 'https://images.fotmob.com/image_resources/playerimages/30893.png',
+  'Mohamed Simakan': 'https://images.fotmob.com/image_resources/playerimages/1039600.png',
+  'Aymeric Laporte': 'https://images.fotmob.com/image_resources/playerimages/411617.png',
+  'Karim Benzema': 'https://images.fotmob.com/image_resources/playerimages/26166.png',
+  'Moussa Diaby': 'https://images.fotmob.com/image_resources/playerimages/923498.png',
+  'Houssem Aouar': 'https://images.fotmob.com/image_resources/playerimages/776299.png',
+  'Riyad Mahrez': 'https://images.fotmob.com/image_resources/playerimages/278343.png',
+  'Hotaru Yamaguchi': 'https://images.fotmob.com/image_resources/playerimages/176201.png',
+  'Takahiro Ogihara': 'https://images.fotmob.com/image_resources/playerimages/196299.png',
+  'Eduardo Camavinga': 'https://images.fotmob.com/image_resources/playerimages/1015185.png',
+  'Arda Güler': 'https://images.fotmob.com/image_resources/playerimages/1253890.png',
+  'Andriy Lunin': 'https://images.fotmob.com/image_resources/playerimages/800882.png',
+  'Éder Militão': 'https://images.fotmob.com/image_resources/playerimages/844415.png',
+  'Aurélien Tchouaméni': 'https://images.fotmob.com/image_resources/playerimages/914458.png',
+  'Endrick': 'https://images.fotmob.com/image_resources/playerimages/1406729.png',
+  'Raphinha': 'https://images.fotmob.com/image_resources/playerimages/696679.png',
+  'Pedri': 'https://images.fotmob.com/image_resources/playerimages/1083323.png',
+  'Dani Olmo': 'https://images.fotmob.com/image_resources/playerimages/614834.png',
+  'Gavi': 'https://images.fotmob.com/image_resources/playerimages/1279040.png',
+  'Frenkie de Jong': 'https://images.fotmob.com/image_resources/playerimages/638622.png',
+  'Jules Koundé': 'https://images.fotmob.com/image_resources/playerimages/705450.png',
+  'Pau Cubarsí': 'https://images.fotmob.com/image_resources/playerimages/1532137.png',
+  'Alejandro Balde': 'https://images.fotmob.com/image_resources/playerimages/1254166.png',
+  'Iñaki Peña': 'https://images.fotmob.com/image_resources/playerimages/990996.png',
+  'Ronald Araújo': 'https://images.fotmob.com/image_resources/playerimages/921253.png',
+  'Fermín López': 'https://images.fotmob.com/image_resources/playerimages/1404415.png',
+  'Julián Álvarez': 'https://images.fotmob.com/image_resources/playerimages/974753.png',
+  'Alexander Sørloth': 'https://images.fotmob.com/image_resources/playerimages/440330.png',
+  'Conor Gallagher': 'https://images.fotmob.com/image_resources/playerimages/966027.png',
+  'Koke': 'https://images.fotmob.com/image_resources/playerimages/184533.png',
+  'Marcos Llorente': 'https://images.fotmob.com/image_resources/playerimages/602563.png',
+  'Robin Le Normand': 'https://images.fotmob.com/image_resources/playerimages/609516.png',
+  'Jan Oblak': 'https://images.fotmob.com/image_resources/playerimages/177126.png',
+  'Juan Musso': 'https://images.fotmob.com/image_resources/playerimages/389050.png',
+  'Nahuel Molina': 'https://images.fotmob.com/image_resources/playerimages/726345.png',
+  'Pablo Barrios': 'https://images.fotmob.com/image_resources/playerimages/1338192.png',
+  'Nico Williams': 'https://images.fotmob.com/image_resources/playerimages/1202110.png',
+  'Iñaki Williams': 'https://images.fotmob.com/image_resources/playerimages/604105.png',
+  'Oihan Sancet': 'https://images.fotmob.com/image_resources/playerimages/950545.png',
+  'Gorka Guruzeta': 'https://images.fotmob.com/image_resources/playerimages/711231.png',
+  'Álex Berenguer': 'https://images.fotmob.com/image_resources/playerimages/574629.png',
+  'Iñigo Ruiz de Galarreta': 'https://images.fotmob.com/image_resources/playerimages/282462.png',
+  'Mikel Jauregizar': 'https://images.fotmob.com/image_resources/playerimages/1553099.png',
+  'Aitor Paredes': 'https://images.fotmob.com/image_resources/playerimages/1191407.png',
+  'Yuri Berchiche': 'https://images.fotmob.com/image_resources/playerimages/80295.png',
+  'Unai Simón': 'https://images.fotmob.com/image_resources/playerimages/660625.png',
+  'Rodri': 'https://images.fotmob.com/image_resources/playerimages/675088.png',
+  'Bernardo Silva': 'https://images.fotmob.com/image_resources/playerimages/488139.png',
+  'Ederson': 'https://images.fotmob.com/image_resources/playerimages/957203.png',
+  'Luis Díaz': 'https://images.fotmob.com/image_resources/playerimages/860914.png',
+  'Cody Gakpo': 'https://images.fotmob.com/image_resources/playerimages/806552.png',
+  'Dominik Szoboszlai': 'https://images.fotmob.com/image_resources/playerimages/846005.png',
+  'Alexis Mac Allister': 'https://images.fotmob.com/image_resources/playerimages/831489.png',
+  'Ryan Gravenberch': 'https://images.fotmob.com/image_resources/playerimages/956683.png',
+  'Ibrahima Konaté': 'https://images.fotmob.com/image_resources/playerimages/820140.png',
+  'Andrew Robertson': 'https://images.fotmob.com/image_resources/playerimages/357880.png',
+  'Bukayo Saka': 'https://images.fotmob.com/image_resources/playerimages/961995.png',
+  'Declan Rice': 'https://images.fotmob.com/image_resources/playerimages/654096.png',
+  'Neto': 'https://images.fotmob.com/image_resources/playerimages/176186.png',
+  'Gabriel Jesus': 'https://images.fotmob.com/image_resources/playerimages/576165.png',
+  'Reece James': 'https://images.fotmob.com/image_resources/playerimages/807729.png',
+  'Levi Colwill': 'https://images.fotmob.com/image_resources/playerimages/1096400.png',
+  'Marc Cucurella': 'https://images.fotmob.com/image_resources/playerimages/873289.png',
+  'Alejandro Garnacho': 'https://images.fotmob.com/image_resources/playerimages/1203665.png',
+  'Dominic Solanke': 'https://images.fotmob.com/image_resources/playerimages/591734.png',
+  'James Maddison': 'https://images.fotmob.com/image_resources/playerimages/493165.png',
+  'Dejan Kulusevski': 'https://images.fotmob.com/image_resources/playerimages/935379.png',
+  'Yves Bissouma': 'https://images.fotmob.com/image_resources/playerimages/724306.png',
+  'Cristian Romero': 'https://images.fotmob.com/image_resources/playerimages/789066.png',
+  'Micky van de Ven': 'https://images.fotmob.com/image_resources/playerimages/1097466.png',
+  'Pedro Porro': 'https://images.fotmob.com/image_resources/playerimages/941573.png',
+  'Destiny Udogie': 'https://images.fotmob.com/image_resources/playerimages/1052898.png',
+  'Rodrigo Bentancur': 'https://images.fotmob.com/image_resources/playerimages/620618.png',
+  'Richarlison': 'https://images.fotmob.com/image_resources/playerimages/654908.png',
+  'Harry Kane': 'https://images.fotmob.com/image_resources/playerimages/194165.png',
+  'Jamal Musiala': 'https://images.fotmob.com/image_resources/playerimages/1156141.png',
+  'Michael Olise': 'https://images.fotmob.com/image_resources/playerimages/1029063.png',
+  'Serge Gnabry': 'https://images.fotmob.com/image_resources/playerimages/385437.png',
+  'Joshua Kimmich': 'https://images.fotmob.com/image_resources/playerimages/460632.png',
+  'Aleksandar Pavlović': 'https://images.fotmob.com/image_resources/playerimages/1473580.png',
+  'Alphonso Davies': 'https://images.fotmob.com/image_resources/playerimages/751202.png',
+  'Dayot Upamecano': 'https://images.fotmob.com/image_resources/playerimages/658554.png',
+  'Kim Min-jae': 'https://images.fotmob.com/image_resources/playerimages/828159.png',
+  'Manuel Neuer': 'https://images.fotmob.com/image_resources/playerimages/27299.png',
+  'Sven Ulreich': 'https://images.fotmob.com/image_resources/playerimages/94841.png',
+  'Hiroki Ito': 'https://images.fotmob.com/image_resources/playerimages/851626.png',
+  'Mathys Tel': 'https://images.fotmob.com/image_resources/playerimages/1288111.png',
+  'Florian Wirtz': 'https://images.fotmob.com/image_resources/playerimages/1152455.png',
+  'Victor Boniface': 'https://images.fotmob.com/image_resources/playerimages/1035208.png',
+  'Patrik Schick': 'https://images.fotmob.com/image_resources/playerimages/540097.png',
+  'Alejandro Grimaldo': 'https://images.fotmob.com/image_resources/playerimages/288406.png',
+  'Jeremie Frimpong': 'https://images.fotmob.com/image_resources/playerimages/966018.png',
+  'Granit Xhaka': 'https://images.fotmob.com/image_resources/playerimages/207236.png',
+  'Jonathan Tah': 'https://images.fotmob.com/image_resources/playerimages/469700.png',
+  'Edmond Tapsoba': 'https://images.fotmob.com/image_resources/playerimages/789914.png',
+  'Nordi Mukiele': 'https://images.fotmob.com/image_resources/playerimages/602304.png',
+  'Karim Adeyemi': 'https://images.fotmob.com/image_resources/playerimages/959594.png',
+  'Waldemar Anton': 'https://images.fotmob.com/image_resources/playerimages/664970.png',
+  'Felix Nmecha': 'https://images.fotmob.com/image_resources/playerimages/966019.png',
+  'Maximilian Beier': 'https://images.fotmob.com/image_resources/playerimages/1047667.png',
+  'Loïs Openda': 'https://images.fotmob.com/image_resources/playerimages/747767.png',
+  'Xavi Simons': 'https://images.fotmob.com/image_resources/playerimages/1173787.png',
+  'Amadou Haidara': 'https://images.fotmob.com/image_resources/playerimages/688830.png',
+  'Lautaro Martínez': 'https://images.fotmob.com/image_resources/playerimages/690230.png',
+  'Federico Dimarco': 'https://images.fotmob.com/image_resources/playerimages/605224.png',
+  'Denzel Dumfries': 'https://images.fotmob.com/image_resources/playerimages/593118.png',
+  'Alessandro Bastoni': 'https://images.fotmob.com/image_resources/playerimages/805451.png',
+  'Josep Martínez': 'https://images.fotmob.com/image_resources/playerimages/772168.png',
+  'Davide Frattesi': 'https://images.fotmob.com/image_resources/playerimages/815431.png',
+  'Christian Pulisic': 'https://images.fotmob.com/image_resources/playerimages/688295.png',
+  'Álvaro Morata': 'https://images.fotmob.com/image_resources/playerimages/213501.png',
+  'Youssouf Fofana': 'https://images.fotmob.com/image_resources/playerimages/954621.png',
+  'Emerson Royal': 'https://images.fotmob.com/image_resources/playerimages/797908.png',
+  'Mike Maignan': 'https://images.fotmob.com/image_resources/playerimages/466439.png',
+  'Strahinja Pavlović': 'https://images.fotmob.com/image_resources/playerimages/1048023.png',
+  'Francisco Conceição': 'https://images.fotmob.com/image_resources/playerimages/1185336.png',
+  'Andrea Cambiaso': 'https://images.fotmob.com/image_resources/playerimages/1078846.png',
+  'Pierre Kalulu': 'https://images.fotmob.com/image_resources/playerimages/1131217.png',
+  'Khvicha Kvaratskhelia': 'https://images.fotmob.com/image_resources/playerimages/900433.png',
+  'Matteo Politano': 'https://images.fotmob.com/image_resources/playerimages/415539.png',
+  'Ousmane Dembélé': 'https://images.fotmob.com/image_resources/playerimages/692984.png',
+  'Bradley Barcola': 'https://images.fotmob.com/image_resources/playerimages/1297165.png',
+  'Lee Kang-in': 'https://images.fotmob.com/image_resources/playerimages/940976.png',
+  'Warren Zaïre-Emery': 'https://images.fotmob.com/image_resources/playerimages/1367615.png',
+  'Elye Wahi': 'https://images.fotmob.com/image_resources/playerimages/1213430.png',
+  'Geoffrey Kondogbia': 'https://images.fotmob.com/image_resources/playerimages/214972.png',
+  'Leonardo Balerdi': 'https://images.fotmob.com/image_resources/playerimages/958464.png',
+  'Folarin Balogun': 'https://images.fotmob.com/image_resources/playerimages/982677.png',
+  'Maghnes Akliouche': 'https://images.fotmob.com/image_resources/playerimages/1305618.png',
+  'Eliesse Ben Seghir': 'https://images.fotmob.com/image_resources/playerimages/1393439.png',
+  'Aleksandr Golovin': 'https://images.fotmob.com/image_resources/playerimages/586388.png',
+  'Jonathan David': 'https://images.fotmob.com/image_resources/playerimages/939569.png',
+  'Hakon Arnar Haraldsson': 'https://images.fotmob.com/image_resources/playerimages/1044470.png',
+  'Ayyoub Bouaddi': 'https://images.fotmob.com/image_resources/playerimages/1561552.png',
+  'Marcelo Weigandt': 'https://images.fotmob.com/image_resources/playerimages/974894.png',
+  'Drake Callender': 'https://images.fotmob.com/image_resources/playerimages/1136263.png',
+  'Gerson': 'https://images.fotmob.com/image_resources/playerimages/580604.png',
+  'Miguel Borja': 'https://images.fotmob.com/image_resources/playerimages/281995.png',
+  'Nguyễn Xuân Son': 'https://images.fotmob.com/image_resources/playerimages/690317.png',
+  'Wataru Endo': 'https://images.fotmob.com/image_resources/playerimages/202643.png',
+  'Richard Ríos': 'https://images.fotmob.com/image_resources/playerimages/1174630.png',
+  'Mateo Retegui': 'https://images.fotmob.com/image_resources/playerimages/905546.png',
+  'Sandro Tonali': 'https://images.fotmob.com/image_resources/playerimages/867414.png',
+  'Luka Sučić': 'https://images.fotmob.com/image_resources/playerimages/959597.png',
+  'Dominik Livaković': 'https://images.fotmob.com/image_resources/playerimages/383971.png',
+  'Brahim Díaz': 'https://images.fotmob.com/image_resources/playerimages/750027.png',
+  'Youri Tielemans': 'https://images.fotmob.com/image_resources/playerimages/465960.png',
+  'Alexander Isak': 'https://images.fotmob.com/image_resources/playerimages/690107.png',
+  'Anthony Gordon': 'https://images.fotmob.com/image_resources/playerimages/906937.png',
+  'Sven Botman': 'https://images.fotmob.com/image_resources/playerimages/956682.png',
+  'Nick Pope': 'https://images.fotmob.com/image_resources/playerimages/280484.png',
+  'Jan Paul van Hecke': 'https://images.fotmob.com/image_resources/playerimages/974618.png',
+  'Mohammed Kudus': 'https://images.fotmob.com/image_resources/playerimages/891743.png',
+  'Marcos Senesi': 'https://images.fotmob.com/image_resources/playerimages/785411.png',
+  'Milos Kerkez': 'https://images.fotmob.com/image_resources/playerimages/1195281.png',
+  'Mateus Fernandes': 'https://images.fotmob.com/image_resources/playerimages/1356312.png',
+  'Thierno Barry': 'https://images.fotmob.com/image_resources/playerimages/1398392.png',
+  'Álex Baena': 'https://images.fotmob.com/image_resources/playerimages/942372.png',
+  'Sergio Gómez': 'https://images.fotmob.com/image_resources/playerimages/844477.png',
+  'Vitor Roque': 'https://images.fotmob.com/image_resources/playerimages/1339347.png',
+  'Pablo Fornals': 'https://images.fotmob.com/image_resources/playerimages/683450.png',
+  'Johnny Cardoso': 'https://images.fotmob.com/image_resources/playerimages/1173678.png',
+  'Diego Llorente': 'https://images.fotmob.com/image_resources/playerimages/420568.png',
+  'Héctor Bellerín': 'https://images.fotmob.com/image_resources/playerimages/427438.png',
+  'Giorgi Mamardashvili': 'https://images.fotmob.com/image_resources/playerimages/948800.png',
+  'Jesús Areso': 'https://images.fotmob.com/image_resources/playerimages/1037537.png',
+  'Robert Navarro': 'https://images.fotmob.com/image_resources/playerimages/1011117.png',
+  'Joan García': 'https://images.fotmob.com/image_resources/playerimages/1167220.png',
+  'Ademola Lookman': 'https://images.fotmob.com/image_resources/playerimages/690516.png',
+  'Éderson': 'https://images.fotmob.com/image_resources/playerimages/957203.png',
+  'Isak Hien': 'https://images.fotmob.com/image_resources/playerimages/939780.png',
+  'Lorenzo Pellegrini': 'https://images.fotmob.com/image_resources/playerimages/540307.png',
+  'Nicolò Rovella': 'https://images.fotmob.com/image_resources/playerimages/1020963.png',
+  'Edoardo Bove': 'https://images.fotmob.com/image_resources/playerimages/1212866.png',
+  'Pietro Comuzzo': 'https://images.fotmob.com/image_resources/playerimages/1529222.png',
+  'Santiago Castro': 'https://images.fotmob.com/image_resources/playerimages/1282008.png',
+  'Łukasz Skorupski': 'https://images.fotmob.com/image_resources/playerimages/178732.png',
+  'Enzo Millot': 'https://images.fotmob.com/image_resources/playerimages/1050859.png',
+  'Atakan Karazor': 'https://images.fotmob.com/image_resources/playerimages/684983.png',
+  'Anthony Rouault': 'https://images.fotmob.com/image_resources/playerimages/1079554.png',
+  'Omar Marmoush': 'https://images.fotmob.com/image_resources/playerimages/839204.png',
+  'Hugo Ekitiké': 'https://images.fotmob.com/image_resources/playerimages/1197030.png',
+  'Ansgar Knauff': 'https://images.fotmob.com/image_resources/playerimages/1175708.png',
+  'Robin Koch': 'https://images.fotmob.com/image_resources/playerimages/628201.png',
+  'Tom Bischof': 'https://images.fotmob.com/image_resources/playerimages/1286183.png',
+  'Maxence Caqueret': 'https://images.fotmob.com/image_resources/playerimages/846000.png',
+  'Lucas Perri': 'https://images.fotmob.com/image_resources/playerimages/637656.png',
+  'M\'Bala Nzola': 'https://images.fotmob.com/image_resources/playerimages/613334.png',
+  'Anass Zaroury': 'https://images.fotmob.com/image_resources/playerimages/1069536.png',
+  'Neil El Aynaoui': 'https://images.fotmob.com/image_resources/playerimages/1274060.png',
+  'Nicolás Otamendi': 'https://images.fotmob.com/image_resources/playerimages/174321.png',
+  'Álvaro Carreras': 'https://images.fotmob.com/image_resources/playerimages/1190025.png',
+  'Morten Hjulmand': 'https://images.fotmob.com/image_resources/playerimages/950199.png',
+  'Daniel Bragança': 'https://images.fotmob.com/image_resources/playerimages/1014980.png',
+  'Franco Israel': 'https://images.fotmob.com/image_resources/playerimages/1053960.png',
+  'Dávid Hancko': 'https://images.fotmob.com/image_resources/playerimages/727897.png',
+  'Diogo Barbosa': 'https://images.fotmob.com/image_resources/playerimages/231683.png',
+  'Luciano': 'https://images.fotmob.com/image_resources/playerimages/78584.png',
+  'Robert Arboleda': 'https://images.fotmob.com/image_resources/playerimages/342941.png',
+  'Welington': 'https://images.fotmob.com/image_resources/playerimages/1118192.png',
+  'Hulk': 'https://images.fotmob.com/image_resources/playerimages/20276.png',
+  'Paulinho': 'https://images.fotmob.com/image_resources/playerimages/857176.png',
+  'Deyverson': 'https://images.fotmob.com/image_resources/playerimages/476769.png',
+  'Gustavo Scarpa': 'https://images.fotmob.com/image_resources/playerimages/544424.png',
+  'Renzo Saravia': 'https://images.fotmob.com/image_resources/playerimages/433819.png',
+  'Marlon Freitas': 'https://images.fotmob.com/image_resources/playerimages/634868.png',
+  'Konrad Laimer': 'https://images.fotmob.com/image_resources/playerimages/526827.png',
+  'Rômulo': 'https://images.fotmob.com/image_resources/playerimages/940689.png',
+  'Ben Davies': 'https://images.fotmob.com/image_resources/playerimages/276121.png',
+  'Conor Bradley': 'https://images.fotmob.com/image_resources/playerimages/1113690.png',
+  'Lucas Bergvall': 'https://images.fotmob.com/image_resources/playerimages/1386775.png',
+  'Hákon Arnar Haraldsson': 'https://images.fotmob.com/image_resources/playerimages/1044470.png',
+  'Victor Pálsson': 'https://images.fotmob.com/image_resources/playerimages/161937.png',
+  'Martin Dúbravka': 'https://images.fotmob.com/image_resources/playerimages/72241.png',
+  'Damoth Thongkhamsavath': 'https://images.fotmob.com/image_resources/playerimages/1561129.png',
+  'Kevin Felida': 'https://images.fotmob.com/image_resources/playerimages/875845.png',
+  'Esteban Orozco': 'https://images.fotmob.com/image_resources/playerimages/941951.png',
+  'Erling Haaland': 'https://images.fotmob.com/image_resources/playerimages/737066.png',
+  'Kevin De Bruyne': 'https://images.fotmob.com/image_resources/playerimages/169200.png',
+  'Bruno Fernandes': 'https://images.fotmob.com/image_resources/playerimages/422685.png',
+  'Luka Modrić': 'https://images.fotmob.com/image_resources/playerimages/31097.png',
+  'Rúben Dias': 'https://images.fotmob.com/image_resources/playerimages/614006.png',
+  'William Saliba': 'https://images.fotmob.com/image_resources/playerimages/955406.png',
+  'João Pedro': 'https://images.fotmob.com/image_resources/playerimages/1021382.png',
+  'Ferran Torres': 'https://images.fotmob.com/image_resources/playerimages/881771.png',
+  'Phil Foden': 'https://images.fotmob.com/image_resources/playerimages/815006.png',
+  'Jérémy Doku': 'https://images.fotmob.com/image_resources/playerimages/942368.png',
+  'Joško Gvardiol': 'https://images.fotmob.com/image_resources/playerimages/1070712.png',
+  'John Stones': 'https://images.fotmob.com/image_resources/playerimages/263653.png',
+  'Mateo Kovačić': 'https://images.fotmob.com/image_resources/playerimages/239219.png',
+  'Curtis Jones': 'https://images.fotmob.com/image_resources/playerimages/933768.png',
+  'Kai Havertz': 'https://images.fotmob.com/image_resources/playerimages/749736.png',
+  'Jurriën Timber': 'https://images.fotmob.com/image_resources/playerimages/942381.png',
+  'David Raya': 'https://images.fotmob.com/image_resources/playerimages/562727.png',
+  'Ben White': 'https://images.fotmob.com/image_resources/playerimages/776151.png',
+  'Mikel Merino': 'https://images.fotmob.com/image_resources/playerimages/574645.png',
+  'Cole Palmer': 'https://images.fotmob.com/image_resources/playerimages/1096353.png',
+  'Pedro Neto': 'https://images.fotmob.com/image_resources/playerimages/843040.png',
+  'Noni Madueke': 'https://images.fotmob.com/image_resources/playerimages/1084981.png',
+  'Moisés Caicedo': 'https://images.fotmob.com/image_resources/playerimages/1137668.png',
+  'Enzo Fernández': 'https://images.fotmob.com/image_resources/playerimages/1137705.png',
+  'Wesley Fofana': 'https://images.fotmob.com/image_resources/playerimages/917802.png',
+  'Roméo Lavia': 'https://images.fotmob.com/image_resources/playerimages/1190867.png',
+  'Rasmus Højlund': 'https://images.fotmob.com/image_resources/playerimages/1199272.png',
+  'Marcus Rashford': 'https://images.fotmob.com/image_resources/playerimages/696365.png',
+  'Amad Diallo': 'https://images.fotmob.com/image_resources/playerimages/1070052.png',
+  'Kobbie Mainoo': 'https://images.fotmob.com/image_resources/playerimages/1292810.png',
+  'Manuel Ugarte': 'https://images.fotmob.com/image_resources/playerimages/1035614.png',
+  'Lisandro Martínez': 'https://images.fotmob.com/image_resources/playerimages/847983.png',
+  'Matthijs de Ligt': 'https://images.fotmob.com/image_resources/playerimages/769895.png',
+  'Diogo Dalot': 'https://images.fotmob.com/image_resources/playerimages/751550.png',
+  'Luke Shaw': 'https://images.fotmob.com/image_resources/playerimages/362694.png',
+  'Joshua Zirkzee': 'https://images.fotmob.com/image_resources/playerimages/950830.png',
+  'Guglielmo Vicario': 'https://images.fotmob.com/image_resources/playerimages/538501.png',
+  'Piero Hincapié': 'https://images.fotmob.com/image_resources/playerimages/1137667.png',
+  'Aleix García': 'https://images.fotmob.com/image_resources/playerimages/642551.png',
+  'Nathan Tella': 'https://images.fotmob.com/image_resources/playerimages/877700.png',
+  'Serhou Guirassy': 'https://images.fotmob.com/image_resources/playerimages/448540.png',
+  'Jamie Gittens': 'https://images.fotmob.com/image_resources/playerimages/1113692.png',
+  'Marcel Sabitzer': 'https://images.fotmob.com/image_resources/playerimages/215151.png',
+  'Emre Can': 'https://images.fotmob.com/image_resources/playerimages/307021.png',
+  'Nico Schlotterbeck': 'https://images.fotmob.com/image_resources/playerimages/1002058.png',
+  'Gregor Kobel': 'https://images.fotmob.com/image_resources/playerimages/764018.png',
+  'Alexander Meyer': 'https://images.fotmob.com/image_resources/playerimages/743381.png',
+  'Ramy Bensebaini': 'https://images.fotmob.com/image_resources/playerimages/559065.png',
+  'Benjamin Šeško': 'https://images.fotmob.com/image_resources/playerimages/1073977.png',
+  'Marcus Thuram': 'https://images.fotmob.com/image_resources/playerimages/621562.png',
+  'Nicolò Barella': 'https://images.fotmob.com/image_resources/playerimages/541820.png',
+  'Hakan Çalhanoğlu': 'https://images.fotmob.com/image_resources/playerimages/304733.png',
+  'Henrikh Mkhitaryan': 'https://images.fotmob.com/image_resources/playerimages/73167.png',
+  'Benjamin Pavard': 'https://images.fotmob.com/image_resources/playerimages/611223.png',
+  'Fikayo Tomori': 'https://images.fotmob.com/image_resources/playerimages/749662.png',
+  'Matteo Gabbia': 'https://images.fotmob.com/image_resources/playerimages/844996.png',
+  'Yunus Musah': 'https://images.fotmob.com/image_resources/playerimages/1137272.png',
+  'Samuel Chukwueze': 'https://images.fotmob.com/image_resources/playerimages/688300.png',
+  'Kenan Yıldız': 'https://images.fotmob.com/image_resources/playerimages/1412132.png',
+  'Teun Koopmeiners': 'https://images.fotmob.com/image_resources/playerimages/866516.png',
+  'Manuel Locatelli': 'https://images.fotmob.com/image_resources/playerimages/624166.png',
+  'Gleison Bremer': 'https://images.fotmob.com/image_resources/playerimages/857269.png',
+  'Federico Gatti': 'https://images.fotmob.com/image_resources/playerimages/1189288.png',
+  'Weston McKennie': 'https://images.fotmob.com/image_resources/playerimages/848266.png',
+  'Arkadiusz Milik': 'https://images.fotmob.com/image_resources/playerimages/277460.png',
+  'Scott McTominay': 'https://images.fotmob.com/image_resources/playerimages/843099.png',
+  'Stanislav Lobotka': 'https://images.fotmob.com/image_resources/playerimages/308517.png',
+  'Giovanni Di Lorenzo': 'https://images.fotmob.com/image_resources/playerimages/414906.png',
+  'Alessandro Buongiorno': 'https://images.fotmob.com/image_resources/playerimages/823018.png',
+  'Amir Rrahmani': 'https://images.fotmob.com/image_resources/playerimages/544693.png',
+  'Mathías Olivera': 'https://images.fotmob.com/image_resources/playerimages/729093.png',
+  'Alex Meret': 'https://images.fotmob.com/image_resources/playerimages/577912.png',
+  'Billy Gilmour': 'https://images.fotmob.com/image_resources/playerimages/942549.png',
+  'Gonçalo Ramos': 'https://images.fotmob.com/image_resources/playerimages/940087.png',
+  'João Neves': 'https://images.fotmob.com/image_resources/playerimages/1342757.png',
+  'Vitinha': 'https://images.fotmob.com/image_resources/playerimages/1061249.png',
+  'Achraf Hakimi': 'https://images.fotmob.com/image_resources/playerimages/770881.png',
+  'Nuno Mendes': 'https://images.fotmob.com/image_resources/playerimages/1158945.png',
+  'Marquinhos': 'https://images.fotmob.com/image_resources/playerimages/267365.png',
+  'Gianluigi Donnarumma': 'https://images.fotmob.com/image_resources/playerimages/618878.png',
+  'Matvey Safonov': 'https://images.fotmob.com/image_resources/playerimages/800880.png',
+  'Fabián Ruiz': 'https://images.fotmob.com/image_resources/playerimages/605654.png',
+  'Désiré Doué': 'https://images.fotmob.com/image_resources/playerimages/1339208.png',
+  'Luis Henrique': 'https://images.fotmob.com/image_resources/playerimages/1114635.png',
+  'Adrien Rabiot': 'https://images.fotmob.com/image_resources/playerimages/352879.png',
+  'Gerónimo Rulli': 'https://images.fotmob.com/image_resources/playerimages/245555.png',
+  'Edon Zhegrova': 'https://images.fotmob.com/image_resources/playerimages/862616.png',
+  'Lucas Chevalier': 'https://images.fotmob.com/image_resources/playerimages/1177131.png',
+  'Bruno Guimarães': 'https://images.fotmob.com/image_resources/playerimages/850354.png',
+  'Jhon Lucumí': 'https://images.fotmob.com/image_resources/playerimages/860913.png',
+  'Marc Guéhi': 'https://images.fotmob.com/image_resources/playerimages/844425.png',
+  'Robert Andrich': 'https://images.fotmob.com/image_resources/playerimages/411851.png',
+  'Riccardo Calafiori': 'https://images.fotmob.com/image_resources/playerimages/1105912.png',
+  'Noussair Mazraoui': 'https://images.fotmob.com/image_resources/playerimages/775539.png',
+  'Iliman Ndiaye': 'https://images.fotmob.com/image_resources/playerimages/965764.png',
+  'Habib Diarra': 'https://images.fotmob.com/image_resources/playerimages/1285866.png',
+  'Morgan Rogers': 'https://images.fotmob.com/image_resources/playerimages/883080.png',
+  'Ezri Konsa': 'https://images.fotmob.com/image_resources/playerimages/710159.png',
+  'Lucas Digne': 'https://images.fotmob.com/image_resources/playerimages/210111.png',
+  'Danny Welbeck': 'https://images.fotmob.com/image_resources/playerimages/113836.png',
+  'Carlos Baleba': 'https://images.fotmob.com/image_resources/playerimages/1352713.png',
+  'Pervis Estupiñán': 'https://images.fotmob.com/image_resources/playerimages/688278.png',
+  'Bryan Mbeumo': 'https://images.fotmob.com/image_resources/playerimages/923312.png',
+  'Mark Flekken': 'https://images.fotmob.com/image_resources/playerimages/330643.png',
+  'Eberechi Eze': 'https://images.fotmob.com/image_resources/playerimages/818975.png',
+  'Maxence Lacroix': 'https://images.fotmob.com/image_resources/playerimages/950485.png',
+  'Antoine Semenyo': 'https://images.fotmob.com/image_resources/playerimages/933576.png',
+  'Kepa Arrizabalaga': 'https://images.fotmob.com/image_resources/playerimages/317564.png',
+  'Matheus Cunha': 'https://images.fotmob.com/image_resources/playerimages/863098.png',
+  'Rayan Aït-Nouri': 'https://images.fotmob.com/image_resources/playerimages/933845.png',
+  'Elliot Anderson': 'https://images.fotmob.com/image_resources/playerimages/1089691.png',
+  'Omari Hutchinson': 'https://images.fotmob.com/image_resources/playerimages/1215652.png',
+  'Martín Zubimendi': 'https://images.fotmob.com/image_resources/playerimages/1031325.png',
+  'Miguel Gutiérrez': 'https://images.fotmob.com/image_resources/playerimages/942379.png',
+  'Loïc Badé': 'https://images.fotmob.com/image_resources/playerimages/1119461.png',
+  'Cristhian Mosquera': 'https://images.fotmob.com/image_resources/playerimages/1298907.png',
+  'Omar Alderete': 'https://images.fotmob.com/image_resources/playerimages/751998.png',
+  'Fábio Silva': 'https://images.fotmob.com/image_resources/playerimages/1050158.png',
+  'Mario Gila': 'https://images.fotmob.com/image_resources/playerimages/1106074.png',
+  'Ivan Provedel': 'https://images.fotmob.com/image_resources/playerimages/364822.png',
+  'Sam Beukema': 'https://images.fotmob.com/image_resources/playerimages/873573.png',
+  'Vanja Milinković-Savić': 'https://images.fotmob.com/image_resources/playerimages/543021.png',
+  'Lorenzo Lucca': 'https://images.fotmob.com/image_resources/playerimages/1212630.png',
+  'Koni De Winter': 'https://images.fotmob.com/image_resources/playerimages/1200630.png',
+  'Ange-Yoan Bonny': 'https://images.fotmob.com/image_resources/playerimages/1199383.png',
+  'Warren Bondo': 'https://images.fotmob.com/image_resources/playerimages/1209987.png',
+  'Patrick Dorgu': 'https://images.fotmob.com/image_resources/playerimages/1526560.png',
+  'Kamil Grabara': 'https://images.fotmob.com/image_resources/playerimages/760722.png',
+  'Patrick Drewes': 'https://images.fotmob.com/image_resources/playerimages/359203.png',
+  'Malick Fofana': 'https://images.fotmob.com/image_resources/playerimages/1364069.png',
+  'Rayan Cherki': 'https://images.fotmob.com/image_resources/playerimages/1104053.png',
+  'Jérémie Boga': 'https://images.fotmob.com/image_resources/playerimages/643229.png',
+  'Andy Diouf': 'https://images.fotmob.com/image_resources/playerimages/1254297.png',
+  'Kevin Danso': 'https://images.fotmob.com/image_resources/playerimages/754126.png',
+  'Facundo Medina': 'https://images.fotmob.com/image_resources/playerimages/812652.png',
+  'Emanuel Emegha': 'https://images.fotmob.com/image_resources/playerimages/1183148.png',
+  'Diego Moreira': 'https://images.fotmob.com/image_resources/playerimages/1342754.png',
+  'Andrey Santos': 'https://images.fotmob.com/image_resources/playerimages/1372921.png',
+  'Guela Doué': 'https://images.fotmob.com/image_resources/playerimages/1395704.png',
+  'Petar Sučić': 'https://images.fotmob.com/image_resources/playerimages/1382000.png',
+  'Christos Tzolis': 'https://images.fotmob.com/image_resources/playerimages/1157237.png',
+  'Ardon Jashari': 'https://images.fotmob.com/image_resources/playerimages/1163219.png',
+  'Janis Blaswich': 'https://images.fotmob.com/image_resources/playerimages/278814.png',
+  'Viktor Gyökeres': 'https://images.fotmob.com/image_resources/playerimages/664500.png',
+  'Geovany Quenda': 'https://images.fotmob.com/image_resources/playerimages/1530314.png',
+  'Malik Tillman': 'https://images.fotmob.com/image_resources/playerimages/1126058.png',
+  'Noa Lang': 'https://images.fotmob.com/image_resources/playerimages/837341.png',
+  'Joey Veerman': 'https://images.fotmob.com/image_resources/playerimages/792429.png',
+  'Aaron Anselmino': 'https://images.fotmob.com/image_resources/playerimages/1494947.png',
+  'Manuel Akanji': 'https://images.fotmob.com/image_resources/playerimages/521318.png',
+  'Piotr Zieliński': 'https://images.fotmob.com/image_resources/playerimages/362212.png',
+  'Abdukodir Khusanov': 'https://images.fotmob.com/image_resources/playerimages/1362998.png',
+  'Trai Hume': 'https://images.fotmob.com/image_resources/playerimages/1067763.png',
+  'Daniel Ballard': 'https://images.fotmob.com/image_resources/playerimages/974268.png',
+  'Julian Ryerson': 'https://images.fotmob.com/image_resources/playerimages/659272.png',
+  'Willian Pacho': 'https://images.fotmob.com/image_resources/playerimages/1137670.png',
+  'Alisson Farias': 'https://images.fotmob.com/image_resources/playerimages/638757.png',
+  'Amarildo': 'https://images.fotmob.com/image_resources/playerimages/1082142.png',
+  'Augustine Chidi Kwem': 'https://images.fotmob.com/image_resources/playerimages/1095052.png',
+  'Benjamin Kuku': 'https://images.fotmob.com/image_resources/playerimages/791699.png',
+  'Erik Sorga': 'https://images.fotmob.com/image_resources/playerimages/762688.png',
+  'Eyenga Alain': 'https://vpf.vn/wp-content/uploads/2022/09/10-150x150.jpg',
+  'Geovane Magno': 'https://vpf.vn/wp-content/uploads/2019/07/VTFC_BR0002265_GeovaneMangoCandidoSilveira_10-150x150.jpg',
+  'Gustavo Santos': 'https://images.fotmob.com/image_resources/playerimages/1997436.png',
+  'Hyuri Henrique': 'https://vpf.vn/wp-content/uploads/2024/09/so-9-QNam-150x150.jpg',
+  'Hà Minh Tuấn': 'https://vpf.vn/wp-content/uploads/2018/12/SHBDN_13_HaMinhTuan_VN001570-150x150.jpg',
+  'Jason Pendant Quang Vinh': 'https://images.fotmob.com/image_resources/playerimages/812234.png',
+  'Lucão do Break': 'https://images.fotmob.com/image_resources/playerimages/1088156.png',
+  'Michael Olaha': 'https://images.fotmob.com/image_resources/playerimages/832706.png',
+  'Nguyễn Ngọc Hậu': 'https://vpf.vn/wp-content/uploads/2026/09/VHU_12_NguyenNgocHau_VN002026-150x150.jpg',
+  'Noel Mbo': 'https://images.fotmob.com/image_resources/playerimages/688030.png',
+  'Phạm Văn Nam': 'https://vpf.vn/wp-content/uploads/2022/03/PTFC_20_PhamVanNam_VN001933-150x150.jpg',
+  'Wellington Nem': 'https://images.fotmob.com/image_resources/playerimages/264080.png',
+  'Yuri Mamute': 'https://images.fotmob.com/image_resources/playerimages/292265.png',
+  'Zaracho': 'https://images.fotmob.com/image_resources/playerimages/787262.png',
+  'Zé Paulo': 'https://images.fotmob.com/image_resources/playerimages/535602.png',
+  'Mohamed Salah': 'https://images.fotmob.com/image_resources/playerimages/292462.png',
+  'Robert Lewandowski': 'https://images.fotmob.com/image_resources/playerimages/93447.png',
+  'Salem Al-Dawsari': 'https://images.fotmob.com/image_resources/playerimages/307753.png',
+  'Chanathip Songkrasin': 'https://images.fotmob.com/image_resources/playerimages/303561.png',
+  'Theo Hernández': 'https://images.fotmob.com/image_resources/playerimages/724371.png',
+  'Ederson Moraes': 'https://images.fotmob.com/image_resources/playerimages/957203.png',
+  'Hendrio Araújo': 'https://images.fotmob.com/image_resources/playerimages/863137.png',
+  'Đàm Tiến Dũng': 'https://vpf.vn/wp-content/uploads/2026/09/TXN-_4_DamTienDung_VN0000424-e1788420058199-150x150.png',
+  'Hồ Minh Dĩ': 'https://vpf.vn/wp-content/uploads/2026/08/HPFC_11_HoMinhDi_VN0000740-e1787200857652-150x150.jpg',
+  'Trương Thanh Nam': 'https://vpf.vn/wp-content/uploads/2026/08/ATH_14_TruongThanhNam_VN001297-scaled-e1787125501753-150x150.jpg',
+  'Trần Mạnh Quỳnh': 'https://vpf.vn/wp-content/uploads/2026/09/TXN-_22_TranManhQuynh_VN001824-150x150.png',
+  'Đinh Thành Luân': 'https://vpf.vn/wp-content/uploads/2026/09/QNU_11_DinhThanhLuan_VN0001144-150x150.jpg',
+  'Kyle Colonna': 'https://vpf.vn/wp-content/uploads/2026/08/TCVT_2_ColonnaKyleNino_US002131-e1787651768773-150x150.jpg',
+  'Võ Ngọc Cường': 'https://vpf.vn/wp-content/uploads/2026/09/KKH_93_VoNgocCuong_VN0001234-150x150.jpg',
+  'Phan Văn Biểu': 'https://vpf.vn/wp-content/uploads/2026/08/CAHCM_32_PhanVanBieu_VN002172-150x150.jpg',
+  'Janclesio': 'https://vpf.vn/wp-content/uploads/2023/02/13-150x150.jpg'
+};
+    let REAL_PLAYER_PHOTOS_NORM = {};
+
+    function normalizeSearchText(str) {
+      return (str || '')
+        .toString()
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    }
+
+    function rebuildPlayerPhotoIndex() {
+      REAL_PLAYER_PHOTOS_NORM = {};
+      Object.entries(REAL_PLAYER_PHOTOS).forEach(([name, url]) => {
+        if (!url) return;
+        const nk = normalizeSearchText(name.split(' (')[0]);
+        if (nk && !REAL_PLAYER_PHOTOS_NORM[nk]) {
+          REAL_PLAYER_PHOTOS_NORM[nk] = url;
+        }
+      });
+    }
+    rebuildPlayerPhotoIndex();
+
+    function getPlayerAvatarUrl(playerName) {
+      if (!playerName) return null;
+      if (REAL_PLAYER_PHOTOS[playerName]) return REAL_PLAYER_PHOTOS[playerName];
+      const nk = normalizeSearchText(playerName.split(' (')[0]);
+      return REAL_PLAYER_PHOTOS_NORM[nk] || null;
+    }
+
+    function getPlayerInitials(playerName) {
+      const clean = (playerName || 'C T').split(' (')[0].trim();
+      const parts = clean.split(/\s+/).filter(Boolean);
+      if (parts.length === 0) return 'CT';
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function getPlayerAvatarHtml(playerName, team = null, sizeClass = 'w-9 h-9', extraClass = '') {
+      const url = getPlayerAvatarUrl(playerName);
+      const initials = getPlayerInitials(playerName);
+      const nat = getPlayerNaturalInfo(playerName, team);
+      const safeName = (playerName || '').replace(/"/g, '&quot;');
+      if (url) {
+        return `
+          <span class="player-avatar-wrap ${sizeClass} ${extraClass}" title="${safeName} (${nat.vnLabel})">
+            <img src="${url}" alt="${safeName}" referrerpolicy="no-referrer" class="player-avatar-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+            <span style="display:none;" class="w-full h-full items-center justify-center font-black text-[10px] leading-none ${nat.textClass} bg-slate-900">${initials}</span>
+          </span>
+        `;
+      }
+      return `
+        <span class="player-avatar-wrap ${sizeClass} ${nat.badgeClass} ${extraClass}" title="${safeName} (${nat.vnLabel})">
+          <span class="font-black text-[10px] leading-none">${initials}</span>
+        </span>
+      `;
+    }
+
+    // =========================================================================
     // 3. SOUND ENGINE (WEB AUDIO API SYNTHESIZER)
     // =========================================================================
     const SoundFX = {
@@ -2987,6 +3870,16 @@
       // Multi-Season Progression & OVR Evolution (Strictly Max 125 OVR)
       seasonYear: 2026,
       seasonSummary: null,
+      awardBootScope: 'league', // 'league' | 'global'
+      awardBallonScope: 'world', // 'world' | 'league'
+      transferSearch: '',
+      playerSearchQuery: '',
+      playerSearchFilter: 'all',
+      playerSeasonData: {
+        seasonYear: 2026,
+        players: {},
+        awardHistory: []
+      },
 
       // Game Mode & HLV Tương Lai (Soccer Manager Career Mode)
       gameMode: 'predict', // 'predict' | 'manager'
@@ -3138,6 +4031,10 @@
       if (badge) {
         badge.textContent = `MÙA GIẢI ${state.seasonYear}/${state.seasonYear + 1}`;
       }
+      const awardsPill = document.getElementById('awardsSeasonPill');
+      if (awardsPill) {
+        awardsPill.textContent = `MÙA ${state.seasonYear}/${state.seasonYear + 1}`;
+      }
       const modalYearTag = document.getElementById('seasonEndYearTag');
       if (modalYearTag) {
         modalYearTag.textContent = `MÙA ${state.seasonYear}/${state.seasonYear + 1}`;
@@ -3228,10 +4125,12 @@
       });
 
       saveCustomRatings();
+      const awards = finalizeSeasonAwards(tourney, ovrChanges);
       state.seasonSummary = {
         tourney,
         seasonYear: state.seasonYear,
-        ovrChanges
+        ovrChanges,
+        awards
       };
 
       showSeasonEndModal(tourney, ovrChanges);
@@ -3464,6 +4363,82 @@
         honorsContainer.innerHTML = honorsHtml;
       }
 
+      // Populate Individual Awards Podium: Vua Phá Lưới & Quả Bóng Vàng
+      const indivEl = document.getElementById('seasonIndividualAwardsPodium');
+      const awards = state.seasonSummary?.awards || finalizeSeasonAwards(tourney, ovrChanges, false);
+      if (indivEl && awards) {
+        const gb = awards.goldenBoot || [];
+        const bLeague = awards.ballonLeague || [];
+        const bWorld = awards.ballonWorld || [];
+        const gbWinner = gb[0];
+        const bWinner = bWorld[0] || bLeague[0];
+        const leagueMvp = bLeague[0];
+
+        const renderMiniPos = (pos, badgeCls) => `<span class="px-1.5 py-0.2 rounded text-[9px] font-black border ${badgeCls}">${pos}</span>`;
+
+        indivEl.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500/15 via-slate-900/90 to-slate-950 border border-emerald-400/35 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-400 text-slate-950">👟 VUA PHÁ LƯỚI (${tourney.shortName})</span>
+                <span class="text-[10px] text-emerald-300 font-bold">Chiếc Giày Vàng</span>
+              </div>
+              ${gbWinner ? `
+                <div class="flex items-center gap-2.5">
+                  ${getPlayerAvatarHtml(gbWinner.name, gbWinner.team, 'w-11 h-11')}
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      ${renderMiniPos(gbWinner.posInfo.specificPos, gbWinner.posInfo.badgeClass)}
+                      <span class="font-black text-sm text-white truncate">${gbWinner.name}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300 truncate flex items-center gap-1 mt-0.5">${getTeamLogoHtml(gbWinner.team, 'w-3.5 h-3.5')} <span>${gbWinner.team.name} · <strong class="text-emerald-300">${gbWinner.goals} bàn</strong> · ${gbWinner.assists} KT</span></div>
+                  </div>
+                </div>
+                ${gb.length > 1 ? `
+                  <div class="pt-1.5 border-t border-white/10 space-y-1 text-[11px]">
+                    ${gb.slice(1, 3).map((r, i) => `
+                      <div class="flex items-center justify-between gap-2 text-slate-300">
+                        <span class="truncate flex items-center gap-1">${i === 0 ? '🥈' : '🥉'} ${renderMiniPos(r.posInfo.specificPos, r.posInfo.badgeClass)} <span class="text-white font-semibold truncate">${r.name}</span> <span class="text-slate-500">(${r.team.code})</span></span>
+                        <span class="font-mono font-bold text-emerald-300 shrink-0">⚽ ${r.goals}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              ` : `<div class="text-xs text-slate-400">Chưa ghi nhận bàn thắng trong giải đấu này.</div>`}
+            </div>
+
+            <div class="p-3 rounded-xl award-podium-gold border space-y-2">
+              <div class="flex items-center justify-between flex-wrap gap-1">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-400 text-slate-950">🌕 QUẢ BÓNG VÀNG</span>
+                ${leagueMvp ? `<span class="text-[10px] text-amber-200 font-bold truncate max-w-[170px]">MVP Giải: ${leagueMvp.name}</span>` : ''}
+              </div>
+              ${bWinner ? `
+                <div class="flex items-center gap-2.5">
+                  ${getPlayerAvatarHtml(bWinner.name, bWinner.team, 'w-11 h-11')}
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      ${renderMiniPos(bWinner.posInfo.specificPos, bWinner.posInfo.badgeClass)}
+                      <span class="font-black text-sm text-white truncate">${bWinner.name}</span>
+                    </div>
+                    <div class="text-[11px] text-amber-100 truncate flex items-center gap-1 mt-0.5">${getTeamLogoHtml(bWinner.team, 'w-3.5 h-3.5')} <span>${bWinner.team.name} · <strong class="text-amber-300">${bWinner.score} đ QBV</strong> · ⚽${bWinner.goals} 🎯${bWinner.assists}</span></div>
+                  </div>
+                </div>
+                ${(bWorld.length > 1 || bLeague.length > 1) ? `
+                  <div class="pt-1.5 border-t border-white/10 space-y-1 text-[11px]">
+                    ${(bWorld.length > 1 ? bWorld : bLeague).slice(1, 3).map((r, i) => `
+                      <div class="flex items-center justify-between gap-2 text-slate-200">
+                        <span class="truncate flex items-center gap-1">${i === 0 ? '🥈 Bạc:' : '🥉 Đồng:'} ${renderMiniPos(r.posInfo.specificPos, r.posInfo.badgeClass)} <span class="text-white font-semibold truncate">${r.name}</span> <span class="text-slate-400">(${r.team.code})</span></span>
+                        <span class="font-mono font-bold text-amber-300 shrink-0">${r.score}đ</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              ` : `<div class="text-xs text-slate-400">Chưa có dữ liệu Quả Bóng Vàng mùa này.</div>`}
+            </div>
+          </div>
+        `;
+      }
+
       // Populate Table Body (Scrollable to view all remaining teams)
       const tbody = document.getElementById('seasonOvrTableBody');
       if (tbody) {
@@ -3556,8 +4531,19 @@
             if (prizeBonus > 0) {
               state.manager.budget = (state.manager.budget || 150) + prizeBonus;
             }
+            const myGbWin = awards?.goldenBoot?.[0]?.teamId === state.manager.teamId ? awards.goldenBoot[0] : null;
+            const myBdWin = awards?.ballonWorld?.[0]?.teamId === state.manager.teamId
+              ? awards.ballonWorld[0]
+              : (awards?.ballonLeague?.[0]?.teamId === state.manager.teamId ? awards.ballonLeague[0] : null);
+            if (myGbWin) state.manager.budget = (state.manager.budget || 150) + 5;
+            if (myBdWin) state.manager.budget = (state.manager.budget || 150) + 10;
             saveManagerCareer();
           }
+
+          const myGbWinDisplay = awards?.goldenBoot?.[0]?.teamId === state.manager.teamId ? awards.goldenBoot[0] : null;
+          const myBdWinDisplay = awards?.ballonWorld?.[0]?.teamId === state.manager.teamId
+            ? awards.ballonWorld[0]
+            : (awards?.ballonLeague?.[0]?.teamId === state.manager.teamId ? awards.ballonLeague[0] : null);
 
           const evalTextEl = document.getElementById('seasonEndManagerEvaluationText');
           if (evalTextEl) {
@@ -3576,10 +4562,15 @@
               assessment = `⚡ ${team.name} cán đích ở vị trí <strong>#${rank}</strong>. Hợp đồng mùa giải này chính thức hoàn tất.`;
             }
 
+            const indivBonuses = [];
+            if (myGbWinDisplay) indivBonuses.push(`👟 Vua Phá Lưới (${myGbWinDisplay.name}): +5M €`);
+            if (myBdWinDisplay) indivBonuses.push(`🌕 Quả Bóng Vàng (${myBdWinDisplay.name}): +10M €`);
+
             evalTextEl.innerHTML = `
               <div class="space-y-1">
                 <p>${assessment}</p>
                 ${prizeText ? `<p class="text-emerald-300 font-bold">💰 ${prizeText}</p>` : ''}
+                ${indivBonuses.length ? `<p class="text-amber-200 font-bold">🏅 Thưởng danh hiệu cá nhân: ${indivBonuses.join(' • ')}</p>` : ''}
                 <p class="text-amber-300 font-semibold">🔓 Hợp đồng Mùa giải ${state.seasonYear}/${state.seasonYear + 1} đã kết thúc. Bạn có thể chọn <strong>Gia hạn tiếp tục</strong> hoặc <strong>Hết hạn hợp đồng & Chọn CLB khác trong giải</strong>!</p>
               </div>
             `;
@@ -3606,6 +4597,7 @@
       SoundFX.click();
       const tourney = getActiveTournament();
       initStandingsForTournament(tourney.id, true);
+      resetPlayerSeasonStats(tourney.id);
 
       state.roundNumber = 1;
       state.stageIndex = 0;
@@ -3621,6 +4613,7 @@
       renderLeagueStandings();
       renderFifaWorldRankings();
       renderTeamsDirectory();
+      renderSeasonAwards();
       updateStageFormatUI();
       pickNextMatch();
 
@@ -3641,6 +4634,7 @@
       // Reset All Tournaments for fresh new season with upgraded/downgraded OVRs & randomly shuffled groups/fixtures
       state.standingsByTourney = {};
       state.groupFixturesByTourney = {};
+      resetPlayerSeasonStats(null);
       const tourney = getActiveTournament();
       initStandingsForTournament(tourney.id, true, true);
 
@@ -3659,6 +4653,7 @@
       renderLeagueStandings();
       renderFifaWorldRankings();
       renderTeamsDirectory();
+      renderSeasonAwards();
       updateStageFormatUI();
       pickNextMatch();
 
@@ -3671,6 +4666,7 @@
       SoundFX.whistle();
       const tourney = tourneyParam || getActiveTournament();
       initStandingsForTournament(tourney.id);
+      let simulatedInTourney = 0;
 
       function simulateCurrentFixtures() {
         const allGroups = state.groupFixturesByTourney[tourney.id] || {};
@@ -3697,7 +4693,9 @@
               f.played = true;
               f.score = `${homeGoals}-${awayGoals}`;
               record(f.home, f.away, homeGoals, awayGoals);
+              recordPlayerStatsForMatch(tourney.id, f.home, f.away, homeGoals, awayGoals);
               updateFifaWorldPointsAfterMatch(f.home, f.away, homeGoals, awayGoals);
+              simulatedInTourney++;
             }
           }
         }
@@ -3720,9 +4718,33 @@
         simulateCurrentFixtures();
       }
 
+      // Proportional catch-up simulation across global leagues so World Ballon d'Or & Global Golden Boot reflect a full season
+      const stTableNow = state.standingsByTourney[tourney.id] || {};
+      const teamCount = Math.max(4, Object.keys(stTableNow).length || 14);
+      const catchUpRounds = Math.min(28, Math.max(6, Math.round(simulatedInTourney / Math.max(2, Math.floor(teamCount / 2)))));
+      const isNational = tourney.group === 'nations';
+      const activeIds = new Set(Object.keys(stTableNow));
+      const worldPool = TEAMS_DB
+        .filter(t => (isNational ? t.type === 'nations' : t.type !== 'nations') && !activeIds.has(t.id))
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 64);
+
+      for (let r = 0; r < catchUpRounds && worldPool.length >= 2; r++) {
+        for (let i = 0; i + 1 < worldPool.length; i += 2) {
+          const offset = (i + r * 2) % worldPool.length;
+          const oppIdx = (offset + 1 + (r % 5)) % worldPool.length;
+          if (offset === oppIdx) continue;
+          const t1 = worldPool[offset];
+          const t2 = worldPool[oppIdx];
+          const { homeGoals, awayGoals } = generateMatchScore(t1, t2);
+          recordPlayerStatsForMatch(null, t1, t2, homeGoals, awayGoals);
+        }
+      }
+
       state.phase = 'complete';
       renderLeagueStandings();
       renderFifaWorldRankings();
+      renderSeasonAwards();
       updateStageFormatUI();
       handleSeasonEndAndOvrProgression(tourney);
     }
@@ -4697,18 +5719,37 @@
     // =========================================================================
     // SẮP XẾP ĐỘI HÌNH, VỊ TRÍ CẦU THỦ & SƠ ĐỒ ĐỘI HÌNH HLV
     // =========================================================================
+    function findTransferPlayerMeta(playerName) {
+      const list = (typeof TRANSFER_MARKET_PLAYERS !== 'undefined' && Array.isArray(TRANSFER_MARKET_PLAYERS))
+        ? TRANSFER_MARKET_PLAYERS
+        : [];
+      const norm = (playerName || '').trim().toLowerCase();
+      if (!norm) return null;
+      const normBase = norm.split(' (')[0].trim();
+      return list.find(p => {
+        const pNorm = (p.name || '').toLowerCase();
+        const pBase = pNorm.split(' (')[0].trim();
+        return pNorm === norm || pBase === normBase;
+      }) || null;
+    }
+
     function guessPlayerRoleFromName(name, fallbackIdx = 5, hasExplicitGk = false) {
       if (!name) return 'MF';
-      if (/filip|lâm|chuẩn|nguyên mạnh|đình triệu|minh toàn|xuân hoàng|trung kiên|văn việt|văn lâm|courtois|alisson|ederson|martínez|ter stegen|donnarumma|neuer|sommer|oblak|raya|onana|vicario|maignan|kelleher|pickford|pope|leno|ramsdale|henderson|kepa|sánchez|areola|verbreggen|flekk|hermansen|muric|ward/i.test(name)) {
+      const norm = name.trim().toLowerCase();
+      const normBase = norm.split(' (')[0].trim();
+      const override = PLAYER_POSITION_OVERRIDES[norm] || PLAYER_POSITION_OVERRIDES[normBase];
+      if (override) return override.role;
+
+      if (/filip|văn lâm|chuẩn|nguyên mạnh|đình triệu|minh toàn|xuân hoàng|trung kiên|văn việt|văn phong|thanh tùng|nguyễn văn công|bùi tiến dũng \(gk\)|patrik lê giang|liêm điều|sỹ huy|văn hoàng|thế tài|văn toản|tuyên quang|thanh thắng|dương văn lợi|cao văn bình|tùng lâm|minh hoàng|tống đức an|tuấn hưng|courtois|alisson becker|ederson|emiliano martínez|ter stegen|donnarumma|neuer|sommer|oblak|raya|andré onana|vicario|maignan|kelleher|pickford|pope|leno|ramsdale|dean henderson|kepa|robert sánchez|areola|verbruggen|flekken|hermansen|muric|unai simón|mamardashvili|bounou|lunin|iñaki peña|musso|ortega|jörgensen|bayındır|forster|ulreich|kovář|meyer|safonov/i.test(name)) {
         return 'GK';
       }
-      if (/văn hậu|việt anh|ngọc hải|thành chung|duy mạnh|tiến dũng|thanh bình|tấn tài|tuấn tài|hồng duy|văn thanh|xuân mạnh|thanh hào|pendant|quang vinh|janclesio|gustavo|jairo|dias|dijk|saliba|rüdiger|hernández|alexander-arnold|walker|stones|gabriel|konaté|robertson|bastoni|militão|carvajal|hakimi|marquinhos|araujo|koundé|cubarsí|kim min|gvardiol|akanji|upamecano|tah|frimpong|grimaldo|schlotterbeck|romero|porro|udogie/i.test(name)) {
+      if (/văn hậu|việt anh|ngọc hải|thành chung|duy mạnh|bùi tiến dũng|thanh bình|tấn tài|tuấn tài|hồng duy|văn thanh|xuân mạnh|thanh hào|pendant|quang vinh|tô văn vũ|tiến anh|đức chiến|văn vĩ|tuấn dương|đình hai|minh tùng|mạnh hùng|thiện đức|thanh long|văn triệu|sỹ hoàng|văn hạnh|ngọc bảo|ngọc đức|ngọc hiệp|công nhật|janclesio|gustavo|jairo|dias|dijk|saliba|rüdiger|hernández|alexander-arnold|walker|stones|gabriel magalhães|konaté|robertson|bastoni|militão|carvajal|hakimi|marquinhos|araujo|araújo|koundé|cubarsí|kim min|gvardiol|akanji|upamecano|tah|frimpong|grimaldo|schlotterbeck|romero|porro|udogie|fofana|ben white|shaw|molina|de vrij|pavard/i.test(name)) {
         return 'DF';
       }
-      if (/xuân son|rafaelson|tiến linh|tuấn hải|văn toàn|văn quyết|vĩ hào|mạnh dũng|lucão|rimario|olaha|geovane|alan grafite|haaland|mbappé|vinícius|salah|lewandowski|son heung|yamal|kane|lautaro|osimhen|messi|ronaldo|benzema|neymar|griezmann|saka|foden|palmer|watkins|isak|solanke|gyökeres|leão|thuram|vlahovic|alvarez|rodrygo|endrick|jackson|havertz|rashford|højlund|zirkzee|wirtz/i.test(name)) {
+      if (/xuân son|rafaelson|tiến linh|tuấn hải|văn toàn|văn quyết|vĩ hào|mạnh dũng|lucão|rimario|olaha|geovane|alan grafite|léo artur|alisson farias|đình bắc|văn đạt|văn đô|văn tùng|danh trung|xuân nam|sỹ giáp|nguyên hoàng|thanh bình|phúc tịnh|quang nam|ngọc hậu|xuân tú|minh quang|haaland|mbappé|vinícius|salah|lewandowski|son heung|yamal|kane|lautaro|osimhen|messi|ronaldo|benzema|neymar|griezmann|saka|foden|palmer|watkins|isak|solanke|gyökeres|leão|thuram|vlahovic|alvarez|álvarez|rodrygo|endrick|jackson|havertz|rashford|højlund|zirkzee|wirtz|grealish|jota|gabriel jesus|richarlison|ferran torres|tel|correa|doué|taremi/i.test(name)) {
         return 'FW';
       }
-      if (/tuấn anh|hoàng anh|quang hải|hoàng đức|hùng dũng|hai long|ngọc tân|thái sơn|minh vương|ngọc quang|xuân trường|hendrio|lallana|de bruyne|bellingham|pedri|gavi|rodri|rice|ødegaard|modrić|kroos|valverde|camavinga|tchouaméni|bruno fernandes|bernardo silva|mac allister|caicedo|musiala|kimmich|barella|vitinha/i.test(name)) {
+      if (/tuấn anh|hoàng anh|quang hải|hoàng đức|hùng dũng|hai long|ngọc tân|thái sơn|minh vương|ngọc quang|xuân trường|hendrio|lâm thuận|thành long|khắc ngọc|hữu thắng|hải huy|quốc phương|đình lâm|văn thuận|thanh khôi|ngọc hà|lallana|de bruyne|bellingham|pedri|gavi|rodri|rice|ødegaard|modrić|kroos|valverde|camavinga|tchouaméni|bruno fernandes|bernardo silva|mac allister|caicedo|musiala|kimmich|barella|vitinha|kovačić|kock|merino|eriksen|bentancur|goretzka|frattesi|fabián ruiz/i.test(name)) {
         return 'MF';
       }
       if (fallbackIdx === 10) return hasExplicitGk ? 'DF' : 'GK';
@@ -4717,16 +5758,79 @@
       return 'MF';
     }
 
+    function getPlayerNaturalInfo(playerName, team = null, fallbackIdx = null) {
+      const cleanName = (playerName || '').trim();
+      const norm = cleanName.toLowerCase();
+      const normBase = norm.split(' (')[0].trim();
+
+      let role = null;
+      let specificPos = null;
+      let ovrHint = null;
+
+      const tm = findTransferPlayerMeta(cleanName);
+      if (tm) {
+        ovrHint = tm.ovr;
+      }
+
+      const override = PLAYER_POSITION_OVERRIDES[norm] || PLAYER_POSITION_OVERRIDES[normBase];
+      if (override) {
+        role = override.role;
+        specificPos = override.pos;
+      } else if (tm) {
+        role = tm.pos;
+        specificPos = tm.pos;
+      } else {
+        const stars = (team && Array.isArray(team.stars)) ? team.stars : [];
+        const hasExplicitGk = stars.some(n => guessPlayerRoleFromName(n, -1, false) === 'GK');
+        const idxInStars = stars.indexOf(cleanName);
+        const effIdx = idxInStars >= 0 ? idxInStars : (fallbackIdx !== null ? fallbackIdx : 5);
+        role = guessPlayerRoleFromName(cleanName, effIdx, hasExplicitGk);
+        specificPos = role;
+      }
+
+      const ROLE_META = {
+        GK: {
+          vnLabel: 'Thủ môn',
+          badgeClass: 'bg-amber-400/25 text-amber-300 border-amber-400/40',
+          textClass: 'text-amber-300'
+        },
+        DF: {
+          vnLabel: 'Hậu vệ',
+          badgeClass: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+          textClass: 'text-sky-300'
+        },
+        MF: {
+          vnLabel: 'Tiền vệ',
+          badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+          textClass: 'text-emerald-300'
+        },
+        FW: {
+          vnLabel: 'Tiền đạo',
+          badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+          textClass: 'text-rose-300'
+        }
+      };
+
+      const meta = ROLE_META[role] || ROLE_META.MF;
+      return {
+        role,
+        specificPos: specificPos || role,
+        vnLabel: meta.vnLabel,
+        badgeClass: meta.badgeClass,
+        textClass: meta.textClass,
+        ovrHint: ovrHint || (team ? team.rating : 76)
+      };
+    }
+
     function getDefaultOrderedLineup(team) {
       if (!team || !Array.isArray(team.stars)) return [];
       const uniqueStars = Array.from(new Set(team.stars));
-      const hasExplicitGk = uniqueStars.some(name => guessPlayerRoleFromName(name, -1, false) === 'GK');
       const gks = [], dfs = [], mfs = [], fws = [];
       uniqueStars.forEach((name, idx) => {
-        const role = guessPlayerRoleFromName(name, idx, hasExplicitGk);
-        if (role === 'GK') gks.push(name);
-        else if (role === 'DF') dfs.push(name);
-        else if (role === 'FW') fws.push(name);
+        const nat = getPlayerNaturalInfo(name, team, idx);
+        if (nat.role === 'GK') gks.push(name);
+        else if (nat.role === 'DF') dfs.push(name);
+        else if (nat.role === 'FW') fws.push(name);
         else mfs.push(name);
       });
 
@@ -4846,32 +5950,52 @@
 
         const isSel = selIdx === i;
         const isCap = name === captain;
+        const photoUrl = getPlayerAvatarUrl(name);
+        const safeTitle = name.replace(/"/g, '&quot;');
 
         return `
-          <button type="button" onclick="window.onClickLineupPlayer(${i})" style="left: ${leftPct}%; top: ${topPct}%;" class="pitch-player-node ${isSel ? 'is-selected' : ''} flex flex-col items-center group" title="${slot.pos || slot.role}: ${name}">
-            <div class="pitch-jersey relative w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 ${jerseyColor} flex items-center justify-center font-black text-[10px] sm:text-[11px] shadow-lg transition">
-              <span>${slot.pos || slot.role}</span>
+          <button type="button" onclick="window.onClickLineupPlayer(${i})" style="left: ${leftPct}%; top: ${topPct}%;" class="pitch-player-node ${isSel ? 'is-selected' : ''} flex flex-col items-center group" title="${slot.pos || slot.role}: ${safeTitle}">
+            <div class="pitch-jersey relative w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 ${jerseyColor} flex items-center justify-center font-black text-[10px] sm:text-[11px] shadow-lg transition">
+              ${photoUrl ? `
+                <img src="${photoUrl}" alt="${safeTitle}" referrerpolicy="no-referrer" class="w-full h-full rounded-full object-cover object-top bg-slate-900" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline';" />
+                <span style="display:none;">${slot.pos || slot.role}</span>
+                <span class="absolute -bottom-1 -right-1 px-1 py-0.2 rounded bg-slate-950/95 border border-white/25 text-[8px] font-black text-white shadow">${slot.pos || slot.role}</span>
+              ` : `<span>${slot.pos || slot.role}</span>`}
               ${isCap ? '<span class="absolute -top-2 -right-1.5 text-xs drop-shadow">👑</span>' : ''}
             </div>
-            <span class="mt-0.5 px-1.5 py-0.2 rounded bg-slate-950/90 border border-white/15 text-[10px] font-bold text-white whitespace-nowrap max-w-[82px] truncate shadow">
+            <span class="mt-0.5 px-1.5 py-0.2 rounded bg-slate-950/90 border border-white/15 text-[10px] font-bold text-white whitespace-nowrap max-w-[84px] truncate shadow">
               ${shortName}
             </span>
           </button>
         `;
       }).join('');
 
-      // Render Starting XI + Bench Roster List
+      // Render Starting XI + Bench Roster List (BOTH Starters AND Bench show playing positions!)
       let listHtml = `<div class="text-[10px] font-black uppercase tracking-wider text-emerald-400 px-1">ĐỘI HÌNH RA SÂN (11)</div>`;
       listHtml += lineup.map((name, i) => {
         const isStarter = i < 11;
         const slot = isStarter ? formSlots[i] : null;
-        const posLabel = slot ? (slot.pos || slot.role) : 'DB';
-        const roleType = slot ? slot.role : guessPlayerRoleFromName(name, i);
+        const natural = getPlayerNaturalInfo(name, team, i);
+
+        // Starters display tactical slot pos; Bench players ALWAYS display their playing position (never bare 'DB')
+        const posLabel = slot ? (slot.pos || slot.role) : natural.specificPos;
+        const roleType = slot ? slot.role : natural.role;
 
         let posBadge = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
         if (roleType === 'GK') posBadge = 'bg-amber-400/25 text-amber-300 border-amber-400/40';
         else if (roleType === 'DF') posBadge = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
         else if (roleType === 'FW') posBadge = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+
+        const isOutOfPos = isStarter && slot && natural.role !== slot.role;
+        const subMeta = isStarter
+          ? (isOutOfPos ? `<span class="text-[9px] text-amber-300/90 font-semibold">Đội chính · Gốc: ${natural.specificPos}</span>` : `<span class="text-[9px] text-slate-400">Đội chính · ${natural.vnLabel}</span>`)
+          : `<span class="text-[9px] font-semibold text-amber-300/90">Dự bị · ${natural.vnLabel}</span>`;
+
+        const rec = state.playerSeasonData?.players?.[`${team.id}::${name}`];
+        const recTotals = rec ? getPlayerSeasonTotals(rec, null) : { goals: 0, assists: 0 };
+        const statsChip = (recTotals.goals > 0 || recTotals.assists > 0)
+          ? `<span class="text-[9px] font-mono font-bold text-emerald-300 bg-emerald-500/15 px-1.5 py-0.2 rounded shrink-0">${recTotals.goals ? `⚽${recTotals.goals}` : ''}${recTotals.goals && recTotals.assists ? ' ' : ''}${recTotals.assists ? `🎯${recTotals.assists}` : ''}</span>`
+          : '';
 
         const isSel = selIdx === i;
         const isCap = name === captain;
@@ -4883,10 +6007,15 @@
 
         return `
           ${divider}
-          <div class="flex items-center gap-1.5 p-1.5 rounded-xl border transition cursor-pointer ${isSel ? 'bg-amber-400/20 border-amber-400 shadow' : (isStarter ? 'bg-slate-900/90 border-white/10 hover:border-emerald-400/40' : 'bg-slate-900/50 border-white/5 hover:border-amber-400/40')}" onclick="window.onClickLineupPlayer(${i})">
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-black border w-9 text-center shrink-0 ${posBadge}">${posLabel}</span>
-            <span class="text-xs font-bold text-white truncate flex-1">${name}</span>
-            <button type="button" onclick="event.stopPropagation(); window.setManagerCaptain(${i})" title="Đặt làm Đội trưởng" class="px-1.5 py-0.5 rounded text-[11px] transition ${isCap ? 'bg-amber-400 text-slate-950 font-black shadow' : 'text-slate-500 hover:text-amber-300 hover:bg-white/10'}">
+          <div class="flex items-center gap-1.5 p-1.5 rounded-xl border transition cursor-pointer ${isSel ? 'bg-amber-400/20 border-amber-400 shadow' : (isStarter ? 'bg-slate-900/90 border-white/10 hover:border-emerald-400/40' : 'bg-slate-900/60 border-amber-400/15 hover:border-amber-400/40')}" onclick="window.onClickLineupPlayer(${i})">
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-black border w-10 text-center shrink-0 ${posBadge}" title="${natural.vnLabel}">${posLabel}</span>
+            ${getPlayerAvatarHtml(name, team, 'w-7 h-7')}
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-bold text-white truncate">${name}</div>
+              <div class="leading-tight">${subMeta}</div>
+            </div>
+            ${statsChip}
+            <button type="button" onclick="event.stopPropagation(); window.setManagerCaptain(${i})" title="Đặt làm Đội trưởng" class="px-1.5 py-0.5 rounded text-[11px] transition shrink-0 ${isCap ? 'bg-amber-400 text-slate-950 font-black shadow' : 'text-slate-500 hover:text-amber-300 hover:bg-white/10'}">
               👑
             </button>
           </div>
@@ -4894,7 +6023,13 @@
       }).join('');
 
       if (lineup.length <= 11) {
-        listHtml += `<div class="mt-2 p-2 rounded-xl bg-slate-900/60 border border-dashed border-white/10 text-[10px] text-slate-400 text-center">Mua thêm cầu thủ ở Chợ Chuyển Nhượng bên dưới để bổ sung dự bị & xoay tua!</div>`;
+        listHtml += `
+          <div class="mt-2 p-2.5 rounded-xl bg-slate-900/60 border border-dashed border-amber-400/25 text-[10px] text-slate-300 text-center space-y-1.5">
+            <div>Đội này hiện chưa có cầu thủ dự bị nào.</div>
+            <button type="button" onclick="document.getElementById('transferMarketContainer')?.scrollIntoView({behavior:'smooth'})" class="px-2.5 py-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 font-bold border border-amber-400/30 transition">
+              🛒 Vào Chợ mua cầu thủ dự bị
+            </button>
+          </div>`;
       }
 
       listEl.innerHTML = listHtml;
@@ -4986,6 +6121,547 @@
     }
 
     // =========================================================================
+    // GOLDEN BOOT (ĐUA VUA PHÁ LƯỚI) & BALLON D'OR (QUẢ BÓNG VÀNG) ENGINE
+    // =========================================================================
+    function loadPlayerAwardsHistory() {
+      try {
+        const raw = localStorage.getItem('football_player_awards_history_v1');
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) state.playerSeasonData.awardHistory = arr;
+        }
+      } catch (e) {}
+    }
+
+    function savePlayerAwardsHistory() {
+      try {
+        localStorage.setItem('football_player_awards_history_v1', JSON.stringify(state.playerSeasonData.awardHistory || []));
+      } catch (e) {}
+    }
+
+    function resetPlayerSeasonStats(tourneyIdOnly = null) {
+      if (!state.playerSeasonData) {
+        state.playerSeasonData = { seasonYear: state.seasonYear, players: {}, awardHistory: [] };
+      }
+      if (!tourneyIdOnly) {
+        state.playerSeasonData.players = {};
+        state.playerSeasonData.seasonYear = state.seasonYear;
+      } else {
+        const players = state.playerSeasonData.players || {};
+        Object.keys(players).forEach(key => {
+          const rec = players[key];
+          if (rec && rec.buckets && rec.buckets[tourneyIdOnly]) {
+            delete rec.buckets[tourneyIdOnly];
+          }
+          if (!rec || !rec.buckets || Object.keys(rec.buckets).length === 0) {
+            delete players[key];
+          }
+        });
+      }
+    }
+
+    function getTeamFormationSlotsForSim(team) {
+      const isMgrTeam = state.manager && state.manager.teamId === team.id;
+      const formKey = isMgrTeam ? (state.manager.formation || '4-3-3') : '4-3-3';
+      return TACTICAL_FORMATIONS[formKey] || TACTICAL_FORMATIONS['4-3-3'];
+    }
+
+    function pickScorerFromLineup(team) {
+      if (!team) return 'Cầu thủ';
+      const starters = getTeamLineup(team).slice(0, 11);
+      const slots = getTeamFormationSlotsForSim(team);
+      const captain = getTeamCaptain(team);
+      const weights = starters.map((name, idx) => {
+        const slot = slots[idx];
+        const role = slot ? slot.role : getPlayerNaturalInfo(name, team, idx).role;
+        const pos = slot ? slot.pos : role;
+        if (role === 'GK') return 0;
+        let w = 1.0;
+        if (pos === 'ST' || pos === 'CF') w = 7.5;
+        else if (role === 'FW') w = 5.2;
+        else if (pos === 'CAM') w = 3.8;
+        else if (role === 'MF') w = 2.2;
+        else if (role === 'DF') w = 0.45;
+        if (name === captain && role !== 'GK') w += 0.9;
+        const tm = findTransferPlayerMeta(name);
+        if (tm && tm.ovr >= 85) w += (tm.ovr - 83) * 0.45;
+        return w;
+      });
+      const total = weights.reduce((a, b) => a + b, 0);
+      if (total <= 0) return starters[0] || team.stars?.[0] || 'Cầu thủ';
+      let r = Math.random() * total;
+      for (let i = 0; i < starters.length; i++) {
+        r -= weights[i];
+        if (r <= 0) return starters[i];
+      }
+      return starters[starters.length - 1] || 'Cầu thủ';
+    }
+
+    function pickAssisterFromLineup(team, scorerName) {
+      if (!team || Math.random() > 0.82) return null;
+      const starters = getTeamLineup(team).slice(0, 11);
+      const slots = getTeamFormationSlotsForSim(team);
+      const candidates = starters.map((name, idx) => {
+        if (name === scorerName) return 0;
+        const slot = slots[idx];
+        const role = slot ? slot.role : getPlayerNaturalInfo(name, team, idx).role;
+        const pos = slot ? slot.pos : role;
+        if (role === 'GK') return 0.05;
+        if (pos === 'CAM' || pos === 'CM' || pos === 'LM' || pos === 'RM') return 4.8;
+        if (pos === 'LW' || pos === 'RW') return 4.2;
+        if (role === 'MF') return 3.4;
+        if (role === 'FW') return 2.8;
+        return 1.4;
+      });
+      const total = candidates.reduce((a, b) => a + b, 0);
+      if (total <= 0) return null;
+      let r = Math.random() * total;
+      for (let i = 0; i < starters.length; i++) {
+        r -= candidates[i];
+        if (r <= 0) return starters[i];
+      }
+      return null;
+    }
+
+    function ensurePlayerBucket(playerName, teamId, bucketKey) {
+      if (!state.playerSeasonData.players) state.playerSeasonData.players = {};
+      const key = `${teamId}::${playerName}`;
+      let rec = state.playerSeasonData.players[key];
+      if (!rec) {
+        rec = { key, name: playerName, teamId, buckets: {} };
+        state.playerSeasonData.players[key] = rec;
+      }
+      if (!rec.buckets[bucketKey]) {
+        rec.buckets[bucketKey] = { goals: 0, assists: 0, motm: 0, cleanSheets: 0, matches: 0, wins: 0 };
+      }
+      return { rec, b: rec.buckets[bucketKey] };
+    }
+
+    function recordPlayerStatsForMatch(tourneyId, homeTeam, awayTeam, homeGoals, awayGoals, scheduledEvents = null, isPenWinHome = null) {
+      if (!homeTeam || !awayTeam) return;
+      const bucketKey = tourneyId || '_world';
+      const homeXI = getTeamLineup(homeTeam).slice(0, 11);
+      const awayXI = getTeamLineup(awayTeam).slice(0, 11);
+      const homeSlots = getTeamFormationSlotsForSim(homeTeam);
+      const awaySlots = getTeamFormationSlotsForSim(awayTeam);
+
+      const homeWon = (homeGoals > awayGoals) || (homeGoals === awayGoals && isPenWinHome === true);
+      const awayWon = (awayGoals > homeGoals) || (homeGoals === awayGoals && isPenWinHome === false);
+
+      const matchScores = {}; // key -> impact points for MOTM picking
+
+      homeXI.forEach((name, idx) => {
+        const { rec, b } = ensurePlayerBucket(name, homeTeam.id, bucketKey);
+        b.matches++;
+        if (homeWon) b.wins++;
+        const role = homeSlots[idx]?.role || getPlayerNaturalInfo(name, homeTeam, idx).role;
+        if (awayGoals === 0 && (role === 'GK' || role === 'DF')) {
+          b.cleanSheets++;
+        }
+        matchScores[rec.key] = (homeWon ? 1.5 : 0) + (awayGoals === 0 && (role === 'GK' || role === 'DF') ? 1.8 : 0);
+      });
+
+      awayXI.forEach((name, idx) => {
+        const { rec, b } = ensurePlayerBucket(name, awayTeam.id, bucketKey);
+        b.matches++;
+        if (awayWon) b.wins++;
+        const role = awaySlots[idx]?.role || getPlayerNaturalInfo(name, awayTeam, idx).role;
+        if (homeGoals === 0 && (role === 'GK' || role === 'DF')) {
+          b.cleanSheets++;
+        }
+        matchScores[rec.key] = (awayWon ? 1.5 : 0) + (homeGoals === 0 && (role === 'GK' || role === 'DF') ? 1.8 : 0);
+      });
+
+      const homeScheduled = Array.isArray(scheduledEvents) ? scheduledEvents.filter(e => e.side === 'home') : [];
+      for (let g = 0; g < homeGoals; g++) {
+        const scorer = (homeScheduled[g] && homeScheduled[g].scorer) ? homeScheduled[g].scorer : pickScorerFromLineup(homeTeam);
+        const { rec: sRec, b: sB } = ensurePlayerBucket(scorer, homeTeam.id, bucketKey);
+        sB.goals++;
+        matchScores[sRec.key] = (matchScores[sRec.key] || 0) + 2.4;
+
+        const assister = pickAssisterFromLineup(homeTeam, scorer);
+        if (assister) {
+          const { rec: aRec, b: aB } = ensurePlayerBucket(assister, homeTeam.id, bucketKey);
+          aB.assists++;
+          matchScores[aRec.key] = (matchScores[aRec.key] || 0) + 1.5;
+        }
+      }
+
+      const awayScheduled = Array.isArray(scheduledEvents) ? scheduledEvents.filter(e => e.side === 'away') : [];
+      for (let g = 0; g < awayGoals; g++) {
+        const scorer = (awayScheduled[g] && awayScheduled[g].scorer) ? awayScheduled[g].scorer : pickScorerFromLineup(awayTeam);
+        const { rec: sRec, b: sB } = ensurePlayerBucket(scorer, awayTeam.id, bucketKey);
+        sB.goals++;
+        matchScores[sRec.key] = (matchScores[sRec.key] || 0) + 2.4;
+
+        const assister = pickAssisterFromLineup(awayTeam, scorer);
+        if (assister) {
+          const { rec: aRec, b: aB } = ensurePlayerBucket(assister, awayTeam.id, bucketKey);
+          aB.assists++;
+          matchScores[aRec.key] = (matchScores[aRec.key] || 0) + 1.5;
+        }
+      }
+
+      // Award Man of the Match (MOTM)
+      let bestKey = null;
+      let bestImpact = -1;
+      Object.entries(matchScores).forEach(([k, val]) => {
+        const jitter = val + Math.random() * 0.45;
+        if (jitter > bestImpact) {
+          bestImpact = jitter;
+          bestKey = k;
+        }
+      });
+      if (bestKey && state.playerSeasonData.players[bestKey]?.buckets?.[bucketKey]) {
+        state.playerSeasonData.players[bestKey].buckets[bucketKey].motm++;
+      }
+    }
+
+    function getPlayerSeasonTotals(playerRec, tourneyFilterId = null) {
+      const out = { goals: 0, assists: 0, motm: 0, cleanSheets: 0, matches: 0, wins: 0 };
+      if (!playerRec || !playerRec.buckets) return out;
+      if (tourneyFilterId) {
+        const b = playerRec.buckets[tourneyFilterId];
+        return b ? Object.assign(out, b) : out;
+      }
+      Object.values(playerRec.buckets).forEach(b => {
+        out.goals += b.goals || 0;
+        out.assists += b.assists || 0;
+        out.motm += b.motm || 0;
+        out.cleanSheets += b.cleanSheets || 0;
+        out.matches += b.matches || 0;
+        out.wins += b.wins || 0;
+      });
+      return out;
+    }
+
+    function getPlayerStandingsRankBonus(teamId, tourneyFilterId) {
+      const checkTourneyId = tourneyFilterId || state.activeTournamentId;
+      const stTable = state.standingsByTourney?.[checkTourneyId];
+      if (!stTable || !stTable[teamId]) return 0;
+      const rows = Object.values(stTable).sort(rankStandingRows);
+      const rank = rows.findIndex(r => r.team.id === teamId) + 1;
+      if (rank === 1) return 18;
+      if (rank === 2) return 10;
+      if (rank <= 4) return 5;
+      return 0;
+    }
+
+    function computeBallonDorScore(playerRec, tourneyFilterId = null) {
+      const team = TEAMS_DB.find(t => t.id === playerRec.teamId);
+      if (!team) return 0;
+      const s = getPlayerSeasonTotals(playerRec, tourneyFilterId);
+      if (!s || s.matches === 0) return 0;
+
+      const nat = getPlayerNaturalInfo(playerRec.name, team);
+      const role = nat.role;
+
+      const goalPts = s.goals * (role === 'DF' ? 5.0 : role === 'MF' ? 4.2 : 3.4);
+      const assistPts = s.assists * (role === 'MF' ? 3.2 : 2.6);
+      const cleanSheetPts = s.cleanSheets * (role === 'GK' ? 5.2 : role === 'DF' ? 3.0 : 0.35);
+      const motmPts = s.motm * 4.5;
+      const winPts = s.wins * 1.1;
+      const rankBonus = getPlayerStandingsRankBonus(team.id, tourneyFilterId);
+      const prestigeMult = tourneyFilterId
+        ? 1.0
+        : (0.72 + (Math.min(115, team.rating) / 100) * 0.55);
+      const starBonus = ((nat.ovrHint || team.rating) - 70) * 0.25;
+
+      const raw = (goalPts + assistPts + cleanSheetPts + motmPts + winPts + rankBonus) * prestigeMult + Math.max(0, starBonus);
+      return Math.round(raw * 10) / 10;
+    }
+
+    function buildPlayerAwardRow(rec, tourneyFilterId, score = 0) {
+      const team = TEAMS_DB.find(t => t.id === rec.teamId);
+      if (!team) return null;
+      const totals = getPlayerSeasonTotals(rec, tourneyFilterId);
+      const posInfo = getPlayerNaturalInfo(rec.name, team);
+      const lineup = getTeamLineup(team);
+      const idx = lineup.indexOf(rec.name);
+      const isStarter = idx >= 0 && idx < 11;
+      const slots = getTeamFormationSlotsForSim(team);
+      const activePosLabel = (isStarter && slots[idx]) ? (slots[idx].pos || posInfo.specificPos) : posInfo.specificPos;
+      return {
+        key: rec.key,
+        name: rec.name,
+        teamId: team.id,
+        team,
+        posInfo: Object.assign({}, posInfo, { specificPos: activePosLabel }),
+        isStarter,
+        matches: totals.matches,
+        goals: totals.goals,
+        assists: totals.assists,
+        cleanSheets: totals.cleanSheets,
+        motm: totals.motm,
+        wins: totals.wins,
+        score
+      };
+    }
+
+    function getSeasonTopScorers(scope = 'league', tourneyId = null, limit = 15) {
+      const filterId = (scope === 'league') ? (tourneyId || state.activeTournamentId) : null;
+      const list = [];
+      Object.values(state.playerSeasonData?.players || {}).forEach(rec => {
+        const s = getPlayerSeasonTotals(rec, filterId);
+        if (s.goals <= 0) return;
+        const row = buildPlayerAwardRow(rec, filterId, s.goals);
+        if (row) list.push(row);
+      });
+      list.sort((a, b) =>
+        (b.goals - a.goals) ||
+        (b.assists - a.assists) ||
+        (a.matches - b.matches) ||
+        (b.team.rating - a.team.rating)
+      );
+      return list.slice(0, limit);
+    }
+
+    function getBallonDorCandidates(scope = 'world', tourneyId = null, limit = 15) {
+      const filterId = (scope === 'league') ? (tourneyId || state.activeTournamentId) : null;
+      const list = [];
+      Object.values(state.playerSeasonData?.players || {}).forEach(rec => {
+        const s = getPlayerSeasonTotals(rec, filterId);
+        if (s.matches <= 0) return;
+        const score = computeBallonDorScore(rec, filterId);
+        if (score <= 0) return;
+        const row = buildPlayerAwardRow(rec, filterId, score);
+        if (row) list.push(row);
+      });
+      list.sort((a, b) =>
+        (b.score - a.score) ||
+        (b.goals - a.goals) ||
+        (b.assists - a.assists) ||
+        (b.team.rating - a.team.rating)
+      );
+      return list.slice(0, limit);
+    }
+
+    function finalizeSeasonAwards(tourney, ovrChanges, recordHistory = true) {
+      const goldenBoot = getSeasonTopScorers('league', tourney.id, 5);
+      const ballonLeague = getBallonDorCandidates('league', tourney.id, 5);
+      const ballonWorld = getBallonDorCandidates('world', null, 5);
+
+      if (recordHistory) {
+        const alreadyArchived = (state.playerSeasonData.awardHistory || []).some(
+          h => h.seasonYear === state.seasonYear && h.tourneyId === tourney.id
+        );
+        if (!alreadyArchived && (goldenBoot.length > 0 || ballonLeague.length > 0 || ballonWorld.length > 0)) {
+          const champ = ovrChanges?.[0]?.team || null;
+          const bWin = ballonWorld[0] || ballonLeague[0] || null;
+          const gbWin = goldenBoot[0] || null;
+          state.playerSeasonData.awardHistory = state.playerSeasonData.awardHistory || [];
+          state.playerSeasonData.awardHistory.unshift({
+            seasonYear: state.seasonYear,
+            tourneyId: tourney.id,
+            tourneyName: tourney.shortName || tourney.name,
+            championName: champ ? champ.name : '',
+            goldenBoot: gbWin ? {
+              name: gbWin.name, teamName: gbWin.team.name, teamCode: gbWin.team.code,
+              pos: gbWin.posInfo.specificPos, goals: gbWin.goals, assists: gbWin.assists
+            } : null,
+            ballonDor: bWin ? {
+              name: bWin.name, teamName: bWin.team.name, teamCode: bWin.team.code,
+              pos: bWin.posInfo.specificPos, score: bWin.score, goals: bWin.goals, assists: bWin.assists
+            } : null
+          });
+          if (state.playerSeasonData.awardHistory.length > 18) {
+            state.playerSeasonData.awardHistory = state.playerSeasonData.awardHistory.slice(0, 18);
+          }
+          savePlayerAwardsHistory();
+          renderSeasonAwards();
+        }
+      }
+
+      return { goldenBoot, ballonLeague, ballonWorld };
+    }
+
+    function renderSeasonAwards() {
+      const tourney = getActiveTournament();
+      const leagueBadge = document.getElementById('awardsActiveLeagueBadge');
+      if (leagueBadge && tourney) {
+        leagueBadge.innerHTML = `<span class="inline-flex items-center gap-1.5">${getTournamentLogoHtml(tourney, 'w-4 h-4')}<span>${tourney.name}</span></span>`;
+      }
+
+      const myTeamId = (state.manager && state.manager.teamId) ? state.manager.teamId : null;
+      const bootScope = state.awardBootScope || 'league';
+      const ballonScope = state.awardBallonScope || 'world';
+
+      // 1. VUA PHÁ LƯỚI (GOLDEN BOOT)
+      const scorers = getSeasonTopScorers(bootScope, tourney?.id, 15);
+      const leaderEl = document.getElementById('goldenBootLeaderCard');
+      const bootBody = document.getElementById('goldenBootBody');
+
+      if (leaderEl) {
+        if (scorers.length === 0) {
+          leaderEl.innerHTML = `
+            <div class="text-xs text-slate-300 flex items-center justify-between gap-2">
+              <span>👟 Chưa có bàn thắng được ghi trong mùa giải này.</span>
+              <span class="text-[10px] text-emerald-300 font-bold shrink-0">Đá trận để khởi tranh!</span>
+            </div>
+          `;
+        } else {
+          const top = scorers[0];
+          const isMine = myTeamId && top.teamId === myTeamId;
+          leaderEl.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="relative shrink-0">
+                ${getPlayerAvatarHtml(top.name, top.team, 'w-12 h-12')}
+                <span class="absolute -top-1.5 -right-1.5 text-base">🥇</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-1.5 py-0.5 rounded text-[9px] font-black border ${top.posInfo.badgeClass}">${top.posInfo.specificPos}</span>
+                  <span class="text-[10px] font-black uppercase text-emerald-300">DẪN ĐẦU CHIẾC GIÀY VÀNG</span>
+                  ${isMine ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-amber-400 text-slate-950">ĐỘI BẠN</span>' : ''}
+                </div>
+                <div class="font-black text-sm text-white truncate mt-0.5">${top.name}</div>
+                <div class="text-[11px] text-slate-300 truncate flex items-center gap-1">${getTeamLogoHtml(top.team, 'w-3.5 h-3.5')} <span>${top.team.name} · ${top.matches} trận · ${top.assists} kiến tạo</span></div>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-xl font-black score-num text-emerald-300">${top.goals}</div>
+                <div class="text-[10px] text-slate-400 uppercase font-bold">Bàn thắng</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (bootBody) {
+        if (scorers.length === 0) {
+          bootBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-xs text-slate-400">Chưa có cầu thủ ghi bàn.</td></tr>`;
+        } else {
+          bootBody.innerHTML = scorers.map((p, idx) => {
+            const rankBadge = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx + 1}`));
+            const isMine = myTeamId && p.teamId === myTeamId;
+            const roleTag = isMine ? (p.isStarter ? ' · Chính' : ' · Dự bị') : '';
+            return `
+              <tr class="${isMine ? 'bg-emerald-500/15' : (idx === 0 ? 'bg-emerald-500/10' : '')} hover:bg-white/5 transition">
+                <td class="py-2 px-2 text-center font-mono font-bold text-slate-300">${rankBadge}</td>
+                <td class="py-2 px-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    ${getPlayerAvatarHtml(p.name, p.team, 'w-7 h-7')}
+                    <div class="min-w-0">
+                      <div class="font-bold text-xs text-white truncate max-w-[130px] sm:max-w-[170px]">${p.name}</div>
+                      <div class="text-[10px] text-slate-400 truncate flex items-center gap-1">${getTeamLogoHtml(p.team, 'w-3.5 h-3.5')} <span>${p.team.code}${roleTag}</span></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-2 px-2 text-center">
+                  <span class="px-1.5 py-0.5 rounded text-[9px] font-black border ${p.posInfo.badgeClass}" title="${p.posInfo.vnLabel}">${p.posInfo.specificPos}</span>
+                </td>
+                <td class="py-2 px-2 text-center font-mono text-slate-300">${p.matches}</td>
+                <td class="py-2 px-2 text-center font-mono font-black text-emerald-300">${p.goals}</td>
+                <td class="py-2 px-2 text-right font-mono text-sky-300">${p.assists}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 2. QUẢ BÓNG VÀNG (BALLON D'OR)
+      const candidates = getBallonDorCandidates(ballonScope, tourney?.id, 15);
+      const podiumEl = document.getElementById('ballonDorPodiumCards');
+      const ballonBody = document.getElementById('ballonDorBody');
+
+      if (podiumEl) {
+        if (candidates.length === 0) {
+          podiumEl.innerHTML = `
+            <div class="col-span-full p-3 rounded-xl bg-slate-900/70 border border-white/10 text-xs text-slate-300 flex items-center justify-between gap-2">
+              <span>🌕 Chưa có dữ liệu điểm Quả Bóng Vàng mùa này.</span>
+              <span class="text-[10px] text-amber-300 font-bold shrink-0">Đá trận để chấm điểm!</span>
+            </div>
+          `;
+        } else {
+          const medals = [
+            { label: '🥇 QUẢ BÓNG VÀNG', cls: 'award-podium-gold', text: 'text-amber-300' },
+            { label: '🥈 QUẢ BÓNG BẠC', cls: 'award-podium-silver', text: 'text-slate-200' },
+            { label: '🥉 QUẢ BÓNG ĐỒNG', cls: 'award-podium-bronze', text: 'text-amber-400' }
+          ];
+          podiumEl.innerHTML = candidates.slice(0, 3).map((c, idx) => {
+            const m = medals[idx];
+            return `
+              <div class="p-2.5 rounded-xl border ${m.cls} flex flex-col justify-between gap-1">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-[9px] font-black uppercase ${m.text}">${m.label}</span>
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-black border ${c.posInfo.badgeClass}">${c.posInfo.specificPos}</span>
+                </div>
+                <div class="flex items-center gap-2 min-w-0">
+                  ${getPlayerAvatarHtml(c.name, c.team, 'w-8 h-8')}
+                  <div class="min-w-0">
+                    <div class="font-black text-xs text-white truncate">${c.name}</div>
+                    <div class="text-[10px] text-slate-400 truncate flex items-center gap-1">${getTeamLogoHtml(c.team, 'w-3.5 h-3.5')} <span>${c.team.code} · ⚽${c.goals} 🎯${c.assists}</span></div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] pt-1 border-t border-white/10">
+                  <span class="text-slate-400">${c.posInfo.vnLabel}</span>
+                  <span class="font-mono font-black ${m.text}">${c.score}đ</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      if (ballonBody) {
+        if (candidates.length === 0) {
+          ballonBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-xs text-slate-400">Chưa có ứng viên Quả Bóng Vàng.</td></tr>`;
+        } else {
+          ballonBody.innerHTML = candidates.map((c, idx) => {
+            const rankBadge = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx + 1}`));
+            const isMine = myTeamId && c.teamId === myTeamId;
+            const roleTag = isMine ? (c.isStarter ? ' · Chính' : ' · Dự bị') : '';
+            const bonusText = (c.posInfo.role === 'GK' || c.posInfo.role === 'DF')
+              ? `${c.cleanSheets} CS · ${c.motm}⭐`
+              : `${c.motm}⭐ MOTM`;
+            return `
+              <tr class="${isMine ? 'bg-amber-400/15' : (idx === 0 ? 'bg-amber-400/10' : '')} hover:bg-white/5 transition">
+                <td class="py-2 px-2 text-center font-mono font-bold text-slate-300">${rankBadge}</td>
+                <td class="py-2 px-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    ${getPlayerAvatarHtml(c.name, c.team, 'w-7 h-7')}
+                    <div class="min-w-0">
+                      <div class="font-bold text-xs text-white truncate max-w-[130px] sm:max-w-[165px]">${c.name}</div>
+                      <div class="text-[10px] text-slate-400 truncate flex items-center gap-1">${getTeamLogoHtml(c.team, 'w-3.5 h-3.5')} <span>${c.team.code}${roleTag}</span></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-2 px-2 text-center">
+                  <span class="px-1.5 py-0.5 rounded text-[9px] font-black border ${c.posInfo.badgeClass}" title="${c.posInfo.vnLabel}">${c.posInfo.specificPos}</span>
+                </td>
+                <td class="py-2 px-2 text-center font-mono text-slate-200">${c.goals}/${c.assists}</td>
+                <td class="py-2 px-2 text-center text-[10px] text-slate-400 hidden sm:table-cell">${bonusText}</td>
+                <td class="py-2 px-2 text-right font-mono font-black text-amber-300">${c.score}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 3. LỊCH SỬ CÁC MÙA TRƯỚC
+      const historyBox = document.getElementById('pastSeasonAwardsBox');
+      const historyList = document.getElementById('pastSeasonAwardsList');
+      const hist = state.playerSeasonData?.awardHistory || [];
+      if (historyBox && historyList) {
+        if (hist.length === 0) {
+          historyBox.classList.add('hidden');
+        } else {
+          historyBox.classList.remove('hidden');
+          historyList.innerHTML = hist.slice(0, 6).map(h => `
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-white/10 space-y-1">
+              <div class="flex items-center justify-between text-[10px] font-black text-amber-300">
+                <span>MÙA ${h.seasonYear}/${h.seasonYear + 1} · ${h.tourneyName}</span>
+                ${h.championName ? `<span class="text-emerald-300 truncate max-w-[120px]">🏆 ${h.championName}</span>` : ''}
+              </div>
+              ${h.ballonDor ? `<div class="text-[11px] text-slate-200 truncate">🌕 QBV: <strong class="text-white">${h.ballonDor.name}</strong> (${h.ballonDor.pos} · ${h.ballonDor.teamCode}) — ${h.ballonDor.score}đ</div>` : ''}
+              ${h.goldenBoot ? `<div class="text-[11px] text-slate-300 truncate">👟 VPL: <strong class="text-emerald-300">${h.goldenBoot.name}</strong> (${h.goldenBoot.pos} · ${h.goldenBoot.teamCode}) — ⚽${h.goldenBoot.goals}</div>` : ''}
+            </div>
+          `).join('');
+        }
+      }
+      if (typeof renderGlobalPlayerSearch === 'function') renderGlobalPlayerSearch();
+    }
+
+    // =========================================================================
     // THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ (TRANSFER MARKET)
     // =========================================================================
     const TRANSFER_MARKET_PLAYERS = [
@@ -5048,13 +6724,21 @@
       const squadContainer = document.getElementById('transferSquadContainer');
 
       const filter = state.transferFilter || 'all';
+      const searchNorm = normalizeSearchText(state.transferSearch || '');
 
       // 1. RENDER MARKET TARGETS (MUA CẦU THỦ)
       if (marketContainer) {
-        const filteredPlayers = TRANSFER_MARKET_PLAYERS.filter(p => filter === 'all' || p.pos === filter);
+        const filteredPlayers = TRANSFER_MARKET_PLAYERS.filter(p => {
+          const matchPos = filter === 'all' || p.pos === filter;
+          if (!matchPos) return false;
+          if (!searchNorm) return true;
+          return normalizeSearchText(p.name).includes(searchNorm) ||
+                 normalizeSearchText(p.club).includes(searchNorm) ||
+                 normalizeSearchText(p.pos).includes(searchNorm);
+        });
         const currentStars = team ? (team.stars || []) : [];
 
-        marketContainer.innerHTML = filteredPlayers.map(p => {
+        marketContainer.innerHTML = filteredPlayers.length ? filteredPlayers.map(p => {
           const alreadyOwned = currentStars.some(s => s.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(s.toLowerCase()));
           const canAfford = (state.manager.budget || 150) >= p.price;
 
@@ -5066,14 +6750,17 @@
 
           return `
             <div class="transfer-card p-3 rounded-xl bg-slate-900/90 border border-white/10 hover:border-amber-400/50 flex flex-col justify-between gap-2 shadow transition">
-              <div class="flex items-start justify-between gap-1.5">
-                <div class="min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-black border ${posBadgeClass}">${p.pos}</span>
-                    <span class="text-xs font-mono font-bold text-amber-300">OVR ${p.ovr}</span>
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-start gap-2.5 min-w-0">
+                  ${getPlayerAvatarHtml(p.name, null, 'w-10 h-10')}
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-black border ${posBadgeClass}">${p.pos}</span>
+                      <span class="text-xs font-mono font-bold text-amber-300">OVR ${p.ovr}</span>
+                    </div>
+                    <h5 class="text-xs sm:text-sm font-black text-white truncate mt-1">${p.name}</h5>
+                    <div class="text-[11px] text-slate-400 truncate">${p.club} · Tăng <strong class="text-emerald-400">+${p.ovrBoost} OVR</strong></div>
                   </div>
-                  <h5 class="text-xs sm:text-sm font-black text-white truncate mt-1">${p.name}</h5>
-                  <div class="text-[11px] text-slate-400">${p.club} · Tăng <strong class="text-emerald-400">+${p.ovrBoost} OVR</strong></div>
                 </div>
                 <div class="text-right shrink-0">
                   <div class="text-xs sm:text-sm font-black font-mono text-amber-300">${p.price}M €</div>
@@ -5099,7 +6786,7 @@
               </div>
             </div>
           `;
-        }).join('');
+        }).join('') : `<div class="col-span-full py-8 text-center text-slate-400 text-xs">Không tìm thấy cầu thủ phù hợp trên Chợ chuyển nhượng.</div>`;
       }
 
       // 2. RENDER CURRENT SQUAD (BÁN CẦU THỦ)
@@ -5114,25 +6801,28 @@
           const stars = team.stars || [];
           const canSell = stars.length > 11;
           const sellPrice = Math.max(10, Math.round(team.rating * 0.35));
+          const curLineup = getTeamLineup(team);
+          const formSlots = getTeamFormationSlotsForSim(team);
 
           const squadItems = stars.map((name, idx) => {
-            let pos = 'MF';
-            if (idx <= 3) pos = 'FW';
-            else if (idx <= 6) pos = 'MF';
-            else if (idx <= 9) pos = 'DF';
-            else pos = 'GK';
-
-            // keyword heuristic
-            if (/filip|lâm|chuẩn|mạnh|triệu|toàn|hoàng|phong|việt|courtois|alisson|ederson|martínez/i.test(name)) pos = 'GK';
-            else if (/hậu|anh|dũng|bình|hải|chung|tài|duy|thanh|dias|dijk|saliba|rüdiger/i.test(name)) pos = 'DF';
-            else if (/son|linh|hải|artur|lucão|silva|mbappe|haaland|vinicius|salah/i.test(name)) pos = 'FW';
-
-            return { name, pos, idx, price: sellPrice };
+            const nat = getPlayerNaturalInfo(name, team, idx);
+            const lineupIdx = curLineup.indexOf(name);
+            const isStarter = lineupIdx >= 0 && lineupIdx < 11;
+            const slotPos = isStarter && formSlots[lineupIdx] ? (formSlots[lineupIdx].pos || nat.specificPos) : nat.specificPos;
+            const roleStatus = isStarter ? `Đội chính (${slotPos})` : `Dự bị · ${nat.vnLabel}`;
+            return { name, pos: nat.role, specificPos: nat.specificPos, roleStatus, isStarter, idx, price: sellPrice };
           });
 
-          const filteredSquad = squadItems.filter(p => filter === 'all' || p.pos === filter);
+          const filteredSquad = squadItems.filter(p => {
+            const matchPos = filter === 'all' || p.pos === filter;
+            if (!matchPos) return false;
+            if (!searchNorm) return true;
+            return normalizeSearchText(p.name).includes(searchNorm) ||
+                   normalizeSearchText(p.specificPos).includes(searchNorm) ||
+                   normalizeSearchText(p.roleStatus).includes(searchNorm);
+          });
 
-          squadContainer.innerHTML = filteredSquad.map(item => {
+          squadContainer.innerHTML = filteredSquad.length ? filteredSquad.map(item => {
             let posBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
             if (item.pos === 'FW') posBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
             else if (item.pos === 'MF') posBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
@@ -5141,14 +6831,17 @@
 
             return `
               <div class="transfer-card p-3 rounded-xl bg-slate-900/90 border border-white/10 hover:border-rose-400/50 flex flex-col justify-between gap-2 shadow transition">
-                <div class="flex items-start justify-between gap-1.5">
-                  <div class="min-w-0">
-                    <div class="flex items-center gap-1.5">
-                      <span class="px-1.5 py-0.5 rounded text-[10px] font-black border ${posBadgeClass}">${item.pos}</span>
-                      <span class="text-xs font-mono font-bold text-slate-300">OVR ${team.rating}</span>
+                <div class="flex items-start justify-between gap-2">
+                  <div class="flex items-start gap-2.5 min-w-0">
+                    ${getPlayerAvatarHtml(item.name, team, 'w-10 h-10')}
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-black border ${posBadgeClass}">${item.specificPos}</span>
+                        <span class="text-[10px] font-bold ${item.isStarter ? 'text-emerald-300' : 'text-amber-300'}">${item.roleStatus}</span>
+                      </div>
+                      <h5 class="text-xs sm:text-sm font-black text-white truncate mt-1">${item.name}</h5>
+                      <div class="text-[11px] text-slate-400 truncate">${team.name} · OVR ${team.rating}</div>
                     </div>
-                    <h5 class="text-xs sm:text-sm font-black text-white truncate mt-1">${item.name}</h5>
-                    <div class="text-[11px] text-slate-400">${team.name} · Trụ cột CLB</div>
                   </div>
                   <div class="text-right shrink-0">
                     <div class="text-xs sm:text-sm font-black font-mono text-emerald-400">+${item.price}M €</div>
@@ -5164,12 +6857,152 @@
                 </div>
               </div>
             `;
-          }).join('');
+          }).join('') : `<div class="col-span-full py-8 text-center text-slate-400 text-xs">Không tìm thấy cầu thủ nào trong đội hình.</div>`;
         }
       }
 
       if (window.lucide) window.lucide.createIcons();
     }
+
+    function renderGlobalPlayerSearch() {
+      const grid = document.getElementById('globalPlayerSearchGrid');
+      const metaEl = document.getElementById('playerSearchResultMeta');
+      const badgeEl = document.getElementById('playerSearchCountBadge');
+      if (!grid) return;
+
+      const filter = state.playerSearchFilter || 'all';
+      const q = normalizeSearchText(state.playerSearchQuery || '');
+      const myTeamId = (state.manager && state.manager.teamId) ? state.manager.teamId : null;
+      const isSigned = !!(state.manager && state.manager.isContractLocked && myTeamId);
+
+      // Build unified searchable catalog across TEAMS_DB
+      const results = [];
+      const seenKeys = new Set();
+
+      TEAMS_DB.forEach(t => {
+        const lineup = getTeamLineup(t);
+        const slots = getTeamFormationSlotsForSim(t);
+        lineup.forEach((name, idx) => {
+          const isStarter = idx < 11;
+          const nat = getPlayerNaturalInfo(name, t, idx);
+          const slotPos = (isStarter && slots[idx]) ? (slots[idx].pos || nat.specificPos) : nat.specificPos;
+          const isVLeague = Array.isArray(t.tournaments) && t.tournaments.includes('vleague1');
+          const marketMeta = findTransferPlayerMeta(name);
+          const dedupeKey = `${t.id}::${name}`;
+          if (seenKeys.has(dedupeKey)) return;
+          seenKeys.add(dedupeKey);
+
+          // Apply filter
+          if (filter === 'vleague' && !isVLeague) return;
+          if (filter === 'market' && !marketMeta) return;
+          if (['FW', 'MF', 'DF', 'GK'].includes(filter) && nat.role !== filter) return;
+
+          // Apply query
+          if (q) {
+            const hay = normalizeSearchText(`${name} ${t.name} ${t.code} ${t.league} ${slotPos} ${nat.role} ${nat.vnLabel} ${isStarter ? 'doi chinh' : 'du bi'}`);
+            if (!hay.includes(q)) return;
+          } else if (filter === 'all') {
+            // Default showcase when search box is empty: feature V.League stars + Top global stars + Managed club
+            const isPriority = isVLeague || (myTeamId === t.id) || !!marketMeta || t.rating >= 86;
+            if (!isPriority) return;
+          }
+
+          const rec = state.playerSeasonData?.players?.[dedupeKey];
+          const totals = rec ? getPlayerSeasonTotals(rec, null) : { goals: 0, assists: 0 };
+          const hasPhoto = !!getPlayerAvatarUrl(name);
+
+          let sortWeight = (myTeamId === t.id ? 500 : 0) + (isVLeague ? 200 : 0) + (hasPhoto ? 50 : 0) + (marketMeta ? 40 : 0) + (totals.goals * 15) + t.rating;
+          if (!isStarter) sortWeight -= 5;
+
+          results.push({
+            name,
+            team: t,
+            nat,
+            slotPos,
+            isStarter,
+            isVLeague,
+            marketMeta,
+            totals,
+            hasPhoto,
+            sortWeight
+          });
+        });
+      });
+
+      results.sort((a, b) => b.sortWeight - a.sortWeight);
+      if (badgeEl) {
+        badgeEl.textContent = `${Object.keys(REAL_PLAYER_PHOTOS).length > 0 ? 'Đủ ảnh V.League & Ngôi sao' : 'V.League & Thế Giới'}`;
+      }
+
+      const shown = results.slice(0, q ? 60 : 24);
+      if (metaEl) {
+        metaEl.textContent = results.length > shown.length
+          ? `Hiển thị ${shown.length} / ${results.length} cầu thủ phù hợp`
+          : `Tìm thấy ${results.length} cầu thủ`;
+      }
+
+      if (shown.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-slate-400">Không tìm thấy cầu thủ nào khớp với "${(state.playerSearchQuery || '').replace(/</g, '&lt;')}". Hãy thử từ khóa khác!</div>`;
+        return;
+      }
+
+      grid.innerHTML = shown.map(item => {
+        const t = item.team;
+        const canBuyDirect = isSigned && item.marketMeta && !(TEAMS_DB.find(x => x.id === myTeamId)?.stars || []).some(s => normalizeSearchText(s.split(' (')[0]) === normalizeSearchText(item.marketMeta.name.split(' (')[0]));
+        const ovrVal = item.marketMeta ? item.marketMeta.ovr : t.rating;
+        const statsText = (item.totals.goals > 0 || item.totals.assists > 0)
+          ? `<span class="text-[10px] font-mono font-bold text-emerald-300">⚽${item.totals.goals} 🎯${item.totals.assists}</span>`
+          : '';
+        return `
+          <div class="p-3 rounded-xl bg-slate-950/85 border border-white/10 hover:border-emerald-400/45 flex items-center justify-between gap-2.5 shadow transition">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              ${getPlayerAvatarHtml(item.name, t, 'w-12 h-12')}
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1 flex-wrap">
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-black border ${item.nat.badgeClass}">${item.slotPos}</span>
+                  <span class="text-[9px] font-bold ${item.isStarter ? 'text-emerald-300' : 'text-amber-300'}">${item.isStarter ? 'Đội chính' : 'Dự bị'}</span>
+                  <span class="text-[9px] font-mono font-bold text-slate-400">OVR ${ovrVal}</span>
+                  ${statsText}
+                </div>
+                <div class="font-black text-xs sm:text-sm text-white truncate mt-0.5">${item.name}</div>
+                <div class="flex items-center gap-1.5 text-[10px] text-slate-400 truncate mt-0.5">
+                  ${getTeamLogoHtml(t, 'w-4 h-4')}
+                  <span class="truncate text-slate-300 font-semibold">${t.name}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-1 shrink-0 items-end">
+              ${canBuyDirect ? `
+                <button type="button" onclick="window.buyPlayer('${item.marketMeta.id}')" class="btn-tap px-2 py-1 rounded-lg text-[10px] font-black bg-amber-400 hover:bg-amber-300 text-slate-950 shadow">
+                  🛒 Mua (${item.marketMeta.price}M)
+                </button>
+              ` : ''}
+              <button type="button" onclick="window.focusTeamFromPlayerSearch('${t.id}')" class="btn-tap px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-white/10">
+                Xem CLB
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.focusTeamFromPlayerSearch = function(teamId) {
+      const t = TEAMS_DB.find(x => x.id === teamId);
+      if (!t) return;
+      SoundFX.click();
+      if (state.manager && state.manager.isContractLocked && state.manager.teamId && teamId !== state.manager.teamId) {
+        showContractLockedModal();
+        return;
+      }
+      const targetTourney = Array.isArray(t.tournaments) && t.tournaments.length > 0
+        ? (t.tournaments.includes(state.activeTournamentId) ? state.activeTournamentId : t.tournaments[0])
+        : state.activeTournamentId;
+      if (targetTourney !== state.activeTournamentId) {
+        selectTournament(targetTourney);
+      }
+      chooseTeam(t.id);
+      document.getElementById('hubMainHeading')?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     function buyPlayer(playerId) {
       const p = TRANSFER_MARKET_PLAYERS.find(item => item.id === playerId);
@@ -5211,6 +7044,7 @@
       renderTransferMarket();
       renderManagerUI();
       renderTeamsDirectory(document.getElementById('teamSearchInput')?.value);
+      renderGlobalPlayerSearch();
       pickNextMatch();
     }
     window.buyPlayer = buyPlayer;
@@ -5241,6 +7075,7 @@
       renderTransferMarket();
       renderManagerUI();
       renderTeamsDirectory(document.getElementById('teamSearchInput')?.value);
+      renderGlobalPlayerSearch();
       pickNextMatch();
     }
     window.sellPlayer = sellPlayer;
@@ -5271,11 +7106,19 @@
         localStorage.setItem('football_fifa_points', JSON.stringify(state.fifaPointsMap));
       } catch (e) {}
 
-      // 3. Reset season year
+      // 3. Reset season year & Player Awards (Vua Phá Lưới & Quả Bóng Vàng)
       state.seasonYear = 2026;
       try {
         localStorage.setItem('football_season_year', '2026');
+        localStorage.removeItem('football_player_awards_history_v1');
       } catch (e) {}
+      resetPlayerSeasonStats(null);
+      if (state.playerSeasonData) state.playerSeasonData.awardHistory = [];
+
+      // Restore original squads in memory (removing transferred additions)
+      TEAMS_DB.forEach(t => {
+        if (Array.isArray(t.baseStars)) t.stars = [...t.baseStars];
+      });
 
       // 4. Reset manager contract & career
       state.manager.isContractLocked = false;
@@ -5306,6 +7149,7 @@
       initStandingsForTournament(state.activeTournamentId, true);
       renderLeagueStandings();
       renderFifaWorldRankings();
+      renderSeasonAwards();
       renderManagerUI();
       updateSeasonHeaderBadge();
       pickNextMatch();
@@ -5438,6 +7282,7 @@
       initStandingsForTournament(tournamentId);
       renderTournamentSelectorBar();
       renderTeamsDirectory(document.getElementById('teamSearchInput').value);
+      renderSeasonAwards();
       pickNextMatch();
     }
 
@@ -5559,21 +7404,27 @@
       const slots = TACTICAL_FORMATIONS[formKey] || TACTICAL_FORMATIONS['4-3-3'];
 
       let html = starters.map((player, i) => {
-        const pos = slots[i] ? (slots[i].pos || slots[i].role) : '';
+        const pos = slots[i] ? (slots[i].pos || slots[i].role) : getPlayerNaturalInfo(player, team, i).specificPos;
         const isCap = player === captain;
         return `
-          <span class="px-2 py-0.5 rounded-md border text-[10px] font-medium ${badgeColor}">
-            ${isCap ? '👑 ' : ''}<strong class="opacity-75">${pos}</strong> ${player}
+          <span class="px-2 py-0.5 rounded-md border text-[10px] font-medium inline-flex items-center gap-1 ${badgeColor}">
+            ${getPlayerAvatarHtml(player, team, 'w-4 h-4')}
+            ${isCap ? '<span>👑</span>' : ''}<strong class="font-black opacity-90">${pos}</strong><span>${player}</span>
           </span>
         `;
       }).join('');
 
       if (bench.length > 0) {
-        html += bench.map(player => `
-          <span class="px-2 py-0.5 rounded-md border border-white/10 bg-slate-900/70 text-slate-400 text-[10px]">
-            DB: ${player}
-          </span>
-        `).join('');
+        html += bench.map((player, idx) => {
+          const nat = getPlayerNaturalInfo(player, team, 11 + idx);
+          const isCap = player === captain;
+          return `
+            <span class="px-2 py-0.5 rounded-md border border-white/10 bg-slate-900/75 text-slate-300 text-[10px] inline-flex items-center gap-1" title="Dự bị · ${nat.vnLabel}">
+              ${getPlayerAvatarHtml(player, team, 'w-4 h-4')}
+              ${isCap ? '<span>👑</span>' : ''}<strong class="font-black ${nat.textClass}">${nat.specificPos}</strong><span>${player}</span><span class="text-[9px] text-amber-300/80">(DB)</span>
+            </span>
+          `;
+        }).join('');
       }
       container.innerHTML = html;
     }
@@ -5829,7 +7680,9 @@
 
     function triggerGoalCelebrationPopup(scorer, minute, teamName, homeScore, awayScore) {
       const banner = document.getElementById('goalCelebrationBanner');
-      document.getElementById('goalBannerScorer').textContent = `${scorer} (${minute}')`;
+      const scorerEl = document.getElementById('goalBannerScorer');
+      const scoringTeam = (state.homeTeam?.name === teamName) ? state.homeTeam : ((state.awayTeam?.name === teamName) ? state.awayTeam : null);
+      scorerEl.innerHTML = `<span class="inline-flex items-center justify-center gap-2">${getPlayerAvatarHtml(scorer, scoringTeam, 'w-10 h-10')}<span>${scorer} (${minute}')</span></span>`;
       document.getElementById('goalBannerTeam').textContent = `${teamName} sút tung lưới! • Tỷ số: ${homeScore} - ${awayScore}`;
       banner.classList.remove('hidden');
 
@@ -5870,25 +7723,14 @@
       state.sidesSwapped = false;
       state.scheduledEvents = [];
 
-      function pickScorer(stars) {
-        const weights = stars.map((_, idx) => idx < 4 ? 4 : (idx < 7 ? 2 : 1));
-        const totalW = weights.reduce((a, b) => a + b, 0);
-        let r = Math.random() * totalW;
-        for (let i = 0; i < stars.length; i++) {
-          r -= weights[i];
-          if (r <= 0) return stars[i];
-        }
-        return stars[0];
-      }
-
       for (let i = 0; i < state.targetHomeGoals; i++) {
         const min = Math.floor(Math.random() * 86) + 3;
-        const scorer = pickScorer(state.homeTeam.stars);
+        const scorer = pickScorerFromLineup(state.homeTeam);
         state.scheduledEvents.push({ minute: min, side: 'home', scorer, triggered: false });
       }
       for (let i = 0; i < state.targetAwayGoals; i++) {
         const min = Math.floor(Math.random() * 86) + 3;
-        const scorer = pickScorer(state.awayTeam.stars);
+        const scorer = pickScorerFromLineup(state.awayTeam);
         state.scheduledEvents.push({ minute: min, side: 'away', scorer, triggered: false });
       }
       state.scheduledEvents.sort((a, b) => a.minute - b.minute);
@@ -6015,12 +7857,12 @@
 
             for (let i = 0; i < etSim.homeGoals; i++) {
               const min = Math.floor(Math.random() * 27) + 92;
-              const scorer = pickScorer(state.homeTeam.stars);
+              const scorer = pickScorerFromLineup(state.homeTeam);
               state.scheduledEvents.push({ minute: min, side: 'home', scorer, triggered: false });
             }
             for (let i = 0; i < etSim.awayGoals; i++) {
               const min = Math.floor(Math.random() * 27) + 92;
-              const scorer = pickScorer(state.awayTeam.stars);
+              const scorer = pickScorerFromLineup(state.awayTeam);
               state.scheduledEvents.push({ minute: min, side: 'away', scorer, triggered: false });
             }
             state.scheduledEvents.sort((a, b) => a.minute - b.minute);
@@ -6097,6 +7939,10 @@
 
       let concurrentTourneyMatches = 0;
       let concurrentWorldMatches = 0;
+      const isPenWinHome = (state.penHome !== null && state.penAway !== null) ? (state.penHome > state.penAway) : null;
+
+      // Record player goals, assists, clean sheets & MOTM for user's match
+      recordPlayerStatsForMatch(tourney.id, state.homeTeam, state.awayTeam, actualH, actualA, state.scheduledEvents, isPenWinHome);
 
       // 2. Tournament Fixtures: Simulate User's match + other matches in current group + ALL other groups of this tournament!
       if (!state.isKnockoutMatch) {
@@ -6121,6 +7967,7 @@
               fixture.played = true;
               fixture.score = `${homeGoals}-${awayGoals}`;
               recordScoreToStandings(fixture.home, fixture.away, homeGoals, awayGoals);
+              recordPlayerStatsForMatch(tourney.id, fixture.home, fixture.away, homeGoals, awayGoals);
               updateFifaWorldPointsAfterMatch(fixture.home, fixture.away, homeGoals, awayGoals);
               playedTeamsThisRound.add(fixture.home.id);
               playedTeamsThisRound.add(fixture.away.id);
@@ -6140,6 +7987,7 @@
           if (g1 === g2) {
             penWin = Math.random() > 0.5;
           }
+          recordPlayerStatsForMatch(tourney.id, t1, t2, g1, g2, null, penWin);
           updateFifaWorldPointsAfterMatch(t1, t2, g1, g2, penWin);
           playedTeamsThisRound.add(t1.id);
           playedTeamsThisRound.add(t2.id);
@@ -6148,7 +7996,6 @@
       }
 
       // 3. Official FIFA World Ranking points for the User's match
-      const isPenWinHome = (state.penHome !== null && state.penAway !== null) ? (state.penHome > state.penAway) : null;
       const fifaDelta = updateFifaWorldPointsAfterMatch(state.homeTeam, state.awayTeam, actualH, actualA, isPenWinHome);
 
       // 4. Worldwide Concurrent Matches:
@@ -6162,6 +8009,7 @@
           const n1 = otherNations[i];
           const n2 = otherNations[i + 1];
           const { homeGoals, awayGoals } = generateMatchScore(n1, n2);
+          recordPlayerStatsForMatch(null, n1, n2, homeGoals, awayGoals);
           updateFifaWorldPointsAfterMatch(n1, n2, homeGoals, awayGoals);
           playedTeamsThisRound.add(n1.id);
           playedTeamsThisRound.add(n2.id);
@@ -6174,6 +8022,7 @@
           const c1 = otherClubs[i];
           const c2 = otherClubs[i + 1];
           const { homeGoals, awayGoals } = generateMatchScore(c1, c2);
+          recordPlayerStatsForMatch(null, c1, c2, homeGoals, awayGoals);
           updateFifaWorldPointsAfterMatch(c1, c2, homeGoals, awayGoals);
           playedTeamsThisRound.add(c1.id);
           playedTeamsThisRound.add(c2.id);
@@ -6181,9 +8030,11 @@
         }
       }
 
-      // 5. Instantly Re-render both Tournament Standings and FIFA World Rankings!
+      // 5. Instantly Re-render Tournament Standings, FIFA World Rankings, Golden Boot & Ballon d'Or!
       renderLeagueStandings();
       renderFifaWorldRankings();
+      renderSeasonAwards();
+      if (state.gameMode === 'manager') renderManagerLineupEditor();
 
       // Manager Career Stats & Performance update
       const isMgr = state.gameMode === 'manager';
@@ -7327,7 +9178,73 @@
         });
       });
 
-      // Jump smoothly to dedicated FIFA World Ranking Section
+      // Jump smoothly to Player Search, Awards & FIFA World Ranking Sections
+      const btnJumpPlayerSearch = document.getElementById('btnJumpPlayerSearch');
+      if (btnJumpPlayerSearch) {
+        btnJumpPlayerSearch.addEventListener('click', () => {
+          SoundFX.click();
+          document.getElementById('playerSearchSection')?.scrollIntoView({ behavior: 'smooth' });
+          setTimeout(() => document.getElementById('globalPlayerSearchInput')?.focus(), 250);
+        });
+      }
+
+      document.getElementById('globalPlayerSearchInput')?.addEventListener('input', (e) => {
+        state.playerSearchQuery = e.target.value || '';
+        renderGlobalPlayerSearch();
+      });
+
+      document.querySelectorAll('.psearch-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.click();
+          state.playerSearchFilter = btn.dataset.psearch || 'all';
+          document.querySelectorAll('.psearch-filter-btn').forEach(b => {
+            b.className = b.dataset.psearch === state.playerSearchFilter
+              ? 'psearch-filter-btn px-2.5 py-1 rounded-lg font-black bg-emerald-500 text-slate-950 transition'
+              : 'psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition';
+          });
+          renderGlobalPlayerSearch();
+        });
+      });
+
+      document.getElementById('transferSearchInput')?.addEventListener('input', (e) => {
+        state.transferSearch = e.target.value || '';
+        renderTransferMarket();
+      });
+
+      const btnJumpAwards = document.getElementById('btnJumpAwardsSection');
+      if (btnJumpAwards) {
+        btnJumpAwards.addEventListener('click', () => {
+          SoundFX.click();
+          document.getElementById('awardsRaceSection')?.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      document.querySelectorAll('.award-boot-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.click();
+          state.awardBootScope = btn.dataset.bootscope || 'league';
+          document.querySelectorAll('.award-boot-tab').forEach(b => {
+            b.className = b.dataset.bootscope === state.awardBootScope
+              ? 'award-boot-tab px-2.5 py-1 rounded-lg font-extrabold bg-emerald-500 text-slate-950 transition'
+              : 'award-boot-tab px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:text-white transition';
+          });
+          renderSeasonAwards();
+        });
+      });
+
+      document.querySelectorAll('.award-ballon-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.click();
+          state.awardBallonScope = btn.dataset.ballonscope || 'world';
+          document.querySelectorAll('.award-ballon-tab').forEach(b => {
+            b.className = b.dataset.ballonscope === state.awardBallonScope
+              ? 'award-ballon-tab px-2.5 py-1 rounded-lg font-extrabold bg-amber-400 text-slate-950 transition'
+              : 'award-ballon-tab px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:text-white transition';
+          });
+          renderSeasonAwards();
+        });
+      });
+
       const btnJumpFifa = document.getElementById('btnJumpFifaSection');
       if (btnJumpFifa) {
         btnJumpFifa.addEventListener('click', () => {
@@ -7777,6 +9694,7 @@
       });
 
       loadManagerCareer();
+      loadPlayerAwardsHistory();
       snapshotFifaRanks();
       if (state.manager && state.manager.isContractLocked && state.manager.teamId) {
         state.focusedTeamId = state.manager.teamId;
@@ -7786,5 +9704,7 @@
       } else {
         selectTournament(state.activeTournamentId);
       }
+      renderSeasonAwards();
+      renderGlobalPlayerSearch();
       requestAnimationFrame(drawPitch);
     });

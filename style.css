@@ -899,5 +899,42 @@ button:disabled {cursor:default;}
   box-shadow: 0 0 0 3px #facc15, 0 0 18px rgba(250, 204, 21, 0.85);
 }
 
+/* Golden Boot & Ballon d'Or Race Cards */
+.award-podium-gold {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(217, 119, 6, 0.14));
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+.award-podium-silver {
+  background: linear-gradient(135deg, rgba(226, 232, 240, 0.16), rgba(148, 163, 184, 0.08));
+  border-color: rgba(203, 213, 225, 0.4);
+}
+
+.award-podium-bronze {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(120, 53, 15, 0.12));
+  border-color: rgba(217, 119, 6, 0.45);
+}
+
+/* Real Player Portrait Avatars & Initial Fallback */
+.player-avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 25%, rgba(30, 41, 59, 0.95), rgba(2, 6, 23, 0.98));
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
 
 

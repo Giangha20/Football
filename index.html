@@ -68,7 +68,15 @@
           </div>
         </div>
 
-        <!-- Jump to Standalone FIFA World Ranking Section + Audio & Rules Buttons -->
+        <!-- Jump to Standalone Player Search, Awards & FIFA World Ranking Sections + Audio & Rules Buttons -->
+        <button id="btnJumpPlayerSearch" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-emerald-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-emerald-500/30" title="Tìm kiếm cầu thủ V.League & Thế Giới">
+          <i data-lucide="search" class="w-4 h-4 text-emerald-400"></i>
+          <span class="hidden sm:inline">Tìm cầu thủ</span>
+        </button>
+        <button id="btnJumpAwardsSection" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-amber-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-amber-500/30" title="Xem Đua Vua Phá Lưới & Quả Bóng Vàng">
+          <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+          <span class="hidden md:inline">Vua Phá Lưới & QBV</span>
+        </button>
         <button id="btnJumpFifaSection" type="button" class="btn-tap px-3 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-sky-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-sky-500/30" title="Xem mục Bảng Xếp Hạng FIFA Thế Giới (186 Quốc gia)">
           <i data-lucide="globe" class="w-4 h-4 text-sky-400"></i>
           <span class="hidden sm:inline">BXH FIFA (186 QG)</span>
@@ -390,7 +398,7 @@
             </div>
           </div>
 
-          <!-- Transfer Tabs & Position Filters -->
+          <!-- Transfer Tabs, Search & Position Filters -->
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10 text-xs font-bold" role="tablist">
               <button id="tabTransferMarket" type="button" class="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-black transition flex items-center gap-1.5 shadow">
@@ -403,7 +411,11 @@
               </button>
             </div>
 
-            <div class="flex items-center gap-1 text-[11px] flex-wrap">
+            <div class="flex items-center gap-1.5 flex-wrap flex-1 justify-end">
+              <input id="transferSearchInput" type="text" placeholder="Tìm tên cầu thủ / CLB..." class="px-3 py-1.5 rounded-xl bg-slate-950 border border-white/15 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 min-w-[160px] flex-1 sm:flex-initial" />
+            </div>
+
+            <div class="flex items-center gap-1 text-[11px] flex-wrap w-full">
               <span class="text-slate-400 hidden sm:inline">Vị trí:</span>
               <button type="button" data-pos-filter="all" class="market-pos-btn px-2 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950">Tất cả</button>
               <button type="button" data-pos-filter="FW" class="market-pos-btn px-2 py-1 rounded-lg font-semibold text-slate-300 hover:bg-white/10">Tiền đạo (FW)</button>
@@ -602,19 +614,19 @@
             </div>
           </div>
 
-          <!-- Squad Players Preview (Home & Away Starting Lineups) -->
-          <details class="squad-details"><summary>Đội hình ra sân</summary>          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-white/10 text-[11px]">
+          <!-- Squad Players Preview (Home & Away Starting Lineups + Bench) -->
+          <details class="squad-details" open><summary class="cursor-pointer font-bold text-xs text-emerald-400 hover:text-emerald-300 transition py-1">Đội hình ra sân & Danh sách cầu thủ (Kèm ảnh & Vị trí)</summary>          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-white/10 text-[11px]">
             <div class="bg-slate-950/70 rounded-xl p-2.5 border border-emerald-500/20">
               <div class="font-bold text-emerald-300 mb-1.5 flex items-center justify-between">
                 <span id="homeSquadTitle">Đội hình Chủ nhà</span>
-                <span class="text-[10px] text-slate-400">11 Cầu thủ ra sân</span>
+                <span class="text-[10px] text-slate-400">Đội chính & Dự bị (Có vị trí)</span>
               </div>
               <div id="homePlayersList" class="text-slate-300 leading-relaxed flex flex-wrap gap-1"></div>
             </div>
             <div class="bg-slate-950/70 rounded-xl p-2.5 border border-sky-500/20">
               <div class="font-bold text-sky-300 mb-1.5 flex items-center justify-between">
                 <span id="awaySquadTitle">Đội hình Đội khách</span>
-                <span class="text-[10px] text-slate-400">11 Cầu thủ ra sân</span>
+                <span class="text-[10px] text-slate-400">Đội chính & Dự bị (Có vị trí)</span>
               </div>
               <div id="awayPlayersList" class="text-slate-300 leading-relaxed flex flex-wrap gap-1"></div>
             </div>
@@ -881,6 +893,167 @@
     </div>
 
     <!-- ===================================================================== -->
+    <!-- DEDICATED SECTION: TÌM KIẾM CẦU THỦ TOÀN CẦU (V.LEAGUE & THẾ GIỚI) -->
+    <!-- ===================================================================== -->
+    <section id="playerSearchSection" class="glass-card rounded-2xl p-4 sm:p-6 border border-emerald-500/35 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/25 shrink-0">
+            <i data-lucide="search" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-sm sm:text-base font-black uppercase tracking-wider text-white">
+                TÌM KIẾM & TRA CỨU CẦU THỦ TOÀN CẦU
+              </h2>
+              <span id="playerSearchCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                V.League & Thế Giới
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Tra cứu hồ sơ, ảnh thật, vị trí thi đấu & chỉ số ghi bàn của hàng nghìn cầu thủ (đặc biệt đủ ảnh V.League 1)
+            </p>
+          </div>
+        </div>
+
+        <div class="w-full lg:w-auto flex-1 max-w-md">
+          <input id="globalPlayerSearchInput" type="text" placeholder="Tìm tên cầu thủ, CLB, giải đấu hoặc vị trí (VD: Xuân Son, Quang Hải, Haaland, GK)..." class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-emerald-500/35 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400 shadow-inner" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+          <button type="button" data-psearch="all" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-black bg-emerald-500 text-slate-950 transition">Tất cả cầu thủ</button>
+          <button type="button" data-psearch="vleague" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-bold bg-slate-900 text-amber-300 border border-amber-400/25 hover:text-white transition">🇻🇳 V.League 1</button>
+          <button type="button" data-psearch="market" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-bold bg-slate-900 text-sky-300 border border-sky-400/25 hover:text-white transition">🛒 Chợ chuyển nhượng</button>
+          <button type="button" data-psearch="FW" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Tiền đạo (FW)</button>
+          <button type="button" data-psearch="MF" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Tiền vệ (MF)</button>
+          <button type="button" data-psearch="DF" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Hậu vệ (DF)</button>
+          <button type="button" data-psearch="GK" class="psearch-filter-btn px-2.5 py-1 rounded-lg font-semibold bg-slate-900 text-slate-300 border border-white/10 hover:text-white transition">Thủ môn (GK)</button>
+        </div>
+        <span id="playerSearchResultMeta" class="text-[11px] text-slate-400 font-semibold"></span>
+      </div>
+
+      <div id="globalPlayerSearchGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-96 overflow-y-auto pr-1">
+        <!-- Populated dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- DEDICATED SECTION: ĐUA VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG (GOLDEN BOOT & BALLON D'OR) -->
+    <!-- ===================================================================== -->
+    <section id="awardsRaceSection" class="glass-card rounded-2xl p-4 sm:p-6 border border-amber-400/35 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30 shrink-0">
+            <i data-lucide="award" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-sm sm:text-base font-black uppercase tracking-wider text-white">
+                ĐUA VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG
+              </h2>
+              <span id="awardsSeasonPill" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-slate-950 shadow">
+                MÙA 2026/2027
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Cập nhật bàn thắng, kiến tạo, sạch lưới & điểm Quả Bóng Vàng theo từng trận đấu (hiển thị đầy đủ vị trí thi đấu)
+            </p>
+          </div>
+        </div>
+        <span id="awardsActiveLeagueBadge" class="px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          LPBank V.League 1
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- LEFT: ĐUA VUA PHÁ LƯỚI (GOLDEN BOOT) -->
+        <div class="bg-slate-950/75 rounded-2xl p-3.5 sm:p-4 border border-emerald-500/25 flex flex-col gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-xs sm:text-sm font-black text-emerald-300 flex items-center gap-1.5 uppercase tracking-wider">
+              <span>👟</span>
+              <span>ĐUA VUA PHÁ LƯỚI</span>
+            </h3>
+            <div class="inline-flex p-0.5 rounded-xl bg-slate-900 border border-white/10 text-[11px]">
+              <button type="button" data-bootscope="league" class="award-boot-tab px-2.5 py-1 rounded-lg font-extrabold bg-emerald-500 text-slate-950 transition">Giải hiện tại</button>
+              <button type="button" data-bootscope="global" class="award-boot-tab px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:text-white transition">Toàn cầu</button>
+            </div>
+          </div>
+
+          <div id="goldenBootLeaderCard" class="p-3 rounded-xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-slate-900/80 border border-emerald-400/30">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="overflow-x-auto max-h-80 overflow-y-auto pr-1 rounded-xl border border-white/10 bg-slate-950/60">
+            <table class="w-full text-left text-xs">
+              <thead class="text-[10px] text-slate-400 uppercase bg-slate-900/95 border-b border-white/10 sticky top-0 z-10">
+                <tr>
+                  <th class="py-2 px-2 text-center">#</th>
+                  <th class="py-2 px-2">Cầu thủ / CLB</th>
+                  <th class="py-2 px-2 text-center">Vị trí</th>
+                  <th class="py-2 px-2 text-center">Trận</th>
+                  <th class="py-2 px-2 text-center text-emerald-300">⚽ Bàn</th>
+                  <th class="py-2 px-2 text-right text-sky-300">🎯 KT</th>
+                </tr>
+              </thead>
+              <tbody id="goldenBootBody" class="divide-y divide-white/5 text-slate-200">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RIGHT: ĐUA QUẢ BÓNG VÀNG (BALLON D'OR) -->
+        <div class="bg-slate-950/75 rounded-2xl p-3.5 sm:p-4 border border-amber-400/30 flex flex-col gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-xs sm:text-sm font-black text-amber-300 flex items-center gap-1.5 uppercase tracking-wider">
+              <span>🌕</span>
+              <span>ĐUA QUẢ BÓNG VÀNG (BALLON D'OR)</span>
+            </h3>
+            <div class="inline-flex p-0.5 rounded-xl bg-slate-900 border border-white/10 text-[11px]">
+              <button type="button" data-ballonscope="world" class="award-ballon-tab px-2.5 py-1 rounded-lg font-extrabold bg-amber-400 text-slate-950 transition">Thế giới</button>
+              <button type="button" data-ballonscope="league" class="award-ballon-tab px-2.5 py-1 rounded-lg font-semibold text-slate-300 hover:text-white transition">Giải hiện tại</button>
+            </div>
+          </div>
+
+          <div id="ballonDorPodiumCards" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="overflow-x-auto max-h-80 overflow-y-auto pr-1 rounded-xl border border-white/10 bg-slate-950/60">
+            <table class="w-full text-left text-xs">
+              <thead class="text-[10px] text-slate-400 uppercase bg-slate-900/95 border-b border-white/10 sticky top-0 z-10">
+                <tr>
+                  <th class="py-2 px-2 text-center">#</th>
+                  <th class="py-2 px-2">Ứng viên / CLB</th>
+                  <th class="py-2 px-2 text-center">Vị trí</th>
+                  <th class="py-2 px-2 text-center">⚽ / 🎯</th>
+                  <th class="py-2 px-2 text-center hidden sm:table-cell">CS / MOTM</th>
+                  <th class="py-2 px-2 text-right text-amber-300">Điểm QBV</th>
+                </tr>
+              </thead>
+              <tbody id="ballonDorBody" class="divide-y divide-white/5 text-slate-200">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hall of Fame: Past Season Winners -->
+      <div id="pastSeasonAwardsBox" class="hidden pt-3 border-t border-white/10 space-y-2">
+        <div class="text-xs font-black text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+          <span>🏛️</span>
+          <span>LỊCH SỬ VINH DANH VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG CÁC MÙA TRƯỚC</span>
+        </div>
+        <div id="pastSeasonAwardsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
     <!-- DEDICATED STANDALONE SECTION: BẢNG XẾP HẠNG FIFA THẾ GIỚI (186 QUỐC GIA) -->
     <!-- ===================================================================== -->
     <section id="fifaWorldRankingSection" class="glass-card rounded-2xl p-4 sm:p-6 border border-sky-500/30 space-y-4">
@@ -1051,6 +1224,11 @@
           <div id="seasonChampionBanner" class="p-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-emerald-500/20 border border-amber-400/40 flex items-center gap-3">
             <!-- Populated by JS -->
           </div>
+        </div>
+
+        <!-- VINH DANH CÁ NHÂN MÙA GIẢI: VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG -->
+        <div id="seasonIndividualAwardsPodium" class="space-y-2">
+          <!-- Populated dynamically by JS -->
         </div>
 
         <!-- Rules explanation note -->
@@ -1228,7 +1406,7 @@
           <span>ĐẶT LẠI TOÀN BỘ GIẢI ĐẤU & ĐIỂM FIFA</span>
         </label>
         <p class="text-[11px] text-slate-400 leading-relaxed">
-          Đặt lại toàn bộ tiến độ của tất cả giải đấu về đầu mùa, đưa điểm số BXH FIFA của tất cả 186 quốc gia về 0, khôi phục Mùa giải 1 và hủy hợp đồng HLV hiện tại.
+          Đặt lại toàn bộ tiến độ của tất cả giải đấu về đầu mùa, đưa điểm số BXH FIFA của tất cả 186 quốc gia về 0, đặt lại Vua Phá Lưới & Quả Bóng Vàng, khôi phục Mùa giải 1 và hủy hợp đồng HLV hiện tại.
         </p>
         <button id="btnResetAllTournamentsAndFifa" type="button" class="btn-tap w-full py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-black flex items-center justify-center gap-2 transition">
           <i data-lucide="rotate-ccw" class="w-4 h-4 text-rose-400"></i>
