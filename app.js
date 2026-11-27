@@ -5719,18 +5719,32 @@
     // =========================================================================
     // SẮP XẾP ĐỘI HÌNH, VỊ TRÍ CẦU THỦ & SƠ ĐỒ ĐỘI HÌNH HLV
     // =========================================================================
+    let TRANSFER_MARKET_CACHE_MAP = null;
+    function getTransferMarketMap() {
+      const currentList = (typeof window !== 'undefined' && Array.isArray(window.TRANSFER_MARKET_PLAYERS) && window.TRANSFER_MARKET_PLAYERS.length)
+        ? window.TRANSFER_MARKET_PLAYERS
+        : (typeof TRANSFER_MARKET_PLAYERS !== 'undefined' && Array.isArray(TRANSFER_MARKET_PLAYERS) ? TRANSFER_MARKET_PLAYERS : []);
+
+      if (!TRANSFER_MARKET_CACHE_MAP || TRANSFER_MARKET_CACHE_MAP.size !== currentList.length) {
+        TRANSFER_MARKET_CACHE_MAP = new Map();
+        for (let i = 0; i < currentList.length; i++) {
+          const p = currentList[i];
+          if (!p || !p.name) continue;
+          const k1 = p.name.trim().toLowerCase();
+          const k2 = k1.split(' (')[0].trim();
+          if (!TRANSFER_MARKET_CACHE_MAP.has(k1)) TRANSFER_MARKET_CACHE_MAP.set(k1, p);
+          if (!TRANSFER_MARKET_CACHE_MAP.has(k2)) TRANSFER_MARKET_CACHE_MAP.set(k2, p);
+        }
+      }
+      return TRANSFER_MARKET_CACHE_MAP;
+    }
+
     function findTransferPlayerMeta(playerName) {
-      const list = (typeof TRANSFER_MARKET_PLAYERS !== 'undefined' && Array.isArray(TRANSFER_MARKET_PLAYERS))
-        ? TRANSFER_MARKET_PLAYERS
-        : [];
-      const norm = (playerName || '').trim().toLowerCase();
-      if (!norm) return null;
+      if (!playerName) return null;
+      const map = getTransferMarketMap();
+      const norm = playerName.trim().toLowerCase();
       const normBase = norm.split(' (')[0].trim();
-      return list.find(p => {
-        const pNorm = (p.name || '').toLowerCase();
-        const pBase = pNorm.split(' (')[0].trim();
-        return pNorm === norm || pBase === normBase;
-      }) || null;
+      return map.get(norm) || map.get(normBase) || null;
     }
 
     function guessPlayerRoleFromName(name, fallbackIdx = 5, hasExplicitGk = false) {
@@ -6664,7 +6678,7 @@
     // =========================================================================
     // THỊ TRƯỜNG CHUYỂN NHƯỢNG CẦU THỦ (TRANSFER MARKET)
     // =========================================================================
-    const TRANSFER_MARKET_PLAYERS = [
+    const FALLBACK_TRANSFER_PLAYERS = [
       // TIỀN ĐẠO (FW)
       { id: 'haaland', name: 'Erling Haaland', pos: 'FW', club: 'Man City', ovr: 91, price: 110, ovrBoost: 3, icon: '⚡' },
       { id: 'mbappe', name: 'Kylian Mbappé', pos: 'FW', club: 'Real Madrid', ovr: 91, price: 115, ovrBoost: 3, icon: '⚡' },
@@ -6711,6 +6725,15 @@
       { id: 'van_lam', name: 'Đặng Văn Lâm', pos: 'GK', club: 'Ninh Bình', ovr: 79, price: 12, ovrBoost: 1, icon: '🇻🇳' }
     ];
 
+    const TRANSFER_MARKET_PLAYERS = (typeof window !== 'undefined' && Array.isArray(window.TRANSFER_MARKET_PLAYERS) && window.TRANSFER_MARKET_PLAYERS.length)
+      ? window.TRANSFER_MARKET_PLAYERS
+      : FALLBACK_TRANSFER_PLAYERS;
+
+    window.loadMoreTransferPlayers = function() {
+      state.transferLimit = (state.transferLimit || 48) + 48;
+      renderTransferMarket();
+    };
+
     function renderTransferMarket() {
       const budgetEl = document.getElementById('managerBudgetDisplay');
       if (budgetEl) {
@@ -6738,7 +6761,11 @@
         });
         const currentStars = team ? (team.stars || []) : [];
 
-        marketContainer.innerHTML = filteredPlayers.length ? filteredPlayers.map(p => {
+        const limit = state.transferLimit || 48;
+        const visiblePlayers = filteredPlayers.slice(0, limit);
+        const hasMore = filteredPlayers.length > limit;
+
+        const cardsHtml = visiblePlayers.map(p => {
           const alreadyOwned = currentStars.some(s => s.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(s.toLowerCase()));
           const canAfford = (state.manager.budget || 150) >= p.price;
 
@@ -6786,7 +6813,18 @@
               </div>
             </div>
           `;
-        }).join('') : `<div class="col-span-full py-8 text-center text-slate-400 text-xs">Không tìm thấy cầu thủ phù hợp trên Chợ chuyển nhượng.</div>`;
+        }).join('');
+
+        const loadMoreHtml = hasMore ? `
+          <div class="col-span-full py-4 text-center">
+            <button type="button" onclick="window.loadMoreTransferPlayers()" class="btn-tap px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400/25 to-yellow-500/25 hover:from-amber-400/40 hover:to-yellow-500/40 text-amber-300 border border-amber-400/40 text-xs sm:text-sm font-extrabold shadow-lg transition flex items-center justify-center gap-2 mx-auto">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Xem thêm cầu thủ (Đang hiện ${visiblePlayers.length} / ${filteredPlayers.length.toLocaleString()} cầu thủ)...</span>
+            </button>
+          </div>
+        ` : '';
+
+        marketContainer.innerHTML = filteredPlayers.length ? (cardsHtml + loadMoreHtml) : `<div class="col-span-full py-8 text-center text-slate-400 text-xs">Không tìm thấy cầu thủ phù hợp trên Chợ chuyển nhượng.</div>`;
       }
 
       // 2. RENDER CURRENT SQUAD (BÁN CẦU THỦ)
@@ -9208,6 +9246,7 @@
 
       document.getElementById('transferSearchInput')?.addEventListener('input', (e) => {
         state.transferSearch = e.target.value || '';
+        state.transferLimit = 48;
         renderTransferMarket();
       });
 
@@ -9460,6 +9499,7 @@
         btn.addEventListener('click', () => {
           SoundFX.click();
           state.transferFilter = btn.dataset.posFilter || 'all';
+          state.transferLimit = 48;
           document.querySelectorAll('.market-pos-btn').forEach(b => {
             b.className = (b.dataset.posFilter === state.transferFilter)
               ? 'market-pos-btn px-2 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950'
