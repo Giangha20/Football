@@ -1,7 +1,7 @@
 {
-  "name": "Siêu Dự Đoán Bóng Đá & Huấn Luyện Viên Tương Lai",
-  "short_name": "Football Manager",
-  "description": "Game mô phỏng bóng đá, dự đoán tỷ số và quản lý HLV mùa giải 2026/2027",
+  "name": "EFOOT Mobile Arena — Dự Đoán & Quản Lý HLV",
+  "short_name": "EFOOT Arena",
+  "description": "Game mô phỏng bóng đá, dự đoán tỷ số và sự nghiệp HLV mùa giải 2026/2027",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
