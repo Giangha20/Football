@@ -1,0 +1,9 @@
+{
+  "appId": "com.giang.footballmanager",
+  "appName": "Siêu Dự Đoán & HLV Tương Lai",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

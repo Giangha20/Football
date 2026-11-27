@@ -14,6 +14,14 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="style.css" />
+  <!-- PWA & Mobile App Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#020617" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Football Manager" />
+  <link rel="apple-touch-icon" href="icon-512.png" />
 </head>
 <body class="antialiased selection:bg-emerald-500 selection:text-slate-950">
 
@@ -1423,5 +1431,13 @@
   <!-- Scripts -->
   <script src="transfer_market_data.js"></script>
   <script src="app.js"></script>
+  <!-- Offline Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

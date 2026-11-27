@@ -1,0 +1,169 @@
+name: Build Offline Apps (Windows .EXE, Android .APK, iOS .IPA)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. BUILD WINDOWS OFFLINE EXECUTABLE (.EXE)
+  # ---------------------------------------------------------------------------
+  build-windows:
+    name: Build Windows (.exe)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile Windows Offline Executable
+        shell: powershell
+        run: |
+          & "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /target:winexe /optimize+ /out:Football_Game_Offline.exe Launcher.cs
+          Compress-Archive -Path Football_Game_Offline.exe, index.html, style.css, app.js, transfer_market_data.js, manifest.json, icon-192.png, icon-512.png -DestinationPath Football_Windows_Offline.zip -Force
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Football_Windows_Offline
+          path: Football_Windows_Offline.zip
+
+  # ---------------------------------------------------------------------------
+  # 2. BUILD ANDROID APK (.APK)
+  # ---------------------------------------------------------------------------
+  build-android:
+    name: Build Android (.apk)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Initialize Capacitor Android Project
+        run: |
+          npm init -y
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+          mkdir -p www
+          cp index.html style.css app.js transfer_market_data.js manifest.json sw.js icon-192.png icon-512.png www/
+          # Update capacitor.config.json to point to www
+          cat << 'EOF' > capacitor.config.json
+          {
+            "appId": "com.giang.footballmanager",
+            "appName": "Siêu Dự Đoán & HLV Tương Lai",
+            "webDir": "www",
+            "bundledWebRuntime": false,
+            "server": {
+              "androidScheme": "https"
+            }
+          }
+          EOF
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Android APK with Gradle
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Locate & Rename APK
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk Football_Manager_Android.apk
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Football_Manager_Android_APK
+          path: Football_Manager_Android.apk
+
+  # ---------------------------------------------------------------------------
+  # 3. BUILD IOS IPA (.IPA)
+  # ---------------------------------------------------------------------------
+  build-ios:
+    name: Build iOS (.ipa)
+    runs-on: macos-14
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Initialize Capacitor iOS Project
+        run: |
+          npm init -y
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/ios@latest
+          mkdir -p www
+          cp index.html style.css app.js transfer_market_data.js manifest.json sw.js icon-192.png icon-512.png www/
+          cat << 'EOF' > capacitor.config.json
+          {
+            "appId": "com.giang.footballmanager",
+            "appName": "Siêu Dự Đoán & HLV Tương Lai",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
+          npx cap add ios
+          npx cap sync ios
+
+      - name: Build iOS App with Xcode
+        working-directory: ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath App.xcarchive archive CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          mkdir -p Payload
+          cp -r App.xcarchive/Products/Applications/App.app Payload/
+          zip -r ../../Football_Manager_iOS.ipa Payload
+
+      - name: Upload iOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Football_Manager_iOS_IPA
+          path: Football_Manager_iOS.ipa
+
+  # ---------------------------------------------------------------------------
+  # 4. PUBLISH GITHUB RELEASE WITH ALL DOWNLOADS
+  # ---------------------------------------------------------------------------
+  release:
+    name: Publish Release (EXE, APK, IPA)
+    needs: [build-windows, build-android, build-ios]
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create GitHub Release with Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0-offline
+          name: "Bản cài đặt Offline — Football Manager 2026/2027 (.exe, .apk, .ipa)"
+          body: |
+            ### ⚽ Tải về các bản cài đặt Game Offline (2026/2027):
+            
+            - **💻 Bản Windows (.EXE):** Tải file `Football_Windows_Offline.zip`, giải nén và nhấp đúp vào `Football_Game_Offline.exe` để chơi ngay 100% offline không cần cài đặt.
+            - **📱 Bản Android (.APK):** Tải file `Football_Manager_Android.apk` và cài đặt trực tiếp trên điện thoại/máy tính bảng Android.
+            - **🍏 Bản iOS (.IPA):** Tải file `Football_Manager_iOS.ipa` để cài đặt lên iPhone/iPad thông qua Sideloadly, AltStore, Scarlet hoặc TrollStore. (Hoặc bạn có thể mở web trên Safari và chọn "Thêm vào MH chính" để dùng PWA offline).
+          files: |
+            Football_Windows_Offline/Football_Windows_Offline.zip
+            Football_Manager_Android_APK/Football_Manager_Android.apk
+            Football_Manager_iOS_IPA/Football_Manager_iOS.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
