@@ -13,7 +13,7 @@
   <!-- Lucide Icons & Confetti FX -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3.0" />
   <!-- PWA & Mobile App Manifest -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020617" />
@@ -520,8 +520,9 @@
       </div>
     </section>
 
-    <!-- STRICT TOURNAMENT / LEAGUE SELECTOR HUB -->
-    <section id="sectionMatchHub" class="match-hub">
+    <!-- STRICT TOURNAMENT & MATCH SIMULATION HUB -->
+    <section id="sectionMatchHub" class="space-y-5">
+      <div class="match-hub">
       <div class="hub-heading"><h2 id="hubMainHeading">Dự đoán trận đấu</h2><div class="pitch-mark" aria-hidden="true"><b></b></div></div>
       <div class="picker-row">
         <label>Giải đấu<select id="selectLeagueFilter"></select></label>
@@ -539,9 +540,9 @@
         <!-- Populated dynamically by JS -->
       </div>
       </details>
-    </section>
+      </div>
 
-    <!-- Primary Game Grid -->
+      <!-- Primary Game Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
       <!-- Left / Center Column: Match Simulation Timer + Prediction Arena + Pitch Canvas -->
@@ -975,6 +976,8 @@
     </div>
 
 
+
+    </section>
 
     <!-- ===================================================================== -->
     <!-- DEDICATED SECTION: ĐUA VUA PHÁ LƯỚI & QUẢ BÓNG VÀNG (GOLDEN BOOT & BALLON D'OR) -->
@@ -1769,13 +1772,13 @@
   </dialog>
 
   <!-- Scripts -->
-  <script src="transfer_market_data.js"></script>
-  <script src="app.js"></script>
+  <script src="transfer_market_data.js?v=3.0"></script>
+  <script src="app.js?v=3.0"></script>
   <!-- Offline Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=3.0').catch(() => {});
       });
     }
     // Offline Desktop Launcher Keep-Alive Heartbeat

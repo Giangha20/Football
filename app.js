@@ -9987,7 +9987,7 @@
       } else if (tabId === 'awards') {
         renderSeasonAwards();
       } else if (tabId === 'fifa') {
-        renderFifaRankings();
+        renderFifaWorldRankings();
       }
     };
 
@@ -10707,6 +10707,10 @@
       // Initialize Auth UI on page load
       if (typeof window.updateAuthUI === 'function') {
         window.updateAuthUI();
+      }
+      // Ensure clean tab isolation on page load
+      if (typeof window.switchMainTab === 'function') {
+        window.switchMainTab(state.manager && state.manager.isSigned ? 'career' : 'match');
       }
 
 

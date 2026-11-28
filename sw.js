@@ -1,4 +1,4 @@
-const CACHE_NAME = 'football-manager-offline-v1';
+const CACHE_NAME = 'football-manager-offline-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,19 +6,14 @@ const ASSETS_TO_CACHE = [
   './app.js',
   './transfer_market_data.js',
   './manifest.json',
+  './logo.png',
   './icon-192.png',
   './icon-512.png',
-  'https://cdn.tailwindcss.com',
-  'https://unpkg.com/lucide@latest',
-  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js'
+  './favicon.png'
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
-    }).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -33,23 +28,30 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+
+  // Bypass heartbeat API
+  if (url.pathname.includes('/api/heartbeat')) return;
+
+  // Network-First: Always try to get the newest file from network; fall back to cache when offline
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
         }
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          if (cached) return cached;
+          if (event.request.headers.get('accept')?.includes('text/html')) {
+            return caches.match('./index.html');
+          }
         });
-        return response;
-      }).catch(() => {
-        if (event.request.headers.get('accept')?.includes('text/html')) {
-          return caches.match('./index.html');
-        }
-      });
-    })
+      })
   );
 });
