@@ -9947,46 +9947,85 @@
     // =========================================================================
     window.switchMainTab = function(tabId) {
       SoundFX.click();
-      const tabDefs = {
-        match: { btn: document.getElementById('tabBtnMatch'), sec: document.getElementById('sectionMatchHub') },
-        career: { btn: document.getElementById('tabBtnCareer'), sec: document.getElementById('panelManagerHub') },
-        market: { btn: document.getElementById('tabBtnMarket'), sec: document.getElementById('sectionTransferMarket') },
-        awards: { btn: document.getElementById('tabBtnAwards'), sec: document.getElementById('awardsRaceSection') },
-        fifa: { btn: document.getElementById('tabBtnFifa'), sec: document.getElementById('fifaWorldRankingSection') }
-      };
-
       state.activeMainTab = tabId;
 
-      Object.keys(tabDefs).forEach(key => {
-        const item = tabDefs[key];
-        if (item.sec) {
-          if (key === tabId) item.sec.classList.remove('hidden');
-          else item.sec.classList.add('hidden');
-        }
-        if (item.btn) {
+      const tabBtns = {
+        match: document.getElementById('tabBtnMatch'),
+        career: document.getElementById('tabBtnCareer'),
+        market: document.getElementById('tabBtnMarket'),
+        awards: document.getElementById('tabBtnAwards'),
+        fifa: document.getElementById('tabBtnFifa')
+      };
+
+      Object.keys(tabBtns).forEach(key => {
+        const btn = tabBtns[key];
+        if (btn) {
           if (key === tabId) {
-            item.btn.className = 'app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md';
+            btn.className = 'app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md';
           } else {
-            item.btn.className = 'app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white';
+            btn.className = 'app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white';
           }
         }
       });
 
+      const secMatchHub = document.getElementById('sectionMatchHub');
+      const panelMgr = document.getElementById('panelManagerHub');
+      const secMarket = document.getElementById('sectionTransferMarket');
+      const secAwards = document.getElementById('awardsRaceSection');
+      const secFifa = document.getElementById('fifaWorldRankingSection');
+
       if (tabId === 'match') {
-        if (state.manager && state.manager.isSigned) {
-          setGameMode('manager');
-        }
+        // Trận đấu & Dự đoán: Hiện sân bóng, nút đá, tốc độ; Ẩn bảng HLV & các mục khác
+        if (secMatchHub) secMatchHub.classList.remove('hidden');
+        if (panelMgr) panelMgr.classList.add('hidden');
+        if (secMarket) secMarket.classList.add('hidden');
+        if (secAwards) secAwards.classList.add('hidden');
+        if (secFifa) secFifa.classList.add('hidden');
+
+        setGameMode('predict');
+        if (typeof syncSettings === 'function') syncSettings();
         initPitchPlayers();
       } else if (tabId === 'career') {
+        // Sự nghiệp HLV: Hiện Bảng HLV VÀ Sân bóng, Nút Bắt đầu đá, Nút Tua nhanh!
+        // Ẩn Chợ chuyển nhượng, Đua vua phá lưới, BXH FIFA
+        if (panelMgr) panelMgr.classList.remove('hidden');
+        if (secMatchHub) secMatchHub.classList.remove('hidden');
+        if (secMarket) secMarket.classList.add('hidden');
+        if (secAwards) secAwards.classList.add('hidden');
+        if (secFifa) secFifa.classList.add('hidden');
+
         setGameMode('manager');
         renderManagerUI();
+        if (typeof syncSettings === 'function') syncSettings();
+        initPitchPlayers();
       } else if (tabId === 'market') {
+        // Chợ chuyển nhượng: Chỉ hiện chuyển nhượng, ẨN sân bóng, nút đá, tua nhanh
+        if (secMarket) secMarket.classList.remove('hidden');
+        if (secMatchHub) secMatchHub.classList.add('hidden');
+        if (panelMgr) panelMgr.classList.add('hidden');
+        if (secAwards) secAwards.classList.add('hidden');
+        if (secFifa) secFifa.classList.add('hidden');
+
         renderTransferMarket();
         const budgetBadge = document.getElementById('transferMarketBudgetBadge');
         if (budgetBadge && state.manager) budgetBadge.textContent = state.manager.budget + 'M €';
       } else if (tabId === 'awards') {
+        // Đua vua phá lưới & QBV: Chỉ hiện danh hiệu, ẨN sân bóng, nút đá, tua nhanh
+        if (secAwards) secAwards.classList.remove('hidden');
+        if (secMatchHub) secMatchHub.classList.add('hidden');
+        if (panelMgr) panelMgr.classList.add('hidden');
+        if (secMarket) secMarket.classList.add('hidden');
+        if (secFifa) secFifa.classList.add('hidden');
+
         renderSeasonAwards();
       } else if (tabId === 'fifa') {
+        // BXH FIFA: Chỉ hiện BXH FIFA, ẨN sân bóng, nút đá, tua nhanh
+        if (secFifa) secFifa.classList.remove('hidden');
+        if (secMatchHub) secMatchHub.classList.add('hidden');
+        if (panelMgr) panelMgr.classList.add('hidden');
+        if (secMarket) secMarket.classList.add('hidden');
+        if (secAwards) secAwards.classList.add('hidden');
+
         renderFifaWorldRankings();
       }
     };
