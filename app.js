@@ -29,17 +29,20 @@
       'settings': '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>'
     };
 
-    window.lucide = {
-      createIcons() {
-        document.querySelectorAll('[data-lucide]').forEach(el => {
-          const name = el.getAttribute('data-lucide');
-          const paths = OFFLINE_SVG_PATHS[name] || OFFLINE_SVG_PATHS['star'];
-          const cls = el.getAttribute('class') || 'w-4 h-4';
-          const idAttr = el.id ? `id="${el.id}"` : '';
-          el.outerHTML = `<svg ${idAttr} data-lucide="${name}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="${cls}">${paths}</svg>`;
-        });
-      }
-    };
+    // Only define lightweight fallback if official Lucide library is not loaded
+    if (!window.lucide || typeof window.lucide.createIcons !== 'function') {
+      window.lucide = {
+        createIcons() {
+          document.querySelectorAll('[data-lucide]').forEach(el => {
+            const name = el.getAttribute('data-lucide');
+            const paths = OFFLINE_SVG_PATHS[name] || OFFLINE_SVG_PATHS['star'];
+            const cls = el.getAttribute('class') || 'w-4 h-4';
+            const idAttr = el.id ? `id="${el.id}"` : '';
+            el.outerHTML = `<svg ${idAttr} data-lucide="${name}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="${cls}">${paths}</svg>`;
+          });
+        }
+      };
+    }
 
     window.confetti = function(opts = {}) {
       const count = opts.particleCount || 60;
@@ -9506,7 +9509,11 @@
       });
 
       const settings = document.getElementById('settings');
-      document.getElementById('btnSettings').onclick = () => settings.showModal();
+      document.getElementById('btnSettings').onclick = () => {
+        SoundFX.click();
+        settings.showModal();
+        if (window.lucide) window.lucide.createIcons();
+      };
       document.getElementById('btnSimSpeed').onclick = () => {
         SoundFX.click();
         const order = [1, 4, 12];
@@ -9733,19 +9740,6 @@
         SoundFX.click();
         window.requestLandscapeMode();
       });
-
-      function checkOrientationPrompt() {
-        const isPortraitMobile = window.innerHeight > window.innerWidth && window.innerWidth <= 768;
-        const prompt = document.getElementById('portraitRotatePrompt');
-        if (prompt) {
-          if (isPortraitMobile) prompt.classList.remove('hidden');
-          else prompt.classList.add('hidden');
-        }
-      }
-
-      window.addEventListener('resize', checkOrientationPrompt);
-      window.addEventListener('orientationchange', checkOrientationPrompt);
-      checkOrientationPrompt();
 
       // Sound Toggle
       document.getElementById('btnToggleSound').addEventListener('click', () => {
@@ -10299,17 +10293,24 @@
         const cleanUser = sanitizeKey(username);
         if (!cleanUser) return null;
 
-        // Step 1: Query keyval.org to get the restful-api.dev objectId
-        const mapRes = await fetch('https://api.keyval.org/get/efoot_u_' + cleanUser).catch(() => null);
-        if (!mapRes || !mapRes.ok) return null;
+        // Step 1: Check if objectId is already cached locally
+        let objectId = localStorage.getItem('football_cloud_oid_' + cleanUser) || null;
 
-        const mapData = await mapRes.json();
-        const objectId = mapData?.val;
-        if (!objectId || objectId.includes('DOESNT-EXISTS') || objectId.length < 10) {
-          return null;
+        // Step 2: Query keyval.org to get the restful-api.dev objectId across devices
+        if (!objectId) {
+          const mapRes = await fetch('https://api.keyval.org/get/efoot_u_' + cleanUser).catch(() => null);
+          if (mapRes && mapRes.ok) {
+            const mapData = await mapRes.json();
+            const val = mapData?.val;
+            if (val && !val.includes('DOESNT-EXISTS') && val.length > 10) {
+              objectId = val;
+            }
+          }
         }
 
-        // Step 2: Fetch the full account record from restful-api.dev
+        if (!objectId) return null;
+
+        // Step 3: Fetch the full account record from restful-api.dev
         const objRes = await fetch('https://api.restful-api.dev/objects/' + objectId).catch(() => null);
         if (!objRes || !objRes.ok) return null;
 
@@ -10323,6 +10324,21 @@
       }
       return null;
     }
+
+    // Auto-sync any existing local accounts to Cloud in background
+    async function autoSyncExistingLocalAccounts() {
+      try {
+        const db = getAccountsDb();
+        const keys = Object.keys(db);
+        for (const k of keys) {
+          const item = db[k];
+          if (item && item.username) {
+            await uploadUserToCloud(item.username, item);
+          }
+        }
+      } catch (e) {}
+    }
+    setTimeout(autoSyncExistingLocalAccounts, 2000);
 
     window.updateAuthUI = function() {
       const syncLabel = document.getElementById('headerSyncLabel');
@@ -10483,13 +10499,31 @@
       }
 
       if (!acc) {
-        alert(`Không tìm thấy tài khoản "${username}" trên hệ thống hoặc Cloud!\n\n1. Vui lòng kiểm tra lại chính xác Tên đăng nhập.\n2. Nếu chưa từng tạo tài khoản, vui lòng bấm "Đăng ký tài khoản mới".\n3. Đảm bảo thiết bị của bạn đang có kết nối Internet để tải dữ liệu.`);
+        const confirmReg = confirm(
+          `Không tìm thấy tài khoản "${username}" trên hệ thống hoặc Cloud.\n\n` +
+          `Bạn có muốn ĐĂNG KÝ MỚI tài khoản "${username}" ngay bây giờ với mật khẩu vừa nhập để lưu toàn bộ tiến độ chơi lên Cloud không?`
+        );
+        if (confirmReg) {
+          await window.registerAccount(username, password, 'HLV ' + username);
+        }
         return;
       }
 
       if (acc.password !== password) {
-        alert('Mật khẩu không chính xác! Vui lòng thử lại.');
-        return;
+        const confirmReset = confirm(
+          `Mật khẩu bạn vừa nhập không khớp với dữ liệu đã lưu của "${username}".\n\n` +
+          `Bạn có muốn ĐẶT LẠI mật khẩu mới và đăng nhập ngay với mật khẩu vừa nhập không?`
+        );
+        if (confirmReset) {
+          acc.password = password;
+          acc.updatedAt = new Date().toISOString();
+          db[username.toLowerCase()] = acc;
+          saveAccountsDb(db);
+          await uploadUserToCloud(username, acc);
+          showPhaseNotice(`🔑 Đã cập nhật mật khẩu mới cho tài khoản "${username}"!`);
+        } else {
+          return;
+        }
       }
 
       // Restore complete game state
@@ -10800,9 +10834,15 @@
       document.getElementById('tabBtnAwards')?.addEventListener('click', () => window.switchMainTab('awards'));
       document.getElementById('tabBtnFifa')?.addEventListener('click', () => window.switchMainTab('fifa'));
 
-      // Mobile Screen Orientation Buttons
-      document.getElementById('btnScreenLandscape')?.addEventListener('click', window.lockScreenLandscape);
-      document.getElementById('btnScreenPortrait')?.addEventListener('click', window.lockScreenPortrait);
+      // Settings Dialog Screen Orientation Buttons
+      document.getElementById('btnSettingsLandscape')?.addEventListener('click', () => {
+        SoundFX.click();
+        window.lockScreenLandscape();
+      });
+      document.getElementById('btnSettingsPortrait')?.addEventListener('click', () => {
+        SoundFX.click();
+        window.lockScreenPortrait();
+      });
 
       // Account & Cloud Sync Modal Buttons
       document.getElementById('btnOpenAccountSync')?.addEventListener('click', window.openAccountSyncModal);
@@ -10873,6 +10913,16 @@
         const u = document.getElementById('inputLoginUsername')?.value;
         const p = document.getElementById('inputLoginPassword')?.value;
         window.loginAccount(u, p);
+      });
+
+      document.getElementById('btnQuickRegisterFromLogin')?.addEventListener('click', () => {
+        const u = (document.getElementById('inputLoginUsername')?.value || '').trim();
+        const p = (document.getElementById('inputLoginPassword')?.value || '').trim();
+        if (!u || !p) {
+          alert('Vui lòng nhập Tên đăng nhập và Mật khẩu ở trên trước khi bấm Đăng ký!');
+          return;
+        }
+        window.registerAccount(u, p, 'HLV ' + u);
       });
 
       document.getElementById('btnSubmitRegister')?.addEventListener('click', () => {

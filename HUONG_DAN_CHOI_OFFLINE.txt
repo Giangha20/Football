@@ -1,0 +1,17 @@
+==============================================================
+    EFOOT MOBILE ARENA - BẢN CÀI ĐẶT & CHƠI OFFLINE WINDOWS
+==============================================================
+
+CÁCH CHƠI RẤT ĐƠN GIẢN:
+1. Giải nén (Extract All) toàn bộ tệp zip này vào một thư mục trên máy tính.
+2. Nhấp đúp chuột vào tệp: Football_Game_Offline.exe (hoặc Chay_Game_Offline.bat)
+3. Trò chơi sẽ tự động mở trong trình duyệt của bạn với đầy đủ tính năng:
+   - 21 giải đấu đỉnh cao (World Cup 48 đội, Champions League, V-League, Ngoại Hạng Anh...)
+   - Hơn 12.000 cầu thủ thật với chỉ số và ảnh chân dung
+   - Chế độ "Sự nghiệp HLV" VIP
+   - Chợ chuyển nhượng cầu thủ, gia hạn hợp đồng
+   - Bảng xếp hạng FIFA 186 quốc gia
+   - Hệ thống Lưu / Đăng nhập tài khoản đồng bộ đa thiết bị
+   - Tùy chỉnh Xoay ngang / Xoay dọc màn hình trong mục Cài đặt
+
+Chúc bạn có những phút giây giải trí tuyệt vời!

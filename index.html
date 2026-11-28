@@ -10,10 +10,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Tailwind CSS Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons & Confetti FX -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Lucide Icons (Offline-first bundled + CDN fallback) & Confetti FX -->
+  <script src="lucide.min.js"></script>
+  <script>
+    if (!window.lucide) {
+      document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=3.0" />
+  <link rel="stylesheet" href="style.css?v=4.0" />
   <!-- PWA & Mobile App Manifest -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020617" />
@@ -80,15 +85,7 @@
           </div>
         </div>
 
-        <!-- Mobile Orientation, Account & Cloud Sync, Sound, Settings & Rules Buttons -->
-        <button id="btnScreenLandscape" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-amber-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-amber-500/30" title="Xoay ngang màn hình">
-          <i data-lucide="smartphone" class="w-4 h-4 rotate-90 text-amber-400"></i>
-          <span class="hidden sm:inline">Xoay ngang</span>
-        </button>
-        <button id="btnScreenPortrait" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-sky-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-sky-500/30" title="Xoay dọc màn hình">
-          <i data-lucide="smartphone" class="w-4 h-4 text-sky-400"></i>
-          <span class="hidden sm:inline">Xoay dọc</span>
-        </button>
+        <!-- Account & Cloud Sync, Sound, Settings & Rules Buttons -->
         <button id="btnOpenAccountSync" type="button" class="btn-tap px-2.5 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-emerald-300 hover:text-white transition flex items-center gap-1.5 text-xs font-extrabold border border-emerald-500/30" title="Đăng nhập tài khoản & Đồng bộ tiến độ đa thiết bị">
           <i data-lucide="cloud" class="w-4 h-4 text-emerald-400"></i>
           <span class="hidden sm:inline">Tài khoản & Đồng bộ</span>
@@ -96,7 +93,7 @@
         <button id="btnToggleSound" type="button" class="btn-tap p-2 rounded-xl glass-card hover:bg-slate-800/80 text-slate-300 hover:text-white transition" title="Bật/Tắt âm thanh">
           <i id="iconSound" data-lucide="volume-2" class="w-5 h-5 text-emerald-400"></i>
         </button>
-        <button id="btnSettings" class="btn-tap px-3 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-slate-300 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold settings-trigger" type="button" title="Cài đặt tốc độ và thời lượng">
+        <button id="btnSettings" class="btn-tap px-3 py-1.5 rounded-xl glass-card hover:bg-slate-800/80 text-slate-300 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold settings-trigger" type="button" title="Cài đặt trò chơi & xoay màn hình">
           <i data-lucide="settings" class="w-4 h-4 text-emerald-400"></i>
           <span class="hidden sm:inline">Cài đặt</span>
         </button>
@@ -114,7 +111,7 @@
     <section class="glass-card rounded-2xl p-2 sm:p-2.5 border border-emerald-500/30 flex items-center justify-between gap-2 flex-wrap">
       <div class="inline-flex p-1 rounded-xl bg-slate-950/90 border border-white/10 flex-wrap gap-1" role="tablist">
         <button id="tabBtnMatch" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 shadow-md">
-          <i data-lucide="target" class="w-4 h-4"></i>
+          <i data-lucide="swords" class="w-4 h-4"></i>
           <span>Trận đấu & Dự đoán</span>
         </button>
         <button id="tabBtnCareer" type="button" class="app-tab-btn btn-tap px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 transition text-slate-300 hover:text-white">
@@ -1522,6 +1519,10 @@
               <i data-lucide="log-in" class="w-4 h-4"></i>
               <span>Đăng nhập & Tải tiến độ</span>
             </button>
+            <button id="btnQuickRegisterFromLogin" type="button" class="btn-tap w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-emerald-400/35 text-emerald-300 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Chưa có tài khoản? Đăng ký nhanh với thông tin trên</span>
+            </button>
           </div>
           <div class="text-center">
             <button id="btnToggleToRegister" type="button" class="text-xs text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-2">
@@ -1750,6 +1751,27 @@
         </div>
       </fieldset>
 
+      <!-- HƯỚNG XOAY MÀN HÌNH (MOBILE & TABLET) -->
+      <div class="pt-3 border-t border-white/10 space-y-2">
+        <label class="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-4 h-4 text-amber-400"></i>
+          <span>HƯỚNG XOAY MÀN HÌNH (ĐIỆN THOẠI / TABLET)</span>
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btnSettingsLandscape" type="button" class="btn-tap py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-white transition flex items-center justify-center gap-2 text-xs font-extrabold border border-amber-500/40 shadow">
+            <i data-lucide="smartphone" class="w-4 h-4 rotate-90 text-amber-400"></i>
+            <span>Xoay ngang</span>
+          </button>
+          <button id="btnSettingsPortrait" type="button" class="btn-tap py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-300 hover:text-white transition flex items-center justify-center gap-2 text-xs font-extrabold border border-sky-500/40 shadow">
+            <i data-lucide="smartphone" class="w-4 h-4 text-sky-400"></i>
+            <span>Xoay dọc</span>
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-400 leading-relaxed">
+          Tùy chỉnh góc nhìn trên điện thoại: Xoay ngang màn hình để quan sát đầy đủ diễn biến 22 cầu thủ trên sân cỏ.
+        </p>
+      </div>
+
       <!-- Vùng Đặt Lại Toàn Bộ (Reset All Tournaments & FIFA Points to 0) -->
       <div class="pt-3 border-t border-rose-500/30 space-y-2">
         <label class="block text-xs font-extrabold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -1772,13 +1794,13 @@
   </dialog>
 
   <!-- Scripts -->
-  <script src="transfer_market_data.js?v=3.0"></script>
-  <script src="app.js?v=3.0"></script>
+  <script src="transfer_market_data.js?v=4.0"></script>
+  <script src="app.js?v=4.0"></script>
   <!-- Offline Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=3.0').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=4.0').catch(() => {});
       });
     }
     // Offline Desktop Launcher Keep-Alive Heartbeat
@@ -1788,10 +1810,5 @@
       }, 2000);
     }
   </script>
-  <!-- Floating Rotate to Landscape Hint for Mobile Users in Portrait -->
-  <div id="portraitRotatePrompt" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-xs shadow-2xl flex items-center gap-2 border-2 border-white/50 cursor-pointer transition hover:scale-105" onclick="window.requestLandscapeMode()">
-    <i data-lucide="smartphone" class="w-4 h-4 rotate-90"></i>
-    <span>Chạm để xoay ngang màn hình</span>
-  </div>
 </body>
 </html>

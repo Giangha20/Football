@@ -1,10 +1,11 @@
-const CACHE_NAME = 'football-manager-offline-v3';
+const CACHE_NAME = 'football-manager-offline-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './transfer_market_data.js',
+  './lucide.min.js',
   './manifest.json',
   './logo.png',
   './icon-192.png',
