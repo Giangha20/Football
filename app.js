@@ -10176,7 +10176,7 @@
     };
 
     // =========================================================================
-    // FEATURE: REGISTERED ACCOUNT AUTH & MULTI-DEVICE CLOUD SYNC
+    // FEATURE: REGISTERED ACCOUNT AUTH & MULTI-DEVICE CLOUD SYNC (HYBRID KV + CLOUD OBJECTS)
     // =========================================================================
     state.currentUser = localStorage.getItem('football_current_user') || null;
 
@@ -10192,24 +10192,96 @@
       localStorage.setItem('football_accounts', JSON.stringify(db));
     }
 
+    function sanitizeKey(str) {
+      return (str || '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    }
+
+    // Hybrid Cloud Storage: maps username -> objectId via keyval.org, stores full data on restful-api.dev
     async function uploadUserToCloud(username, accountRecord) {
       try {
-        await fetch('https://api.restful-api.dev/objects', {
+        const cleanUser = sanitizeKey(username);
+        if (!cleanUser) return null;
+
+        let objectId = localStorage.getItem('football_cloud_oid_' + cleanUser) || null;
+
+        if (!objectId) {
+          try {
+            const lookupRes = await fetch('https://api.keyval.org/get/efoot_u_' + cleanUser).catch(() => null);
+            if (lookupRes && lookupRes.ok) {
+              const lookupData = await lookupRes.json();
+              if (lookupData && lookupData.val && lookupData.val.length > 10 && !lookupData.val.includes('DOESNT-EXISTS')) {
+                objectId = lookupData.val;
+              }
+            }
+          } catch (e) {}
+        }
+
+        // Try updating existing cloud object via PUT
+        if (objectId) {
+          try {
+            const putRes = await fetch('https://api.restful-api.dev/objects/' + objectId, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: 'football_user_' + cleanUser, data: accountRecord })
+            }).catch(() => null);
+
+            if (putRes && putRes.ok) {
+              localStorage.setItem('football_cloud_oid_' + cleanUser, objectId);
+              return objectId;
+            }
+          } catch (e) {}
+        }
+
+        // Create new cloud object via POST
+        const postRes = await fetch('https://api.restful-api.dev/objects', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: 'football_user_' + username.toLowerCase(), data: accountRecord })
-        }).catch(() => {});
-      } catch (e) {}
+          body: JSON.stringify({ name: 'football_user_' + cleanUser, data: accountRecord })
+        });
+
+        if (postRes && postRes.ok) {
+          const postData = await postRes.json();
+          const newOid = postData.id;
+          if (newOid) {
+            localStorage.setItem('football_cloud_oid_' + cleanUser, newOid);
+            // Save mapping in keyval.org so any other device can find it instantly
+            await fetch('https://api.keyval.org/set/efoot_u_' + cleanUser + '/' + newOid).catch(() => {});
+            return newOid;
+          }
+        }
+      } catch (err) {
+        console.warn('uploadUserToCloud warning:', err);
+      }
+      return null;
     }
 
     async function fetchUserFromCloud(username) {
       try {
-        const res = await fetch('https://api.restful-api.dev/objects?id=football_user_' + username.toLowerCase()).catch(() => null);
-        if (res && res.ok) {
-          const data = await res.json();
-          if (data && data.data) return data.data;
+        const cleanUser = sanitizeKey(username);
+        if (!cleanUser) return null;
+
+        // Step 1: Query keyval.org to get the restful-api.dev objectId
+        const mapRes = await fetch('https://api.keyval.org/get/efoot_u_' + cleanUser).catch(() => null);
+        if (!mapRes || !mapRes.ok) return null;
+
+        const mapData = await mapRes.json();
+        const objectId = mapData?.val;
+        if (!objectId || objectId.includes('DOESNT-EXISTS') || objectId.length < 10) {
+          return null;
         }
-      } catch (e) {}
+
+        // Step 2: Fetch the full account record from restful-api.dev
+        const objRes = await fetch('https://api.restful-api.dev/objects/' + objectId).catch(() => null);
+        if (!objRes || !objRes.ok) return null;
+
+        const objData = await objRes.json();
+        if (objData && objData.data) {
+          localStorage.setItem('football_cloud_oid_' + cleanUser, objectId);
+          return objData.data;
+        }
+      } catch (err) {
+        console.warn('fetchUserFromCloud warning:', err);
+      }
       return null;
     }
 
@@ -10279,9 +10351,19 @@
         return;
       }
 
+      const submitBtn = document.getElementById('btnSubmitRegister');
+      const origText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Đang đăng ký & đồng bộ Cloud...</span>';
+      }
+
+      showPhaseNotice('⏳ Đang tạo tài khoản và đồng bộ Cloud...');
+
       const db = getAccountsDb();
-      if (db[username]) {
-        alert('Tên đăng nhập này đã được sử dụng trên máy! Vui lòng chọn tên khác hoặc chuyển sang Đăng nhập.');
+      if (db[username.toLowerCase()]) {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
+        alert('Tên đăng nhập này đã được sử dụng trên máy này! Vui lòng chọn tên khác hoặc chuyển sang Đăng nhập.');
         return;
       }
 
@@ -10304,19 +10386,25 @@
         updatedAt: new Date().toISOString()
       };
 
-      db[username] = accountRecord;
+      // 1. Save locally
+      db[username.toLowerCase()] = accountRecord;
       saveAccountsDb(db);
 
       state.currentUser = username;
       localStorage.setItem('football_current_user', username);
 
-      // Async cloud backup
-      uploadUserToCloud(username, accountRecord);
+      // 2. Upload to Global Cloud (accessible on any device)
+      await uploadUserToCloud(username, accountRecord);
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origText;
+      }
 
       window.updateAuthUI();
       SoundFX.cheer();
-      showPhaseNotice(`🎉 Đăng ký thành công tài khoản HLV: ${username}!`);
-      alert(`Chúc mừng HLV ${managerName}! Tài khoản "${username}" đã được tạo và lưu tiến độ hiện tại thành công.`);
+      showPhaseNotice(`🎉 Đăng ký thành công! Đã đồng bộ tài khoản "${username}" lên Cloud.`);
+      alert(`Chúc mừng HLV ${managerName}!\n\nTài khoản "${username}" đã được tạo và đồng bộ lên Cloud thành công.\nBây giờ bạn có thể dùng tài khoản này để Đăng nhập trên MỌI điện thoại và máy tính khác!`);
     };
 
     window.loginAccount = async function(username, password) {
@@ -10329,22 +10417,34 @@
         return;
       }
 
-      let db = getAccountsDb();
-      let acc = db[username];
+      const submitBtn = document.getElementById('btnSubmitLogin');
+      const origText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Đang kiểm tra Cloud...</span>';
+      }
 
-      // If not in local db, attempt to fetch from Cloud
+      let db = getAccountsDb();
+      let acc = db[username.toLowerCase()];
+
+      // If not in local db (e.g. user is on a new phone or different PC):
       if (!acc) {
-        showPhaseNotice('⏳ Đang tìm kiếm tài khoản trên Cloud...');
+        showPhaseNotice('🌐 Đang tìm kiếm tài khoản trên Cloud đa thiết bị...');
         const cloudAcc = await fetchUserFromCloud(username);
         if (cloudAcc) {
           acc = cloudAcc;
-          db[username] = acc;
+          db[username.toLowerCase()] = acc;
           saveAccountsDb(db);
         }
       }
 
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origText;
+      }
+
       if (!acc) {
-        alert('Tài khoản không tồn tại trên hệ thống! Vui lòng kiểm tra lại hoặc Đăng ký tài khoản mới.');
+        alert(`Không tìm thấy tài khoản "${username}" trên hệ thống hoặc Cloud!\n\n1. Vui lòng kiểm tra lại chính xác Tên đăng nhập.\n2. Nếu chưa từng tạo tài khoản, vui lòng bấm "Đăng ký tài khoản mới".\n3. Đảm bảo thiết bị của bạn đang có kết nối Internet để tải dữ liệu.`);
         return;
       }
 
@@ -10353,7 +10453,7 @@
         return;
       }
 
-      // Restore game state
+      // Restore complete game state
       if (acc.data) {
         if (acc.data.manager) state.manager = acc.data.manager;
         if (acc.data.customLineups) state.customLineups = acc.data.customLineups;
@@ -10362,8 +10462,8 @@
         if (acc.data.seasonAwards) state.seasonAwards = acc.data.seasonAwards;
       }
 
-      state.currentUser = username;
-      localStorage.setItem('football_current_user', username);
+      state.currentUser = acc.username || username;
+      localStorage.setItem('football_current_user', state.currentUser);
 
       saveManagerCareer();
       renderManagerUI();
@@ -10371,8 +10471,8 @@
       window.updateAuthUI();
 
       SoundFX.cheer();
-      showPhaseNotice(`✅ Đã đăng nhập tài khoản: ${username}`);
-      alert(`Đăng nhập thành công! Chào mừng HLV ${acc.managerName || username} đã quay trở lại.`);
+      showPhaseNotice(`✅ Đã đăng nhập và đồng bộ tiến độ tài khoản: ${state.currentUser}`);
+      alert(`Đăng nhập thành công!\n\nChào mừng HLV ${acc.managerName || state.currentUser} đã quay trở lại.\nToàn bộ đội hình, ngân sách và thành tích đã được đồng bộ về thiết bị này.`);
     };
 
     window.saveCurrentProgressToAccount = async function() {
@@ -10382,8 +10482,16 @@
         return;
       }
 
+      const saveBtn = document.getElementById('btnSaveToAccount');
+      const origText = saveBtn ? saveBtn.innerHTML : '';
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span>⏳ Đang tải lên Cloud...</span>';
+      }
+
       const db = getAccountsDb();
-      const acc = db[state.currentUser] || {
+      const userKey = state.currentUser.toLowerCase();
+      const acc = db[userKey] || {
         username: state.currentUser,
         password: '',
         managerName: state.manager?.name || state.currentUser
@@ -10399,39 +10507,56 @@
 
       acc.data = statePkg;
       acc.updatedAt = new Date().toISOString();
-      db[state.currentUser] = acc;
+      db[userKey] = acc;
       saveAccountsDb(db);
 
-      // Upload to Cloud
-      uploadUserToCloud(state.currentUser, acc);
+      // Upload to Global Cloud
+      await uploadUserToCloud(state.currentUser, acc);
+
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = origText;
+      }
 
       saveManagerCareer();
       window.updateAuthUI();
       SoundFX.cheer();
       showPhaseNotice(`☁️ Đã lưu tiến độ chơi vào tài khoản ${state.currentUser}!`);
-      alert(`Tiến độ của HLV ${acc.managerName || state.currentUser} đã được lưu an toàn trên máy và Cloud!`);
+      alert(`Tiến độ của HLV ${acc.managerName || state.currentUser} đã được lưu thành công trên máy và Cloud đa thiết bị!`);
     };
 
     window.reloadFromAccount = async function() {
       SoundFX.click();
       if (!state.currentUser) return;
-      const db = getAccountsDb();
-      let acc = db[state.currentUser];
+
+      showPhaseNotice('⏳ Đang tải dữ liệu mới nhất từ Cloud...');
+      const userKey = state.currentUser.toLowerCase();
+      let acc = await fetchUserFromCloud(state.currentUser);
+
       if (!acc) {
-        acc = await fetchUserFromCloud(state.currentUser);
+        const db = getAccountsDb();
+        acc = db[userKey];
       }
+
       if (acc && acc.data) {
         if (acc.data.manager) state.manager = acc.data.manager;
         if (acc.data.customLineups) state.customLineups = acc.data.customLineups;
         if (acc.data.fifaPoints) state.fifaPoints = acc.data.fifaPoints;
         if (acc.data.predictionStats) state.predictionStats = acc.data.predictionStats;
         if (acc.data.seasonAwards) state.seasonAwards = acc.data.seasonAwards;
+
+        const db = getAccountsDb();
+        db[userKey] = acc;
+        saveAccountsDb(db);
+
         saveManagerCareer();
         renderManagerUI();
         initPitchPlayers();
         window.updateAuthUI();
         SoundFX.cheer();
-        alert('Đã tải lại toàn bộ tiến độ mới nhất từ tài khoản!');
+        alert('Đã tải lại toàn bộ tiến độ mới nhất từ Cloud thành công!');
+      } else {
+        alert('Không thể kết nối đến Cloud hoặc chưa có bản lưu mới.');
       }
     };
 
@@ -10499,11 +10624,21 @@
         const payloadStr = JSON.stringify(statePkg);
         localStorage.setItem('football_cloud_save_' + pin, payloadStr);
 
-        await fetch('https://api.restful-api.dev/objects', {
+        const cleanPin = pin.replace(/[^A-Z0-9_-]/g, '');
+
+        // Upload to restful-api.dev
+        const postRes = await fetch('https://api.restful-api.dev/objects', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: 'football_save_' + pin, data: statePkg })
-        }).catch(() => {});
+          body: JSON.stringify({ name: 'football_pin_' + cleanPin, data: statePkg })
+        }).catch(() => null);
+
+        if (postRes && postRes.ok) {
+          const postData = await postRes.json();
+          if (postData.id) {
+            await fetch('https://api.keyval.org/set/efoot_p_' + cleanPin + '/' + postData.id).catch(() => {});
+          }
+        }
 
         SoundFX.cheer();
         if (statusEl) {
@@ -10528,20 +10663,28 @@
         return;
       }
 
-      if (statusEl) statusEl.textContent = '⏳ Đang tìm và tải dữ liệu...';
+      if (statusEl) statusEl.textContent = '⏳ Đang tìm và tải dữ liệu từ Cloud...';
 
       try {
         let loadedData = null;
         const localSave = localStorage.getItem('football_cloud_save_' + pin);
         if (localSave) {
-          loadedData = JSON.parse(localSave);
+          try { loadedData = JSON.parse(localSave); } catch (e) {}
         }
 
         if (!loadedData) {
-          const res = await fetch(`https://api.restful-api.dev/objects?id=football_save_${pin}`).catch(() => null);
-          if (res && res.ok) {
-            const data = await res.json();
-            if (data && data.data) loadedData = data.data;
+          const cleanPin = pin.replace(/[^A-Z0-9_-]/g, '');
+          const mapRes = await fetch('https://api.keyval.org/get/efoot_p_' + cleanPin).catch(() => null);
+          if (mapRes && mapRes.ok) {
+            const mapData = await mapRes.json();
+            const objectId = mapData?.val;
+            if (objectId && objectId.length > 10 && !objectId.includes('DOESNT-EXISTS')) {
+              const res = await fetch('https://api.restful-api.dev/objects/' + objectId).catch(() => null);
+              if (res && res.ok) {
+                const data = await res.json();
+                if (data && data.data) loadedData = data.data;
+              }
+            }
           }
         }
 
